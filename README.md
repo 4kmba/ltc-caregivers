@@ -21,5 +21,3 @@ Demo Day는 2026년 12월 19일입니다. 강의 전체 프로젝트 목록은 [
 | [docs/QUESTIONS.md](docs/QUESTIONS.md) | 지금 가장 큰 미해결 질문 다섯 가지 |
 | [docs/PREMORTEM.md](docs/PREMORTEM.md) | 팀원 각자의 premortem을 병합한 실패 원인 목록과 대응책 |
 | `docs/premortem/<이름>.md` | 팀원 각자가 혼자 쓴 premortem |
-
-문서는 모두 한국어로 씁니다.
