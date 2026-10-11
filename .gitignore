@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# 가상 보호자 시뮬레이션 코드와 결과. 로컬 git만 쓰고 원격에는 올리지 않는다.
+silicon-sampling/
+
+# premortem 템플릿 원본
+docs/premortem/yourname.md
