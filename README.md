@@ -24,4 +24,4 @@ Demo Day는 2026년 12월 19일입니다. 강의 전체 프로젝트 목록은 [
 
 ## 작업 방법
 
-문서는 `main` 브랜치에 직접 커밋합니다. clone 뒤 `sh setup.sh`를 한 번 실행하면 pull 방식과 커밋 작성자 설정이 이 저장소에 맞게 잡힙니다. 자세한 절차와 `main` 브랜치 규칙은 [CONTRIBUTING.md](CONTRIBUTING.md)에 있습니다.
+모든 변경은 `<github-id>/<주제>` 브랜치를 만들어 pull request로 올리고 squash merge로 `main`에 합칩니다. `main` 직접 커밋은 저장소 설정이 막습니다. clone 뒤 `sh setup.sh`를 한 번 실행하면 pull 방식과 커밋 작성자 설정이 이 저장소에 맞게 잡힙니다. 자세한 절차, 파일 소유 규칙, 개발 원칙(스펙 먼저, SLC)은 [CONTRIBUTING.md](CONTRIBUTING.md)에 있습니다.

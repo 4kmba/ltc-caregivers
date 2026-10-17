@@ -6,3 +6,6 @@ silicon-sampling/
 
 # premortem 템플릿 원본
 docs/premortem/yourname.md
+
+# Claude Code 개인 설정. 팀 공용 규칙은 CLAUDE.md에 둔다.
+CLAUDE.local.md

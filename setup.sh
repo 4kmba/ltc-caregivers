@@ -1,8 +1,8 @@
 #!/bin/sh
 # 이 저장소를 clone한 뒤 저장소 루트에서 한 번 실행한다.
 #   sh setup.sh
-# 하는 일: pull을 rebase 방식으로 고정하고, 저장소 안의 hook을 켜고,
-# 커밋에 기록할 이름과 이메일을 이 저장소에만 설정한다.
+# 하는 일: pull을 rebase 방식으로 고정하고, 새 브랜치 push 시 원격 브랜치를 자동으로 만들고,
+# 저장소 안의 hook을 켜고, 커밋에 기록할 이름과 이메일을 이 저장소에만 설정한다.
 
 set -e
 cd "$(dirname "$0")"
@@ -13,6 +13,7 @@ if [ ! -d .git ]; then
 fi
 
 git config pull.rebase true
+git config push.autoSetupRemote true
 git config core.hooksPath .githooks
 chmod +x .githooks/* 2>/dev/null || true
 
@@ -49,4 +50,9 @@ echo "설정 완료"
 echo "  user.name       = $(git config user.name)"
 echo "  user.email      = $(git config user.email)"
 echo "  pull.rebase     = $(git config pull.rebase)"
+echo "  push.autoSetupRemote = $(git config push.autoSetupRemote)"
 echo "  core.hooksPath  = $(git config core.hooksPath)"
+echo
+echo "작업은 main이 아닌 브랜치에서 합니다:"
+echo "  git switch -c <github-id>/<주제>   →  수정·커밋  →  git push  →  PR 생성"
+echo "자세한 절차는 CONTRIBUTING.md 를 보세요."
