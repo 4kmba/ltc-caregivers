@@ -68,6 +68,21 @@ GitHub 저장소 설정(ruleset)으로 강제합니다. 관리자도 예외가 �
 - **Linear history:** merge 커밋은 거부됩니다. `git pull`을 rebase 없이 해서 merge 커밋이 생겼다면 `git pull --rebase origin main`으로 정리한 뒤 다시 push 합니다.
 - **Force push 금지, 브랜치 삭제 금지:** 이미 올라간 커밋을 덮어쓸 수 없습니다. 되돌려야 하면 `git revert`로 새 커밋을 만들어 PR로 올립니다.
 
+## 보안: 공개 레포에 올리지 않는 것
+
+이 저장소는 누구나 볼 수 있고, 한 번 push된 내용은 force push가 막혀 있어 지울 수 없습니다. 올리기 전에 한 번 더 봅니다.
+
+| 올리지 않는 것 | 어떻게 다루나 |
+|---|---|
+| API 키, 토큰, 비밀번호, `.env` | `.env`는 `.gitignore`에 있습니다. 팀이 공유할 변수 이름은 `.env.example`에 **빈 값**으로 적습니다. 키 값 자체는 팀 채팅이 아니라 1:1로 전달하거나 각자 발급합니다. |
+| 인터뷰 대상의 실명, 연락처, 녹음, 녹취 원문 | `docs/interviews/raw/`와 음성 파일은 `.gitignore`에 있습니다. 올리는 기록(`.md`)에는 가명이나 "보호자 A"처럼 익명으로 적고, 가족 사정은 분석에 필요한 만큼만 남깁니다. |
+| 개인 이메일 | 커밋 이메일은 GitHub noreply 주소를 씁니다(위 "처음 한 번"). 문서 본문에도 개인 이메일과 전화번호를 적지 않습니다. |
+| 개인 도구 설정 | `CLAUDE.local.md`, `.claude/settings.local.json`, `.vscode/`, `.idea/`는 `.gitignore`에 있습니다. |
+
+GitHub의 secret scanning push protection이 켜져 있어, 알려진 형식의 API 키가 들어 있는 push는 서버가 거부합니다. 거부되면 그 키는 **이미 노출된 것으로 보고 새로 발급**한 뒤, 파일에서 지우고 다시 커밋합니다. 실수로 올라간 뒤 알았다면 혼자 지우려 하지 말고 바로 팀에 알립니다. 키 재발급이 히스토리 정리보다 먼저입니다.
+
+AI 코딩 도구(Claude Code 등)를 쓸 때는 `.env`나 키 파일을 읽히지 않도록 하고, 도구가 만든 커밋도 push 전에 `git diff --cached`로 한 번 확인합니다.
+
 ## 개발 원칙
 
 코드가 생기면 다음 세 가지를 지킵니다.

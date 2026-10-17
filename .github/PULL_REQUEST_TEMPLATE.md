@@ -12,4 +12,5 @@
 - [ ] `PROJECT.md`, `QUESTIONS.md`, `PREMORTEM.md`를 고쳤다면 Revision log에 한 줄 추가했다
 - [ ] 다른 사람의 `docs/premortem/<이름>.md`는 건드리지 않았다
 - [ ] 남은 `[` 대괄호 안내문이 없다
+- [ ] API 키, `.env`, 인터뷰 대상의 실명·연락처가 들어 있지 않다
 - [ ] 기능 코드라면 `docs/specs/spec-<기능명>.md`가 먼저 머지돼 있다
