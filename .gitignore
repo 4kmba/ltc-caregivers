@@ -10,6 +10,22 @@
 credentials*.json
 service-account*.json
 secrets/
+secrets*.json
+*.p8
+*.ppk
+*.jks
+*.keystore
+# SSH 개인키. 공개키(.pub)는 제외하지 않는다.
+id_rsa
+id_rsa.*
+id_ecdsa
+id_ecdsa.*
+id_ed25519
+id_ed25519.*
+!*.pub
+# 패키지 저장소 인증 토큰
+.npmrc
+.pypirc
 # 클라우드·도구 로컬 인증 정보
 .aws/
 .gcloud/
