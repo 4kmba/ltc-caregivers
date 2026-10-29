@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>돌봄 한 장 정리</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="top">
+    <p class="brand">돌봄 한 장 정리</p>
+  </header>
+
+  <main id="app">
+    <!-- 0. 응급 확인 -->
+    <section class="screen" id="screen-check">
+      <p class="step">시작하기 전에</p>
+      <h1>지금 어르신이 응급 상황인가요?</h1>
+      <div class="choices two">
+        <button type="button" class="choice big" data-emergency="yes">예</button>
+        <button type="button" class="choice big" data-emergency="no">아니오</button>
+      </div>
+    </section>
+
+    <!-- 응급 안내. AI를 부르지 않는 고정 문구 -->
+    <section class="screen" id="screen-emergency" hidden>
+      <h1>지금 바로 119에 전화하세요.</h1>
+      <a class="call" href="tel:119">119 전화하기</a>
+      <p class="lead">진료받는 병원이 있으면 그 병원에도 연락하세요.</p>
+      <p class="source" id="emergency-source"></p>
+      <button type="button" class="ghost" data-action="restart">응급 상황이 아니면 처음으로</button>
+    </section>
+
+    <!-- 질문 1～6 -->
+    <section class="screen" id="screen-question" hidden>
+      <p class="step" id="q-step"></p>
+      <div class="progress" aria-hidden="true"><span id="q-bar"></span></div>
+      <h1 id="q-title"></h1>
+      <p class="hint" id="q-hint"></p>
+      <div id="q-body"></div>
+      <div class="nav">
+        <button type="button" class="ghost" id="q-back">이전</button>
+        <button type="button" class="primary" id="q-next" disabled>다음</button>
+      </div>
+    </section>
+
+    <!-- 정리하는 중 -->
+    <section class="screen" id="screen-loading" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <h1 aria-live="polite">정리하는 중이에요</h1>
+      <p class="lead">고른 답을 바탕으로 선택지를 모으고 있어요. 30초 정도 걸릴 수 있어요.</p>
+    </section>
+
+    <!-- 한 장 -->
+    <section class="screen" id="screen-card" hidden>
+      <p class="notice">참고용 정리입니다. 결정은 가족과 의료진이 함께 하세요.</p>
+
+      <div class="block decision">
+        <h2>지금 결정할 것</h2>
+        <p id="card-decision"></p>
+      </div>
+
+      <div class="block">
+        <h2>돌봄 방식 비교</h2>
+        <p class="hint">어느 쪽이 낫다고 정하지 않았어요. 가족 상황에 맞춰 비교해 보세요.</p>
+        <div class="options" id="card-options"></div>
+      </div>
+
+      <div class="block">
+        <h2>받을 수 있는 지원과 연락할 곳</h2>
+        <ul class="supports" id="card-supports"></ul>
+      </div>
+
+      <div class="block" id="card-medical-block" hidden>
+        <h2>의료진에게 물어볼 질문</h2>
+        <p class="hint">의료 판단은 여기서 하지 않아요. 다음 진료 때 이렇게 물어보세요.</p>
+        <ol class="questions" id="card-medical"></ol>
+      </div>
+
+      <p class="source" id="card-checked"></p>
+      <button type="button" class="ghost" data-action="restart">처음부터 다시</button>
+    </section>
+
+    <!-- 실패 -->
+    <section class="screen" id="screen-failure" hidden>
+      <h1>정리하지 못했어요</h1>
+      <p class="lead">잠시 뒤 다시 시도하거나, 아래 공공 창구에 문의해 주세요.</p>
+      <button type="button" class="primary" id="retry">다시 시도</button>
+      <div class="block">
+        <h2>문의할 수 있는 곳</h2>
+        <ul class="supports" id="failure-supports"></ul>
+      </div>
+      <button type="button" class="ghost" data-action="restart">처음부터 다시</button>
+    </section>
+  </main>
+</body>
+</html>
