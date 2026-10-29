@@ -1,0 +1,251 @@
+<title>심청이 돌봄 FAQ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  /* 레이아웃: 한 열, 폭 36rem. 첫 화면은 카테고리 카드 목록, 카드를 누르면 그 카테고리의 질문 화면으로 바뀐다. */
+  :root {
+    --bg: #f3f6f6;
+    --surface: #ffffff;
+    --ink: #1d2b2e;
+    --muted: #55686c;
+    --line: #d5e0e1;
+    --accent: #1f6f6b;
+    --accent-soft: #e2f0ee;
+    --care: #8a4b12;
+    --care-soft: #fbefe1;
+    --font-display: "Gowun Batang", "Noto Serif KR", serif;
+    --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121a1b; --surface: #1b2627; --ink: #e6eeee; --muted: #9db0b2;
+      --line: #2e3e40; --accent: #6cc7bf; --accent-soft: #1d3634;
+      --care: #f0b47a; --care-soft: #3a2a1b; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121a1b; --surface: #1b2627; --ink: #e6eeee; --muted: #9db0b2;
+    --line: #2e3e40; --accent: #6cc7bf; --accent-soft: #1d3634;
+    --care: #f0b47a; --care-soft: #3a2a1b; color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); font-size: 17px; line-height: 1.75;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 28px 48px;
+  }
+  .wrap { max-width: 36rem; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+  h1, h2 { font-family: var(--font-display); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.35; }
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  p { margin: 0; }
+  .lede { color: var(--muted); }
+  .brand { font-size: 0.85rem; letter-spacing: 0.04em; color: var(--accent); font-weight: 700; }
+
+  .cats { display: flex; flex-direction: column; gap: 12px; }
+  .cat {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; text-align: left; font: inherit; color: inherit;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 18px; cursor: pointer; min-height: 64px;
+  }
+  .cat:hover { border-color: var(--accent); }
+  .cat:focus-visible, .back:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .cat-name { font-weight: 700; font-size: 1.1rem; }
+  .cat-count { color: var(--muted); font-size: 0.9rem; white-space: nowrap; }
+  .chev { color: var(--accent); font-size: 1.3rem; line-height: 1; }
+
+  .back {
+    align-self: flex-start; font: inherit; font-weight: 500; color: var(--accent);
+    background: var(--accent-soft); border: 0; border-radius: 999px;
+    padding: 10px 18px; cursor: pointer; min-height: 44px;
+  }
+
+  .notice {
+    background: var(--care-soft); color: var(--care); border-radius: 10px;
+    padding: 14px 16px; font-weight: 500;
+  }
+  .signals {
+    border: 2px solid var(--care); border-radius: 12px; padding: 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .signals strong { color: var(--care); }
+  .signals ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+
+  .qs { display: flex; flex-direction: column; gap: 12px; }
+  details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  summary {
+    list-style: none; cursor: pointer; padding: 16px 18px; font-weight: 700;
+    display: flex; justify-content: space-between; gap: 12px; align-items: flex-start;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--accent); font-size: 1.4rem; line-height: 1.2; }
+  details[open] summary::after { content: "−"; }
+  .answer { padding: 0 18px 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .answer ul { margin: 0; padding-left: 1.2em; }
+  .label { font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; display: block; margin-bottom: 2px; }
+  .answer a { color: var(--accent); word-break: break-all; }
+  .contact { background: var(--accent-soft); border-radius: 8px; padding: 10px 12px; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+  th, td { border-bottom: 1px solid var(--line); padding: 8px 6px; text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; }
+  footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+
+<div class="wrap">
+  <section id="home">
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span class="brand">심청이</span>
+        <h1>처음 돌봄을 시작했다면, 여기서부터 보세요</h1>
+        <p class="lede">장기요양을 막 시작한 보호자들이 실제로 가장 많이 물은 질문을 모았어요. 궁금한 주제를 고르세요.</p>
+      </div>
+      <div class="cats" id="cats"></div>
+    </div>
+  </section>
+
+  <section id="detail" hidden>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <button class="back" id="back" type="button">← 주제 목록으로</button>
+      <h2 id="cat-title"></h2>
+      <div id="cat-notice"></div>
+      <div class="qs" id="qs"></div>
+      <div id="cat-signals"></div>
+    </div>
+  </section>
+
+  <footer>2026년 10월에 공공기관 자료를 바탕으로 정리했어요. 제도는 바뀔 수 있으니 신청 전에 국민건강보험공단(1577-1000)에 꼭 확인하세요.</footer>
+</div>
+
+<script>
+const NHIS = "국민건강보험공단 1577-1000";
+const DEMENTIA = "치매상담전화센터 1899-9988 (매일 오전 7시~오후 10시)";
+const SRC = {
+  apply: ["찾기쉬운 생활법령정보: 장기요양인정신청", "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=1963&ccfNo=3&cciNo=1&cnpClsNo=2"],
+  doctor: ["노인장기요양보험: 의사소견서 발급기관", "https://www.longtermcare.or.kr/npbs/e/b/201/selectDodEduCpetMdcAdminList.web?menuId=npe0000000080&prevPath=%2Fnpbs%2Fr%2Fa%2F201%2FselectLtcoSrch.web"],
+  appeal: ["찾기쉬운 생활법령정보: 등급판정 결과에 대한 이의신청", "https://www.easylaw.go.kr/CSP/OnhunqueansInfoRetrieve.laf?onhunqnaAstSeq=97&onhunqueSeq=6348"],
+  copay: ["찾기쉬운 생활법령정보: 본인부담금", "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=2038&ccfNo=3&cciNo=3&cnpClsNo=1"],
+  cap: ["정책브리핑: 본인부담상한 초과 의료비 환급 (2025.8.27.)", "https://www.korea.kr/news/policyNewsView.do?newsId=148948287"],
+  kinds: ["찾기쉬운 생활법령정보: 급여의 종류", "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=2038&ccfNo=3&cciNo=1&cnpClsNo=1"],
+  choose: ["찾기쉬운 생활법령정보: 장기요양기관 선택", "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=2038&ccfNo=3&cciNo=2&cnpClsNo=1"],
+  grade: ["국가건강정보포털: 장기요양등급결정과 이용", "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=6751"],
+  delirium: ["서울대학교병원 의학정보: 섬망", "https://www.snuh.org/health/nMedInfo/nView.do?category=DIS&medid=AC000010"],
+  call: ["정책브리핑: 치매상담전화센터 (2025.4.7.)", "https://www.korea.kr/news/policyNewsView.do?newsId=148941244"],
+  rest: ["복지로: 장기요양 가족휴가제 (2025.8.6.)", "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1308416_1118.html"],
+  line109: ["정책브리핑: 자살예방 상담번호 109 통합", "https://www.korea.kr/news/policyNewsView.do?newsId=148921684"]
+};
+
+const CATEGORIES = [
+  { id: "grade", name: "등급 신청과 소견서", items: [
+    { q: "장기요양 등급은 어디서, 어떻게 신청하나요?",
+      a: "<p>국민건강보험공단에 장기요양인정신청서를 내면 됩니다. 어르신 본인이 신청하기 어려우면 가족이나 친족이 대신 신청할 수 있어요. 본인이나 대리인이 동의하면 치매안심센터장이나 사회복지전담공무원도 대신 신청할 수 있어요.</p><p>신청 뒤에는 공단 직원이 집으로 찾아와 어르신 상태를 조사하고, 등급판정위원회가 등급을 정합니다.</p>",
+      src: ["apply"], ask: [NHIS] },
+    { q: "의사소견서는 어디서 받나요? 다니던 큰 병원에서 안 써 준대요.",
+      a: "<p>의사소견서는 의사나 한의사가 씁니다. 신청할 때 바로 내지 않아도 되고, 공단이 등급판정위원회에 자료를 넘기기 전까지 내면 돼요.</p><p>다니던 병원에서 받기 어렵다면 노인장기요양보험 누리집에서 소견서를 발급하는 의료기관을 찾아보거나 공단에 문의하세요. 거동이 매우 불편하거나 섬·벽지에 살아 병원에 가기 어려우면 소견서 제출이 면제될 수 있어요.</p>",
+      src: ["apply", "doctor"], ask: [NHIS] },
+    { q: "등급이 생각보다 낮게 나왔어요. 다시 받을 수 있나요?",
+      a: "<p>등급판정 결과에 동의하지 않으면, 결과를 안 날부터 90일 이내에 문서로 심사청구를 할 수 있어요. 결과가 나온 날부터 180일이 지나면 특별한 사유가 없는 한 청구할 수 없으니 서두르세요.</p><p>심사청구 결과에도 동의하지 않으면, 통지를 받은 날부터 90일 이내에 장기요양재심사위원회에 재심사를 청구할 수 있어요.</p>",
+      src: ["appeal"], ask: [NHIS] }
+  ]},
+  { id: "cost", name: "비용과 받을 수 있는 지원", items: [
+    { q: "장기요양 서비스를 쓰면 본인이 얼마나 내나요?",
+      a: "<p>장기요양 비용 가운데 본인이 내는 비율은 이렇습니다.</p><ul><li>집에서 받는 서비스(재가급여): 15%</li><li>요양원 같은 시설 서비스(시설급여): 20%</li></ul><p>소득과 재산에 따라 이 비율이 40% 또는 60% 줄어들 수 있고, 의료급여 수급자는 내지 않아요. 다만 장기요양 급여에 들어가지 않는 비용과 월 한도를 넘은 비용은 전부 본인이 냅니다. 실제 금액은 등급, 서비스, 기관마다 다르니 기관 상담 때 비급여 비용을 꼭 물어보세요.</p>",
+      src: ["copay"], ask: [NHIS + " (감경 대상인지 확인)"] },
+    { q: "병원비가 너무 많이 나왔어요. 돌려받을 수 있나요?",
+      a: "<p>본인부담상한제가 있어요. 한 해 동안 낸 건강보험 본인부담금이 소득 수준별 상한액을 넘으면, 넘은 금액을 국민건강보험공단이 돌려줍니다. 비급여 진료비는 계산에서 빠져요.</p><p>대상이 되면 공단이 안내문을 보내고, 공단 누리집, 'The건강보험' 앱, 전화, 우편, 방문으로 신청할 수 있어요.</p>",
+      src: ["cap"], ask: [NHIS] },
+    { q: "보행기나 안전손잡이 같은 용품도 지원되나요?",
+      a: "<p>장기요양 등급이 있으면 일상생활과 인지기능 유지에 필요한 복지용구를 사거나 빌릴 때 지원을 받을 수 있어요. 본인부담 비율은 15%이고, 감경 대상이면 9% 또는 6%, 의료급여 수급자는 내지 않아요.</p>",
+      src: ["kinds", "copay"], ask: [NHIS] }
+  ]},
+  { id: "place", name: "기관 고르기", items: [
+    { q: "요양원과 요양병원은 무엇이 다른가요?",
+      a: "<div class='table-wrap'><table><thead><tr><th></th><th>요양원</th><th>요양병원</th></tr></thead><tbody><tr><th>성격</th><td>돌봄과 일상생활을 돕는 곳</td><td>치료를 하는 의료기관</td></tr><tr><th>들어가는 조건</th><td>장기요양등급 필요</td><td>등급 필요 없음, 의사와 상의</td></tr><tr><th>의료인 상주</th><td>없음</td><td>있음</td></tr><tr><th>적용 보험</th><td>노인장기요양보험</td><td>국민건강보험</td></tr></tbody></table></div><p>돌봄이 주로 필요하면 요양원, 치료가 계속 필요하면 요양병원이 맞아요.</p>",
+      src: ["choose"], ask: [NHIS, "어르신을 진료하는 의사"] },
+    { q: "등급이 몇이어야 요양원에 갈 수 있나요?",
+      a: "<p>요양원 같은 시설 서비스는 원칙적으로 1·2등급이 이용해요. 3~5등급은 집에서 받는 서비스를 먼저 이용하고, 집에서 돌보기 어려운 특별한 사정이 있으면 심의를 거쳐 시설 서비스를 신청할 수 있어요. 인지지원등급은 집에서 받는 서비스만 이용합니다.</p>",
+      src: ["kinds", "grade"], ask: [NHIS] },
+    { q: "믿을 만한 기관은 어떻게 찾고 비교하나요?",
+      a: "<p>노인장기요양보험 누리집의 '장기요양기관 찾기'에서 전국 기관 정보와 공단의 평가 결과를 볼 수 있어요. 기관마다 종사자 수와 근속연수, 정원과 현재 인원, 비급여 비용, 보험 가입 여부도 올라와 있으니 함께 비교하세요.</p><p>계약 전에 기관에 연락하거나 직접 방문해 서비스 내용과 비용을 상담받을 수 있어요.</p>",
+      src: ["choose"], ask: [NHIS] }
+  ]},
+  { id: "health", name: "증상과 약", medical: true, items: [
+    { q: "갑자기 엉뚱한 말을 하고 상태가 확 나빠졌어요. 치매가 심해진 건가요?",
+      a: "<p>치매는 보통 서서히 진행해요. 몇 시간에서 며칠 사이에 갑자기 나빠졌다면 섬망일 수 있어요. 섬망은 감염, 몸속 전해질의 불균형, 약의 변경 같은 몸의 변화 때문에 생기고, 노인에게 흔하며, 치매가 있는 분에게도 생길 수 있어요.</p><p>시간이 지나면 나아지겠지 하고 기다리지 말고 진료받는 병원에 바로 알리세요. 언제부터 달라졌는지, 최근 아프거나 약이 바뀐 적이 있는지를 함께 말하면 도움이 돼요.</p>",
+      src: ["delirium"], ask: ["진료받는 병원", DEMENTIA] },
+    { q: "진료 시간이 짧아요. 의사에게 무엇을 물어보면 좋을까요?",
+      a: "<p>진료 전에 물어볼 것을 적어 가세요. 예를 들면 이런 질문이에요.</p><ul><li>지금 진단명은 무엇이고, 앞으로 어떻게 진행될 수 있나요?</li><li>약이 바뀌었다면, 집에서 어떤 변화를 지켜봐야 하나요?</li><li>어떤 증상이 생기면 다음 진료를 기다리지 말고 연락해야 하나요?</li><li>장기요양 등급 신청에 필요한 의사소견서를 써 주실 수 있나요?</li></ul><p>지금 드시는 약을 모두 적은 목록이나 약 봉투를 가져가면, 같은 성분의 약이 겹치는지 확인하는 데 도움이 돼요.</p>",
+      src: ["call"], ask: ["진료받는 병원", DEMENTIA] },
+    { q: "밤에 잠을 안 자고, 화를 내거나 의심을 해요. 어떻게 해야 하나요?",
+      a: "<p>치매가 있으면 잠, 기분, 행동이 달라지는 증상이 나타날 수 있어요. 치매상담전화센터에서 이런 행동·심리 증상별 대처 방법과 돌봄 스트레스를 상담받을 수 있어요.</p><p>진료 때 알릴 수 있도록 언제, 어떤 상황에서 그런 행동이 나오는지 적어 두세요. 이런 변화가 며칠 사이에 갑자기 생겼다면 섬망일 수 있으니 첫 번째 질문을 함께 보세요.</p>",
+      src: ["call"], ask: [DEMENTIA, "진료받는 병원"] }
+  ]},
+  { id: "me", name: "보호자 자신 돌보기", items: [
+    { q: "너무 지쳐서 하루라도 쉬고 싶어요. 쓸 수 있는 제도가 있나요?",
+      a: "<p>장기요양 가족휴가제가 있어요. 보호자가 쉬는 동안 둘 중 하나를 이용할 수 있어요.</p><ul><li>어르신이 단기보호 기관에서 지내기: 1년에 11일 이내</li><li>요양보호사가 집에 와서 12시간 돌보기: 1년에 22회 이내</li></ul><p>1·2등급 수급자, 그리고 치매가 있는 3~5등급과 인지지원등급 수급자가 이용할 수 있어요. 일수는 2025년 8월 기준이니, 실제로 이용할 수 있는지 공단과 기관에 확인하세요.</p>",
+      src: ["rest"], ask: [NHIS] },
+    { q: "마음이 너무 힘들어요. 어디에 이야기할 수 있나요?",
+      a: "<p>혼자 견디지 않아도 돼요. 치매상담전화센터에서는 돌봄 부담과 스트레스, 마음을 나누는 상담을 해 줍니다.</p><p>죽고 싶다는 생각이 들거나 그런 생각이 반복되면 자살예방 상담전화 109로 전화하세요. 지금 위험한 상황이면 119에 전화하세요.</p>",
+      src: ["call", "line109"], ask: [DEMENTIA, "자살예방 상담전화 109", "위급할 때 119"] },
+    { q: "돌보는 방법을 하나도 몰라요. 어디서 배울 수 있나요?",
+      a: "<p>치매상담전화센터에서 식사, 위생 같은 일상 돌봄 방법과 행동·심리 증상별 대처를 전화로 상담해 줍니다. 치매 관련 기관에서 일한 경험이 있고 전문교육을 받은 상담사가 답해요.</p><p>어르신이 사는 지역의 치매안심센터에도 가족을 위한 프로그램이 있는지 문의해 보세요.</p>",
+      src: ["call"], ask: [DEMENTIA, "지역 치매안심센터"] }
+  ]}
+];
+
+const MED_NOTICE = "아래 내용은 일반 정보예요. 참고만 하시고, 정확한 내용은 의료진과 상담하세요.";
+const MED_SIGNALS = "<strong>이럴 땐 기다리지 말고 바로 연락하세요</strong><ul><li>평소와 달리 갑자기 멍하거나, 지금이 언제인지 여기가 어디인지 모를 때: 진료받는 병원에 바로 연락하세요.</li><li>깨워도 반응이 없거나, 숨쉬기 힘들어할 때: 119에 전화하세요.</li></ul>";
+
+const $ = (id) => document.getElementById(id);
+
+function renderHome() {
+  $("cats").innerHTML = CATEGORIES.map((c) =>
+    `<button class="cat" type="button" data-id="${c.id}" id="cat-${c.id}">
+       <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+         <span class="cat-name">${c.name}</span>
+         <span class="cat-count">질문 ${c.items.length}개</span>
+       </span>
+       <span class="chev" aria-hidden="true">›</span>
+     </button>`).join("");
+  $("cats").querySelectorAll(".cat").forEach((b) =>
+    b.addEventListener("click", () => { location.hash = b.dataset.id; }));
+}
+
+function renderCategory(c) {
+  $("cat-title").textContent = c.name;
+  $("cat-notice").innerHTML = c.medical ? `<p class="notice">${MED_NOTICE}</p>` : "";
+  $("cat-signals").innerHTML = c.medical ? `<div class="signals">${MED_SIGNALS}</div>` : "";
+  $("qs").innerHTML = c.items.map((it) => `
+    <details>
+      <summary>${it.q}</summary>
+      <div class="answer">
+        ${it.a}
+        <div><span class="label">공식 출처</span>
+          <ul>${it.src.map((k) => `<li><a href="${SRC[k][1]}" target="_blank" rel="noopener">${SRC[k][0]}</a></li>`).join("")}</ul>
+        </div>
+        <div class="contact"><span class="label">더 물어볼 곳</span>${it.ask.join("<br>")}</div>
+      </div>
+    </details>`).join("");
+}
+
+function route() {
+  const id = location.hash.replace("#", "");
+  const c = CATEGORIES.find((x) => x.id === id);
+  $("home").hidden = !!c;
+  $("detail").hidden = !c;
+  if (c) renderCategory(c);
+  window.scrollTo(0, 0);
+}
+
+$("back").addEventListener("click", () => {
+  history.replaceState(null, "", location.pathname + location.search);
+  route();
+});
+window.addEventListener("hashchange", route);
+renderHome();
+route();
+</script>
