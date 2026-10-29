@@ -1,0 +1,15 @@
+{
+  "name": "care-todo-prototype",
+  "private": true,
+  "type": "module",
+  "description": "장기요양 가족 보호자를 위한 맞춤 돌봄 할 일 목록 프로토타입 (HW6, 김영균)",
+  "engines": { "node": ">=22.9" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "check:cases": "node --env-file-if-exists=.env scripts/run-cases.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0"
+  }
+}

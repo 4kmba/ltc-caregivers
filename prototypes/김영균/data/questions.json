@@ -1,0 +1,210 @@
+[
+  {
+    "no": 1,
+    "group": "단계",
+    "title": "지금 어떤 상황이세요?",
+    "fields": [
+      {
+        "key": "stage",
+        "type": "one",
+        "options": [
+          { "value": "suspect", "label": "기억력이나 행동이 걱정돼 알아보는 중이에요" },
+          { "value": "new_grade", "label": "장기요양등급을 받은 지 얼마 안 됐어요" },
+          { "value": "change", "label": "최근 입원·낙상·상태 악화가 있었어요" },
+          { "value": "facility", "label": "집에서 돌보기 어려워 시설을 생각 중이에요" },
+          { "value": "unknown", "label": "잘 모르겠어요" }
+        ]
+      }
+    ]
+  },
+  {
+    "no": 2,
+    "group": "대상자 상태",
+    "title": "돌보는 분은 누구이고, 연세는 어떻게 되세요?",
+    "fields": [
+      {
+        "key": "relation",
+        "label": "관계",
+        "type": "one",
+        "options": [
+          { "value": "parent", "label": "부모" },
+          { "value": "spouse", "label": "배우자" },
+          { "value": "grandparent", "label": "조부모" },
+          { "value": "other", "label": "기타" }
+        ]
+      },
+      {
+        "key": "age",
+        "label": "나이",
+        "type": "one",
+        "options": [
+          { "value": "lt65", "label": "65세 미만" },
+          { "value": "65_74", "label": "65～74세" },
+          { "value": "75_84", "label": "75～84세" },
+          { "value": "85plus", "label": "85세 이상" },
+          { "value": "unknown", "label": "잘 모르겠어요" }
+        ]
+      }
+    ]
+  },
+  {
+    "no": 3,
+    "group": "대상자 상태",
+    "title": "진단받은 병이 있나요?",
+    "hint": "여러 개 고를 수 있어요.",
+    "fields": [
+      {
+        "key": "diagnoses",
+        "type": "many",
+        "exclusive": ["none", "unknown"],
+        "options": [
+          { "value": "dementia", "label": "치매" },
+          { "value": "parkinson", "label": "파킨슨" },
+          { "value": "stroke", "label": "뇌졸중" },
+          { "value": "fracture", "label": "골절·낙상" },
+          { "value": "other", "label": "기타" },
+          { "value": "none", "label": "없음" },
+          { "value": "unknown", "label": "잘 모르겠어요" }
+        ]
+      }
+    ]
+  },
+  {
+    "no": 4,
+    "group": "대상자 상태",
+    "title": "혼자 할 수 있는 일은 어느 정도인가요?",
+    "fields": [
+      {
+        "key": "mobility",
+        "label": "거동",
+        "type": "one",
+        "options": [
+          { "value": "walk", "label": "혼자 걸으세요" },
+          { "value": "assist", "label": "부축이 필요해요" },
+          { "value": "bed", "label": "주로 누워 지내세요" },
+          { "value": "unknown", "label": "잘 모르겠어요" }
+        ]
+      },
+      {
+        "key": "talk",
+        "label": "대화",
+        "type": "one",
+        "options": [
+          { "value": "normal", "label": "평소처럼 하세요" },
+          { "value": "sometimes", "label": "가끔 엉뚱한 말씀을 하세요" },
+          { "value": "hard", "label": "대화가 어려워요" },
+          { "value": "unknown", "label": "잘 모르겠어요" }
+        ]
+      }
+    ]
+  },
+  {
+    "no": 5,
+    "group": "제도·서비스",
+    "title": "장기요양등급이 있나요?",
+    "fields": [
+      {
+        "key": "grade",
+        "type": "one",
+        "options": [
+          { "value": "none", "label": "없어요" },
+          { "value": "applying", "label": "신청 중이에요" },
+          { "value": "g1", "label": "1등급" },
+          { "value": "g2", "label": "2등급" },
+          { "value": "g3", "label": "3등급" },
+          { "value": "g4", "label": "4등급" },
+          { "value": "g5", "label": "5등급" },
+          { "value": "cognitive", "label": "인지지원등급" },
+          { "value": "unknown", "label": "잘 모르겠어요" }
+        ]
+      }
+    ]
+  },
+  {
+    "no": 6,
+    "group": "제도·서비스",
+    "title": "지금 받고 있는 돌봄은 무엇인가요?",
+    "hint": "여러 개 고를 수 있어요.",
+    "fields": [
+      {
+        "key": "care",
+        "type": "many",
+        "options": [
+          { "value": "family", "label": "가족만 돌봐요" },
+          { "value": "home_visit", "label": "방문요양" },
+          { "value": "daycare", "label": "주야간보호" },
+          { "value": "nursing_home", "label": "요양원" },
+          { "value": "hospital", "label": "요양병원·병원 입원" },
+          { "value": "private_caregiver", "label": "개인 간병인" },
+          { "value": "other", "label": "기타" }
+        ]
+      }
+    ]
+  },
+  {
+    "no": 7,
+    "group": "보호자 여건",
+    "title": "보호자님의 사정을 알려 주세요.",
+    "fields": [
+      {
+        "key": "lives_together",
+        "label": "함께 사시나요?",
+        "type": "one",
+        "options": [
+          { "value": "yes", "label": "함께 살아요" },
+          { "value": "no", "label": "따로 살아요" }
+        ]
+      },
+      {
+        "key": "works",
+        "label": "일을 하시나요?",
+        "type": "one",
+        "options": [
+          { "value": "yes", "label": "일해요" },
+          { "value": "no", "label": "일하지 않아요" }
+        ]
+      },
+      {
+        "key": "hours",
+        "label": "하루에 직접 돌볼 수 있는 시간",
+        "type": "one",
+        "options": [
+          { "value": "none", "label": "거의 없어요" },
+          { "value": "le2", "label": "2시간 이하" },
+          { "value": "half", "label": "반나절" },
+          { "value": "full", "label": "하루 종일" }
+        ]
+      }
+    ]
+  },
+  {
+    "no": 8,
+    "group": "비용과 가족",
+    "title": "한 달 돌봄에 쓸 수 있는 돈과, 가족끼리 나누는 방식은요?",
+    "fields": [
+      {
+        "key": "budget",
+        "label": "한 달에 쓸 수 있는 돈",
+        "type": "one",
+        "options": [
+          { "value": "lt30", "label": "30만 원 미만" },
+          { "value": "30_70", "label": "30만～70만 원" },
+          { "value": "70_150", "label": "70만～150만 원" },
+          { "value": "gt150", "label": "150만 원 이상" },
+          { "value": "unknown", "label": "잘 모르겠어요" }
+        ]
+      },
+      {
+        "key": "split",
+        "label": "가족끼리 비용 나누기",
+        "type": "one",
+        "options": [
+          { "value": "decided", "label": "정해져 있어요" },
+          { "value": "discussing", "label": "의논 중이에요" },
+          { "value": "alone", "label": "혼자 부담해요" },
+          { "value": "na", "label": "해당 없어요" }
+        ]
+      }
+    ]
+  }
+]
