@@ -1,0 +1,16 @@
+{
+  "name": "care-decision-card",
+  "version": "0.1.0",
+  "private": true,
+  "description": "보호자가 상황을 고르면 돌봄 방식 선택지를 한 장으로 정리해 주는 프로토타입",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0"
+  }
+}
