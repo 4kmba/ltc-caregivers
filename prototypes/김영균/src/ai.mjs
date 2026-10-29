@@ -180,9 +180,16 @@ export async function makePlan(summary, candidates) {
   return validatePlan(result, ids);
 }
 
+// 지시해도 5문장을 넘길 때가 있어서 앞의 5문장만 남긴다.
+export function limitSentences(text, max = 5) {
+  if (!text) return text;
+  const sentences = text.match(/[^.?!]+[.?!]+["')\]]*|[^.?!]+$/g) ?? [text];
+  return sentences.slice(0, max).join("").trim();
+}
+
 export async function makeAnswer(summary, card, qaIndex) {
   const qa = card.qa[qaIndex];
-  return call({
+  const text = await call({
     system: `${COMMON_RULES}
 보호자가 할 일 카드에 붙은 질문을 눌렀습니다. 카드에 적힌 답을 이 보호자의 상황에 맞게 풀어 쓰세요.
 - 3문장에서 5문장 사이로 씁니다. 5문장을 넘기지 않습니다.
@@ -193,4 +200,5 @@ export async function makeAnswer(summary, card, qaIndex) {
     user: `보호자의 답:\n${summary}\n\n할 일: ${card.title}\n질문: ${qa.q}\n카드에 적힌 답: ${qa.a}`,
     maxTokens: 600
   });
+  return limitSentences(text);
 }

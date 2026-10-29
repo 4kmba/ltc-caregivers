@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { BUCKETS, candidateCards, deck, detectEmergency, questions, resolveStage, ruleList } from "../src/rules.mjs";
-import { validatePlan } from "../src/ai.mjs";
+import { limitSentences, validatePlan } from "../src/ai.mjs";
 
 const STAGES = Object.keys(deck.stages);
 const fields = new Map(questions.flatMap((q) => q.fields).map((f) => [f.key, f]));
@@ -90,4 +90,11 @@ test("AI가 고른 항목 가운데 후보에 없거나 형식이 틀린 것은 
   assert.deepEqual(validatePlan(result, ids), [{ card_id: "A", bucket: "this_week", why: "이유" }]);
   assert.deepEqual(validatePlan(null, ids), []);
   assert.deepEqual(validatePlan({ items: "깨진 값" }, ids), []);
+});
+
+test("AI 답은 앞의 5문장까지만 남긴다", () => {
+  const text = "하나입니다. 둘인가요? 셋! 넷입니다. 다섯입니다. 여섯입니다. 일곱입니다.";
+  assert.equal(limitSentences(text), "하나입니다. 둘인가요? 셋! 넷입니다. 다섯입니다.");
+  assert.equal(limitSentences("마침표 없는 한 문장"), "마침표 없는 한 문장");
+  assert.equal(limitSentences(null), null);
 });
