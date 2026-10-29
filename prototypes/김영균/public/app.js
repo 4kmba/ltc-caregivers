@@ -7,7 +7,7 @@ const PREFS_KEY = "care-todo:prefs";
 const SECTIONS = [
   { bucket: "this_week", label: "이번 주", hint: "늦추면 손해가 생기거나 다음 일을 못 하는 일" },
   { bucket: "this_month", label: "이번 달", hint: "이번 주 일이 끝나면 이어서 할 일" },
-  { bucket: "know_ahead", label: "미리 알아둘 것", hint: "상태가 바뀌면 바로 필요한 일" }
+  { bucket: "know_ahead", label: "알아두기", hint: "지금 할 일은 아니지만 상태가 바뀌면 바로 필요한 일" }
 ];
 const RELATION = { parent: "부모님", spouse: "배우자", grandparent: "조부모님", other: "가족" };
 const PHONE = /(1\d{3}-\d{4}|\b(?:119|112|129|109|182|1350)\b)/g;
@@ -23,7 +23,8 @@ const state = {
   receivedAt: null,
   refreshing: false,
   refreshNote: null,
-  open: new Set()
+  open: new Set(),
+  tab: null
 };
 
 // ---- 저장 ----
@@ -334,6 +335,7 @@ async function makePlan(followups) {
   state.refreshing = false;
   state.receivedAt = new Date().toISOString();
   state.open.clear();
+  state.tab = null;
   save();
   if (!bannerOpen) showPlan(emergency.length > 0);
 }
@@ -455,7 +457,7 @@ function todoItem(item) {
   return li;
 }
 
-// 체크하면 그 줄과 완료 개수, 맨 위 안내만 바꾼다. 화면 전체를 다시 그리면 초점을 잃는다.
+// 체크하면 그 줄과 탭의 완료 개수, 맨 위 안내만 바꾼다. 화면 전체를 다시 그리면 초점을 잃는다.
 function setDone(id, done) {
   state.checks[id] = done;
   save();
@@ -467,15 +469,82 @@ function setDone(id, done) {
     if (count) count.textContent = countText(s);
   }
   document.getElementById("first")?.replaceWith(firstBlock());
+  // 열린 장의 일을 모두 끝내면 남은 일이 있는 다음 장을 연다.
+  const current = itemsOf(state.tab);
+  if (done && current.length && current.every((it) => state.checks[it.card.id])) {
+    const next = SECTIONS.find((s) => itemsOf(s.bucket).some((it) => !state.checks[it.card.id]));
+    if (next) selectTab(next.bucket, true);
+  }
 }
 
 function countText(section) {
   const items = itemsOf(section.bucket);
   const doneCount = items.filter((it) => state.checks[it.card.id]).length;
-  return `${items.length}개 중 ${doneCount}개 완료`;
+  return `${doneCount}/${items.length} 완료`;
+}
+
+function visibleSections() {
+  return SECTIONS.filter((s) => itemsOf(s.bucket).length);
+}
+
+// 처음에는 남은 일이 있는 가장 이른 장을 연다.
+function defaultTab() {
+  const sections = visibleSections();
+  return (sections.find((s) => itemsOf(s.bucket).some((it) => !state.checks[it.card.id])) ?? sections[0])?.bucket;
+}
+
+function sheet() {
+  const section = SECTIONS.find((s) => s.bucket === state.tab);
+  return el(
+    "div",
+    { class: "sheet", id: "sheet", role: "tabpanel", "aria-labelledby": `tab-${section.bucket}` },
+    el("p", { class: "sheet-hint" }, section.hint),
+    el("ul", { class: "todo-ul" }, itemsOf(section.bucket).map(todoItem))
+  );
+}
+
+// 탭을 바꾸면 탭 표시와 종이만 바꾼다. focusTab이면 새 탭에 초점을 옮겨 낭독기가 바뀐 장을 읽게 한다.
+function selectTab(bucket, focusTab = false) {
+  state.tab = bucket;
+  for (const s of visibleSections()) {
+    const tab = document.getElementById(`tab-${s.bucket}`);
+    if (!tab) continue;
+    const on = s.bucket === bucket;
+    tab.setAttribute("aria-selected", String(on));
+    tab.tabIndex = on ? 0 : -1;
+  }
+  document.getElementById("sheet")?.replaceWith(sheet());
+  if (focusTab) document.getElementById(`tab-${bucket}`)?.focus();
+}
+
+function tabs() {
+  const sections = visibleSections();
+  const list = el("div", { class: "tabs", role: "tablist", "aria-label": "할 일 시기" });
+  sections.forEach((s, i) => {
+    const on = s.bucket === state.tab;
+    const tab = el(
+      "button",
+      { class: "tab", type: "button", role: "tab", id: `tab-${s.bucket}`, "aria-selected": String(on), "aria-controls": "sheet", tabindex: on ? "0" : "-1" },
+      el("span", { class: "tab-label" }, s.label),
+      el("span", { class: "tab-count", id: `count-${s.bucket}` }, countText(s))
+    );
+    tab.addEventListener("click", () => selectTab(s.bucket));
+    // 탭 목록의 표준 키보드 동작: 화살표, Home, End로 옮긴다.
+    tab.addEventListener("keydown", (e) => {
+      const moves = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: sections.length - 1 };
+      if (!(e.key in moves)) return;
+      e.preventDefault();
+      const target = sections[(moves[e.key] + sections.length) % sections.length];
+      selectTab(target.bucket, true);
+    });
+    list.append(tab);
+  });
+  return list;
 }
 
 function openItem(id) {
+  const item = state.plan.items.find((it) => it.card.id === id);
+  if (item && item.bucket !== state.tab) selectTab(item.bucket);
   const li = document.getElementById(`todo-${id}`);
   const more = li?.querySelector(".more");
   if (more && more.getAttribute("aria-expanded") !== "true") more.click();
@@ -502,7 +571,7 @@ function firstBlock() {
     "section",
     { class: "first", id: "first", "aria-live": "polite" },
     weekDone
-      ? [el("p", { class: "label" }, "이번 주에 필요한 일을 확인했어요."), el("p", { class: "meta" }, `다음은 ${section.label} 할 일이에요.`)]
+      ? [el("p", { class: "label" }, "이번 주에 필요한 일을 확인했어요."), el("p", { class: "meta" }, section.bucket === "know_ahead" ? "다음은 알아둘 것이에요." : `다음은 ${section.label} 할 일이에요.`)]
       : el("p", { class: "label" }, "지금은 이 일부터 해 보세요"),
     el("p", { class: "title" }, pending.card.title),
     el(
@@ -535,15 +604,7 @@ function showPlan(skipEmergency = false) {
   const date = state.receivedAt ? new Date(state.receivedAt).toLocaleDateString("ko-KR", { month: "long", day: "numeric" }) : null;
   const note = state.refreshNote;
 
-  const sections = SECTIONS.filter((s) => itemsOf(s.bucket).length).map((s) =>
-    el(
-      "li",
-      { class: "section" },
-      el("div", { class: "section-head" }, el("h2", {}, s.label), el("span", { class: "count", id: `count-${s.bucket}` }, countText(s))),
-      el("p", { class: "section-hint" }, s.hint),
-      el("ul", { class: "todo-ul" }, itemsOf(s.bucket).map(todoItem))
-    )
-  );
+  if (!state.tab || !itemsOf(state.tab).length) state.tab = defaultTab();
 
   render(
     topbar(),
@@ -570,7 +631,7 @@ function showPlan(skipEmergency = false) {
       : null,
     plan.notice ? el("p", { class: "note" }, plan.notice) : null,
     firstBlock(),
-    el("ol", { class: "notebook" }, sections),
+    el("section", { class: "notebook", "aria-label": "할 일" }, tabs(), sheet()),
     el(
       "div",
       { class: "after" },
