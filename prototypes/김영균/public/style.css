@@ -279,6 +279,8 @@ textarea {
 .new-tag { display: inline-block; margin-left: 0.375rem; padding: 0 0.5rem; border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); font-size: 0.8125rem; font-weight: 600; vertical-align: 0.15em; }
 .todo .why { margin: 0.25rem 0 0; }
 .todo.done .why { display: none; }
+.todo .reason { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.9375rem; }
+.todo.done .reason { display: none; }
 .todo-body { padding-left: 1.75rem; }
 .more {
   min-height: 2.75rem;
@@ -348,3 +350,15 @@ textarea {
 }
 .emergency .call-urgent.soft { background: var(--danger-soft); color: var(--danger); border: 1.5px solid var(--danger); }
 .emergency .call-urgent small { display: block; font-weight: 500; }
+
+/* 보충 질문의 걱정 칸 제목은 다른 질문의 legend와 같게 보인다. */
+.legend-like { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+
+/* 숨기기와 다른 할 일 더 보기 */
+.hide-row { border-top: 1px solid var(--line); padding-top: 0.25rem; }
+.hide-row .text-button { color: var(--muted); }
+.extras { margin: 1.25rem 0 0.5rem; }
+.extras-list { list-style: none; margin: 0.75rem 0 0; padding: 0; }
+.extras-list li { border-top: 1px solid var(--line); padding: 0.75rem 0 0.25rem; }
+.extra-title { font-weight: 600; margin: 0 0 0.25rem; }
+.extras-list .meta { margin: 0; }
