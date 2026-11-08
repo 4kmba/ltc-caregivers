@@ -1,11 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { BUCKETS, candidateCards, deck, detectEmergency, questions, resolveStage, ruleList } from "../src/rules.mjs";
-import { limitSentences, validatePlan } from "../src/ai.mjs";
+import { BUCKETS, detectEmergency, matches, resolveStage } from "../public/logic.js";
+import { deck, engine, followups, questions } from "../scripts/engine.mjs";
+import { CASES, checkCase } from "../scripts/run-cases.mjs";
 
 const STAGES = Object.keys(deck.stages);
 const fields = new Map(questions.flatMap((q) => q.fields).map((f) => [f.key, f]));
+for (const f of followups.questions) fields.set(f.key, f);
 const GRADES = fields.get("grade").options.map((o) => o.value);
+const QA_MIN = 4;
 
 test("카드는 30장에서 50장이고, 단계마다 8장 이상이다", () => {
   assert.ok(deck.cards.length >= 30 && deck.cards.length <= 50, `${deck.cards.length}장`);
@@ -15,7 +18,7 @@ test("카드는 30장에서 50장이고, 단계마다 8장 이상이다", () => 
   }
 });
 
-test("카드마다 할 일, 이유, 연락처, 질문과 답, 출처가 있다", () => {
+test(`카드마다 할 일, 이유, 연락처, 질문과 답 ${QA_MIN}개 이상, 출처가 있다`, () => {
   const ids = new Set();
   for (const c of deck.cards) {
     assert.ok(!ids.has(c.id), `중복 ID ${c.id}`);
@@ -23,24 +26,40 @@ test("카드마다 할 일, 이유, 연락처, 질문과 답, 출처가 있다",
     assert.ok(c.title && c.why && c.contact, c.id);
     assert.ok(BUCKETS.includes(c.bucket), c.id);
     assert.ok(c.stages.length && c.stages.every((s) => STAGES.includes(s)), c.id);
-    assert.ok(c.qa.length >= 1 && c.qa.length <= 2, c.id);
-    for (const qa of c.qa) assert.ok(qa.q && qa.a, c.id);
+    assert.ok(c.qa.length >= QA_MIN, `${c.id}: 질문 ${c.qa.length}개`);
+    const asked = new Set();
+    for (const qa of c.qa) {
+      assert.ok(qa.q && qa.a, c.id);
+      assert.ok(!asked.has(qa.q), `${c.id}: 같은 질문 ${qa.q}`);
+      asked.add(qa.q);
+      for (const key of qa.source_keys ?? []) assert.ok(deck.sources[key]?.url, `${c.id} 답의 출처 ${key}`);
+    }
     assert.ok(c.source_keys.length >= 1, c.id);
     for (const key of c.source_keys) assert.ok(deck.sources[key]?.url, `${c.id}의 출처 ${key}`);
   }
 });
 
-test("카드 조건은 고정 질문에 있는 답만 쓴다", () => {
-  for (const c of deck.cards) {
-    for (const cond of [c.when ?? {}, c.when_not ?? {}]) {
+test("마크다운 취소선이 되는 반각 물결표를 쓰지 않는다", () => {
+  const text = JSON.stringify(deck) + JSON.stringify(followups) + JSON.stringify(questions);
+  assert.ok(!text.includes("~"), "반각 ~ 대신 전각 ～를 쓴다");
+});
+
+test("카드와 보충 질문의 조건은 질문지에 있는 답만 쓴다", () => {
+  const conds = (c) => [c.when, c.when_not, c.boost, ...(c.when_any ?? [])].filter(Boolean);
+  for (const c of [...deck.cards, ...followups.questions]) {
+    for (const cond of conds(c)) {
       for (const [key, values] of Object.entries(cond)) {
         const field = fields.get(key);
-        assert.ok(field, `${c.id}: 없는 질문 ${key}`);
+        assert.ok(field, `${c.id ?? c.key}: 없는 질문 ${key}`);
         const allowed = field.options.map((o) => o.value);
-        for (const v of values) assert.ok(allowed.includes(v), `${c.id}: ${key}=${v}`);
+        for (const v of values) assert.ok(allowed.includes(v), `${c.id ?? c.key}: ${key}=${v}`);
       }
     }
   }
+});
+
+test("걱정 주제가 가리키는 카드는 모두 있다", () => {
+  for (const t of followups.worry_topics) for (const id of t.cards) assert.ok(engine.cardById.has(id), `${t.label}: ${id}`);
 });
 
 test("1번이 '잘 모르겠어요'이면 등급과 돌봄으로 단계를 짐작한다", () => {
@@ -51,21 +70,46 @@ test("1번이 '잘 모르겠어요'이면 등급과 돌봄으로 단계를 짐�
   assert.equal(resolveStage({}), "suspect");
 });
 
-test("규칙 기본 목록은 어떤 단계와 등급에서도 3～7개를 낸다", () => {
+test("when_any는 묶음 가운데 하나만 맞으면 된다", () => {
+  const card = { when_any: [{ grade: ["g1", "g2"] }, { diagnoses: ["dementia"] }] };
+  assert.ok(matches(card, { grade: "g1" }));
+  assert.ok(matches(card, { grade: "g4", diagnoses: ["dementia"] }));
+  assert.ok(!matches(card, { grade: "g4", diagnoses: ["stroke"] }));
+});
+
+test("어떤 단계와 등급에서도 목록이 3～7개다", () => {
   for (const stage of [...STAGES, "unknown"]) {
     for (const grade of GRADES) {
-      const list = ruleList({ stage, grade });
-      assert.ok(list.length >= 3 && list.length <= 7, `${stage}/${grade}: ${list.length}개`);
-      for (const item of list) assert.ok(BUCKETS.includes(item.bucket) && item.why);
+      const plan = engine.buildPlan({ stage, grade });
+      assert.ok(plan.items.length >= 3 && plan.items.length <= 7, `${stage}/${grade}: ${plan.items.length}개`);
+      for (const item of plan.items) assert.ok(BUCKETS.includes(item.bucket) && item.reasons.length);
     }
   }
 });
 
-test("후보 카드는 단계와 조건이 맞는 것만 고른다", () => {
-  const ids = candidateCards({ stage: "suspect", grade: "none", diagnoses: ["dementia"] }).map((c) => c.id);
-  assert.ok(ids.includes("S1-06"), "등급 없음이면 등급 신청 카드");
-  assert.ok(!ids.includes("S1-01"), "치매 진단이 있으면 선별검사 카드는 빠진다");
-  assert.ok(!ids.includes("S1-07"), "신청 중이 아니면 방문조사 카드는 빠진다");
+test("숨긴 카드는 빠지고 다른 카드로 채우며, 직접 넣은 카드는 들어간다", () => {
+  const answers = CASES.find((c) => c.id === "C5").answers;
+  const first = engine.buildPlan(answers);
+  const target = first.items[0].card_id;
+  const hidden = engine.buildPlan(answers, { hidden: [target] });
+  assert.ok(!hidden.items.some((it) => it.card_id === target));
+  assert.ok(hidden.items.length >= first.items.length - 1);
+  const extra = first.extras[0];
+  const added = engine.buildPlan(answers, { added: [extra] });
+  assert.ok(added.items.some((it) => it.card_id === extra));
+});
+
+test("보충 질문은 답에 맞는 것만 나온다", () => {
+  const keys = (a) => engine.pickFollowups(a).map((q) => q.key);
+  assert.deepEqual(keys({ stage: "suspect", care: ["family"] }), []);
+  assert.deepEqual(keys({ stage: "change", care: ["hospital"] }), ["hospital_stay", "sudden_change"]);
+  assert.deepEqual(keys({ stage: "new_grade", care: ["daycare"] }), ["service_fit"]);
+  assert.deepEqual(keys({ stage: "facility", care: ["daycare", "nursing_home"] }), ["sudden_change"]);
+});
+
+test("질문지에 없는 답은 버린다", () => {
+  const answers = engine.cleanAnswers({ stage: "change", grade: "g9", care: ["hospital", "space"], name: "홍길동", hospital_stay: "long", worry: "  비용  " });
+  assert.deepEqual(answers, { stage: "change", care: ["hospital"], hospital_stay: "long", worry: "비용" });
 });
 
 test("응급 신호를 키워드로 찾는다", () => {
@@ -74,27 +118,14 @@ test("응급 신호를 키워드로 찾는다", () => {
   assert.deepEqual(detectEmergency(["어머니가 죽고 싶다고 하세요"]), ["suicide"]);
   assert.deepEqual(detectEmergency(["다음 주 화요일에 퇴원해요", "식사는 잘 하세요"]), []);
   assert.deepEqual(detectEmergency([]), []);
+  assert.deepEqual(engine.buildPlan({ stage: "change", worry: "불러도 대답이 없어요" }).emergency, ["medical"]);
 });
 
-test("AI가 고른 항목 가운데 후보에 없거나 형식이 틀린 것은 버린다", () => {
-  const ids = ["A", "B", "C"];
-  const result = {
-    items: [
-      { card_id: "A", bucket: "this_week", why: "이유" },
-      { card_id: "A", bucket: "this_week", why: "중복" },
-      { card_id: "Z", bucket: "this_week", why: "없는 카드" },
-      { card_id: "B", bucket: "someday", why: "없는 구간" },
-      { card_id: "C", bucket: "know_ahead", why: " " }
-    ]
-  };
-  assert.deepEqual(validatePlan(result, ids), [{ card_id: "A", bucket: "this_week", why: "이유" }]);
-  assert.deepEqual(validatePlan(null, ids), []);
-  assert.deepEqual(validatePlan({ items: "깨진 값" }, ids), []);
-});
-
-test("AI 답은 앞의 5문장까지만 남긴다", () => {
-  const text = "하나입니다. 둘인가요? 셋! 넷입니다. 다섯입니다. 여섯입니다. 일곱입니다.";
-  assert.equal(limitSentences(text), "하나입니다. 둘인가요? 셋! 넷입니다. 다섯입니다.");
-  assert.equal(limitSentences("마침표 없는 한 문장"), "마침표 없는 한 문장");
-  assert.equal(limitSentences(null), null);
-});
+for (const c of CASES) {
+  test(`사례 ${c.id}: 넣어야 할 카드는 들어가고 맞지 않는 카드는 빠진다`, () => {
+    const r = checkCase(c);
+    assert.deepEqual(r.missing, [], "빠진 카드");
+    assert.deepEqual(r.forbidden, [], "나오면 안 되는 카드");
+    assert.ok(r.emergencyOk, "응급 신호");
+  });
+}
