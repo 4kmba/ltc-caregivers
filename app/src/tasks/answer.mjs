@@ -4,7 +4,8 @@
 // 값: 글 한 덩이. 꺼져 있거나 실패하면 qa.json에 적힌 답 원문(없는 qaId면 빈 글).
 
 export function makeAnswer(content) {
-  const find = (id) => content.qa.find((x) => x.id === id);
+  // 서버로 들어온 qaId가 글이 아니면 없는 질문으로 본다.
+  const find = (id) => (typeof id === "string" ? content.qa.find((x) => x.id === id) : undefined);
   return {
     name: "answer",
     schema: null,

@@ -24,9 +24,22 @@ function fillCandidates(cards, answers, method, candidates) {
   return [...candidates, ...plain.slice(0, MIN_ITEMS - candidates.length)];
 }
 
+// 서버로 들어온 입력은 모양이 틀릴 수 있다. 글이 아니거나 배열·객체가 아닌 값은 빈 값으로 본다.
+function clean(input) {
+  const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+  return {
+    situation: typeof input?.situation === "string" ? input.situation : "",
+    answers: isObject(input?.answers) ? input.answers : {},
+    methodId: typeof input?.methodId === "string" ? input.methodId : null,
+    worry: typeof input?.worry === "string" ? input.worry : "",
+    followups: Array.isArray(input?.followups) ? input.followups.filter(isObject) : []
+  };
+}
+
 export function makePickCards(content) {
   // buildUser, validate, fallback이 모두 이 함수로 같은 후보를 얻는다.
-  function prepare(input) {
+  function prepare(raw) {
+    const input = clean(raw);
     const answers = { ...input.answers, situation: input.situation };
     const method = content.methods.find((m) => m.id === input.methodId) ?? null;
     const candidates = fillCandidates(content.cards, answers, method, candidateCards(content.cards, answers, method));
@@ -76,18 +89,19 @@ export function makePickCards(content) {
       additionalProperties: false
     },
 
-    buildUser(input) {
+    buildUser(raw) {
+      const input = clean(raw);
       const { answers, candidates } = prepare(input);
       const situation = content.situations.find((s) => s.id === input.situation);
-      const answerLines = Object.entries(input.answers ?? {})
+      const answerLines = Object.entries(input.answers)
         .filter(([key]) => key !== "situation")
         .map(([key, value]) => describeAnswer(key, value))
         .filter(Boolean);
-      const followupLines = (input.followups ?? []).map((f) => `- ${f.q} → ${f.a}`);
+      const followupLines = input.followups.map((f) => `- ${f.q ?? ""} → ${f.a ?? ""}`);
       return [
         `지금 상황: ${situation?.title ?? answers.situation}`,
         `보호자의 답:\n${answerLines.map((l) => `- ${l}`).join("\n") || "- 없음"}`,
-        `걱정 한 줄: ${input.worry?.trim() || "없음"}`,
+        `걱정 한 줄: ${input.worry.trim() || "없음"}`,
         `보충 질문의 답:\n${followupLines.join("\n") || "- 없음"}`,
         `후보 카드 (이 안에서만 고르세요. "먼저"는 보호자가 고른 돌봄 방식이 가리키는 카드입니다):\n${candidates.map(describeCard).join("\n")}`,
         "후보 가운데 5～7장을 골라 구간을 정하고, 카드마다 '왜 지금'을 보호자의 답과 이어서 한두 문장으로 쓰세요."

@@ -29,7 +29,7 @@ export function makeMedical(content) {
     },
     // 스펙 7절: 걱정 칸의 글만 보낸다. 답은 쓰지 않고 물어볼 질문만 만들게 한다.
     buildUser: ({ worry }) =>
-      `걱정: ${worry ?? ""}\n\n다음 진료 때 의료진에게 물어볼 질문을 한두 개 만들어 주세요. 답은 쓰지 마세요.`,
+      `걱정: ${typeof worry === "string" ? worry : ""}\n\n다음 진료 때 의료진에게 물어볼 질문을 한두 개 만들어 주세요. 답은 쓰지 마세요.`,
     validate(data) {
       const list = Array.isArray(data?.questions) ? data.questions : [];
       const texts = list.filter((x) => typeof x === "string" && x.trim() !== "").map((x) => x.trim());

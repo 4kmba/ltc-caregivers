@@ -3,9 +3,13 @@
 // 입력: { answered: [{ q, a }], followups: [{ q, a }], worry }
 // 값: 글 한 덩이. 꺼져 있거나 실패하면 답을 "질문: 답" 줄로 나열하고, 걱정이 있으면 "걱정: ..." 줄을 덧붙인다.
 
+// 서버로 들어온 입력은 모양이 틀릴 수 있다. 배열이 아니거나 객체가 아닌 항목은 빈 값으로 본다.
 function lines(list) {
-  return (list ?? []).map(({ q, a }) => `${q}: ${a}`);
+  if (!Array.isArray(list)) return [];
+  return list.filter((x) => x !== null && typeof x === "object").map(({ q, a }) => `${q ?? ""}: ${a ?? ""}`);
 }
+
+const text = (v) => (typeof v === "string" ? v.trim() : "");
 
 export function makeSummary(content) {
   return {
@@ -18,14 +22,14 @@ export function makeSummary(content) {
         ...lines(answered),
         "보충 질문의 답:",
         ...lines(followups),
-        `걱정: ${worry ?? ""}`,
+        `걱정: ${text(worry)}`,
         "",
         "위 내용을 두세 문장으로 돌려 적어 주세요. 판단이나 권유는 넣지 마세요.",
       ].join("\n"),
     validate: (data) => (typeof data === "string" && data.trim() !== "" ? data.trim() : null),
     fallback({ answered, followups, worry }) {
       const out = [...lines(answered), ...lines(followups)];
-      if (worry && String(worry).trim() !== "") out.push(`걱정: ${String(worry).trim()}`);
+      if (text(worry) !== "") out.push(`걱정: ${text(worry)}`);
       return out.join("\n");
     },
   };

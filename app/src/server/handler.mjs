@@ -1,7 +1,8 @@
 // node:http 요청 처리기. 외부 웹 프레임워크를 쓰지 않는다.
 // 온디바이스 원칙(스펙 8절): 요청 본문은 AI 자리에 넘기기만 하고, 저장하거나 console에 찍지 않는다.
 //
-// createHandler({ call, content, showUnverified = false, publicDir, loadPrompt }) → (req, res)
+// createHandler({ call, content, showUnverified = false, publicDir, loadPrompt, tasks }) → (req, res)
+//   tasks: 테스트에서 자리 표를 바꿔 끼울 때만 쓴다. { 이름: 자리 객체 }
 //   GET  /, /<파일>          publicDir의 파일
 //   GET  /src/<이름>.mjs     브라우저가 쓰는 모듈. 허용 목록만
 //   GET  /api/content        visibleContent(content, { showUnverified })
@@ -34,6 +35,9 @@ const SLOTS = {
 // 브라우저에 내보내는 모듈. 셋 다 다른 모듈을 가져오지 않는다.
 const BROWSER_MODULES = new Set(["rules.mjs", "emergency.mjs", "notebook.mjs"]);
 
+// HTML 응답에 붙인다. 바깥 스크립트, 분석, 추적을 브라우저가 막는다(스펙 8절).
+const CSP = "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'";
+
 const TYPES = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
@@ -49,7 +53,7 @@ const TYPES = {
 };
 
 function send(res, status, headers, body) {
-  res.writeHead(status, { "X-Content-Type-Options": "nosniff", ...headers });
+  res.writeHead(status, { "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", ...headers });
   res.end(body);
 }
 
@@ -83,10 +87,15 @@ function readBody(req) {
     req.on("data", onData);
     req.on("end", onEnd);
     req.on("error", reject);
+    // 끊긴 요청은 error 없이 close만 올 때가 있다. 기다림이 남지 않게 끝낸다(이미 끝났으면 무시됨).
+    req.on("close", () => {
+      if (!req.complete) resolve({ aborted: true });
+    });
   });
 }
 
 // 경로 조각을 풀고 base 안의 절대 경로로 바꾼다. base 밖이거나 풀 수 없으면 null.
+// 점으로 시작하는 조각(.env, .git, ..)이 하나라도 있으면 내보내지 않는다.
 function resolveInside(base, urlPath) {
   let decoded;
   try {
@@ -95,33 +104,47 @@ function resolveInside(base, urlPath) {
     return null;
   }
   if (decoded.includes("\0")) return null;
+  if (decoded.split(/[\\/]/).some((part) => part.startsWith("."))) return null;
   const root = path.resolve(base);
   const full = path.resolve(root, `.${path.sep}${decoded}`);
   if (full !== root && !full.startsWith(root + path.sep)) return null;
   return full;
 }
 
-async function readFileOrNull(file) {
+// 심볼릭 링크는 내보내지 않는다. 중간 폴더가 링크여도 실제 위치가 base 밖이면 내보내지 않는다.
+async function readFileOrNull(base, file) {
   try {
-    const stat = await fs.promises.stat(file);
-    if (stat.isDirectory()) return readFileOrNull(path.join(file, "index.html"));
+    const stat = await fs.promises.lstat(file);
+    if (stat.isSymbolicLink()) return null;
+    if (stat.isDirectory()) return readFileOrNull(base, path.join(file, "index.html"));
     if (!stat.isFile()) return null;
+    const [realRoot, realFile] = await Promise.all([fs.promises.realpath(base), fs.promises.realpath(file)]);
+    if (!realFile.startsWith(realRoot + path.sep)) return null;
     return { file, data: await fs.promises.readFile(file) };
   } catch {
     return null;
   }
 }
 
-export function createHandler({ call, content, showUnverified = false, publicDir, loadPrompt = realLoadPrompt }) {
+// 클라이언트가 중간에 끊어서 생긴 오류. 정상적인 일이라 찍지 않는다.
+function isClientAbort(err, req) {
+  // 본문을 끝까지 읽은 요청도 destroyed가 되므로, 다 받지 못한(complete가 아닌) 경우만 끊김으로 본다.
+  return err?.code === "ECONNRESET" || err?.message === "aborted" || (req.destroyed && !req.complete);
+}
+
+export function createHandler({ call, content, showUnverified = false, publicDir, loadPrompt = realLoadPrompt, tasks }) {
   // 자리 객체는 한 번만 만든다. 기본 모드에서는 확인 전 카드가 AI에도 대체 목록에도 들어가지 않는다.
   const visible = visibleContent(content, { showUnverified });
-  const slots = new Map(Object.entries(SLOTS).map(([name, make]) => [name, make(visible)]));
+  const slots = tasks
+    ? new Map(Object.entries(tasks))
+    : new Map(Object.entries(SLOTS).map(([name, make]) => [name, make(visible)]));
 
   async function handleTask(req, res, name) {
     const task = slots.get(name);
     if (!task) return sendError(res, 404, "not_found");
     if (req.method !== "POST") return sendError(res, 405, "method_not_allowed", { Allow: "POST" });
     const body = await readBody(req);
+    if (body.aborted) return res.destroy();
     if (body.tooLarge) return sendError(res, 413, "too_large", { Connection: "close" });
     let input;
     try {
@@ -138,10 +161,12 @@ export function createHandler({ call, content, showUnverified = false, publicDir
     if (req.method !== "GET" && req.method !== "HEAD") return sendError(res, 405, "method_not_allowed", { Allow: "GET, HEAD" });
     if (!publicDir) return sendError(res, 404, "not_found");
     const file = resolveInside(publicDir, urlPath.endsWith("/") ? `${urlPath}index.html` : urlPath);
-    const found = file && (await readFileOrNull(file));
+    const found = file && (await readFileOrNull(publicDir, file));
     if (!found) return sendError(res, 404, "not_found");
-    const type = TYPES[path.extname(found.file).toLowerCase()] ?? "application/octet-stream";
-    return send(res, 200, { "Content-Type": type, "Content-Length": found.data.length }, found.data);
+    const ext = path.extname(found.file).toLowerCase();
+    const headers = { "Content-Type": TYPES[ext] ?? "application/octet-stream", "Content-Length": found.data.length };
+    if (ext === ".html") headers["Content-Security-Policy"] = CSP;
+    return send(res, 200, headers, found.data);
   }
 
   async function handleModule(req, res, urlPath) {
@@ -167,6 +192,7 @@ export function createHandler({ call, content, showUnverified = false, publicDir
 
   return function handler(req, res) {
     route(req, res).catch((err) => {
+      if (isClientAbort(err, req)) return res.destroy();
       // 예외 메시지에 본문 내용이 섞일 수 있어 이름만 찍는다.
       console.error("handler_error", err?.name);
       if (!res.headersSent) sendError(res, 500, "internal");

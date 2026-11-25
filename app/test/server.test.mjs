@@ -20,6 +20,14 @@ const fallInput = { situation: fallCase.situation, answers: fallCase.answers, me
 const publicDir = fs.mkdtempSync(path.join(os.tmpdir(), "dolbom-public-"));
 fs.writeFileSync(path.join(publicDir, "index.html"), "<!doctype html><title>돌봄수첩</title>", "utf-8");
 fs.writeFileSync(path.join(publicDir, "app.css"), "body{}", "utf-8");
+// 내보내면 안 되는 것: 점 파일, 점 폴더, 밖을 가리키는 심볼릭 링크(파일, 폴더)
+fs.writeFileSync(path.join(publicDir, ".env"), "SECRET=1", "utf-8");
+fs.mkdirSync(path.join(publicDir, ".git"));
+fs.writeFileSync(path.join(publicDir, ".git", "config"), "x", "utf-8");
+const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "dolbom-outside-"));
+fs.writeFileSync(path.join(outsideDir, "secret.txt"), "밖의 파일", "utf-8");
+fs.symlinkSync(path.join(outsideDir, "secret.txt"), path.join(publicDir, "link.txt"));
+fs.symlinkSync(outsideDir, path.join(publicDir, "linkdir"));
 
 const servers = [];
 async function start(options) {
@@ -38,6 +46,7 @@ before(async () => {
 after(() => {
   for (const s of servers) s.close();
   fs.rmSync(publicDir, { recursive: true, force: true });
+  fs.rmSync(outsideDir, { recursive: true, force: true });
 });
 
 const post = (url, body) =>
@@ -134,6 +143,29 @@ test("public의 파일을 내보낸다", async () => {
   assert.equal((await fetch(`${base}/missing.js`)).status, 404);
 });
 
+test("HTML에는 CSP를, 모든 응답에는 Referrer-Policy를 붙인다", async () => {
+  const index = await fetch(`${base}/`);
+  assert.match(index.headers.get("content-security-policy"), /default-src 'self'/);
+  assert.match(index.headers.get("content-security-policy"), /frame-ancestors 'none'/);
+  assert.equal(index.headers.get("referrer-policy"), "no-referrer");
+  const css = await fetch(`${base}/app.css`);
+  assert.equal(css.headers.get("content-security-policy"), null);
+  assert.equal(css.headers.get("referrer-policy"), "no-referrer");
+  assert.equal((await fetch(`${base}/nope`)).headers.get("referrer-policy"), "no-referrer");
+  assert.equal((await fetch(`${base}/api/content`)).headers.get("referrer-policy"), "no-referrer");
+});
+
+test("점 파일과 점 폴더는 내보내지 않는다", async () => {
+  assert.equal((await fetch(`${base}/.env`)).status, 404);
+  assert.equal((await fetch(`${base}/.git/config`)).status, 404);
+  assert.equal(await rawGet(base, "/%2eenv"), 404);
+});
+
+test("심볼릭 링크는 내보내지 않는다", async () => {
+  assert.equal((await fetch(`${base}/link.txt`)).status, 404);
+  assert.equal((await fetch(`${base}/linkdir/secret.txt`)).status, 404);
+});
+
 test("public 밖의 파일은 내보내지 않는다", async () => {
   assert.equal(await rawGet(base, "/../package.json"), 404);
   assert.equal(await rawGet(base, "/%2e%2e/package.json"), 404);
@@ -154,20 +186,75 @@ test("허용하지 않는 메서드는 405", async () => {
   assert.equal((await post(`${base}/api/content`, {})).status, 405);
 });
 
-test("로그에 남기지 않는다", async () => {
-  const phone = "010-1234-5678";
+// console.log/error/warn/info로 나가는 글을 모두 가로챈다.
+// process.stdout은 가로채지 않는다. node:test가 결과를 보고하는 통로라 테스트 결과가 섞인다.
+async function capture(fn) {
   const printed = [];
   const names = ["log", "error", "warn", "info"];
   const saved = Object.fromEntries(names.map((n) => [n, console[n]]));
   for (const n of names) console[n] = (...args) => printed.push(args.map(String).join(" "));
   try {
-    await post(`${dev}/api/task/pick-cards`, { ...fallInput, worry: `엄마 번호 ${phone}` });
-    await post(`${dev}/api/task/pick-cards`, `{"worry":"${phone}"`);
-    await post(`${dev}/api/task/nope`, { worry: phone });
-    // 대체 값을 만들다 예외가 나는 입력도 보낸다(answers가 숫자).
-    await post(`${dev}/api/task/pick-cards`, { situation: "fall", answers: 1, worry: phone });
+    await fn();
   } finally {
     Object.assign(console, saved);
   }
+  return printed;
+}
+
+test("모양이 틀린 입력에도 대체 값을 돌려준다", async () => {
+  const cases = [
+    ["summary", { answered: "x", followups: [null, 1], worry: 3 }],
+    ["answer", { qaId: {}, answers: [1] }],
+    ["followups", { situation: {}, answers: "x" }],
+    ["medical", { worry: ["x"] }],
+    ["pick-cards", { situation: 1, answers: "abc", followups: "x", worry: {}, methodId: [] }]
+  ];
+  for (const [name, body] of cases) {
+    const res = await post(`${dev}/api/task/${name}`, body);
+    assert.equal(res.status, 200, name);
+    assert.equal((await res.json()).usedAi, false, name);
+  }
+});
+
+test("로그에 남기지 않는다", async () => {
+  const phone = "010-1234-5678";
+  // 대체 값이 예외를 던지는 가짜 자리로 handler_error 경로도 지나가게 한다.
+  const broken = {
+    name: "broken",
+    schema: null,
+    buildUser: () => "",
+    validate: () => null,
+    fallback: (input) => {
+      throw new TypeError(`대체 값 실패: ${input.worry}`);
+    }
+  };
+  const brokenUrl = await start({ tasks: { broken }, loadPrompt: () => null });
+  let brokenRes;
+  const printed = await capture(async () => {
+    await post(`${dev}/api/task/pick-cards`, { ...fallInput, worry: `엄마 번호 ${phone}` });
+    await post(`${dev}/api/task/pick-cards`, `{"worry":"${phone}"`);
+    await post(`${dev}/api/task/nope`, { worry: phone });
+    await post(`${dev}/api/task/summary`, { answered: phone, worry: phone });
+    brokenRes = await post(`${brokenUrl}/api/task/broken`, { worry: phone });
+  });
+  assert.equal(brokenRes.status, 500);
+  assert.deepEqual(await brokenRes.json(), { error: "internal" });
+  assert.ok(printed.some((line) => line.includes("handler_error")), "handler_error 경로를 지나야 함");
   assert.ok(printed.every((line) => !line.includes(phone)), printed.join("\n"));
+});
+
+test("클라이언트가 중간에 끊으면 아무것도 찍지 않는다", async () => {
+  const { hostname, port } = new URL(base);
+  const printed = await capture(async () => {
+    await new Promise((resolve) => {
+      const req = http.request({ hostname, port, path: "/api/task/pick-cards", method: "POST", headers: { "content-length": "1000" } });
+      req.on("error", () => {});
+      req.write('{"worry":"010-');
+      setTimeout(() => {
+        req.destroy();
+        setTimeout(resolve, 100);
+      }, 50);
+    });
+  });
+  assert.deepEqual(printed, []);
 });
