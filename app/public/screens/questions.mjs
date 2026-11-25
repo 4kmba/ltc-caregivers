@@ -251,7 +251,7 @@ function renderBasicSummary({ body, actions }, ctx, step, nextHash) {
   const card = el(
     "div",
     { class: "basic-summary" },
-    lines.length ? lines.map((l) => el("p", { class: "basic-summary-line" }, l)) : el("p", { class: "q-lead" }, "모두 “잘 모르겠어요”로 적혀 있어요.")
+    lines.length ? lines.map((l) => el("p", { class: "basic-summary-line" }, l)) : el("p", { class: "q-lead" }, "지난번에는 모두 “잘 모르겠어요”로 답하셨어요.")
   );
   const editBox = el("div", { class: "basic-summary-edit" });
 

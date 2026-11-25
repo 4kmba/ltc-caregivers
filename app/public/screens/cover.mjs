@@ -40,7 +40,7 @@ export function render(root, ctx) {
       meta ? el("p", { class: "recent-meta" }, meta) : null,
       el("h2", { class: "recent-title" }, "가장 먼저 살펴볼 제안"),
       card ? el("p", { class: "recent-todo" }, card.title) : null,
-      el("a", { class: "recent-go", href: href(latest) }, "이어서 보기", ctx.icon("right", 20))
+      el("a", { class: "recent-go", href: href(latest) }, "이 기록 보기", ctx.icon("right", 20))
     );
   } else {
     recent = el("p", { class: "cover-note" }, "작성하신 기록은 이 휴대폰에만 저장돼요. 휴대폰을 바꾸거나 인터넷 사용 기록을 지우면 기록도 함께 지워져요.");

@@ -524,7 +524,7 @@ async function init() {
   } catch {
     fill(
       root,
-      el("section", { class: "sheet" }, el("h1", {}, "화면을 불러오지 못했어요"), el("p", {}, "인터넷 연결을 확인하고 다시 열어 주세요."), el("button", { class: "primary", type: "button", onclick: () => location.reload() }, "다시 열기"))
+      el("section", { class: "sheet" }, el("h1", {}, "화면을 불러오지 못했어요"), el("p", {}, "인터넷 연결을 확인하고 이 화면을 다시 열어 주세요."), el("button", { class: "primary", type: "button", onclick: () => location.reload() }, "다시 열기"))
     );
     settle();
     return;

@@ -10,8 +10,8 @@ const ALL_KINDS = ["medical", "violence", "suicide"];
 const HINT = {
   emergency119: "의식이 없거나 숨쉬기 어렵거나 크게 다쳤을 때",
   police112: "누군가 맞거나 다칠 위험이 있을 때",
-  hs_line109: "죽고 싶다는 말을 들었을 때, 24시간",
-  mental_crisis: "마음이 위급할 때 24시간 상담",
+  hs_line109: "죽고 싶다는 말을 들었을 때 · 24시간 상담",
+  mental_crisis: "마음이 위급할 때 · 24시간 상담",
 };
 
 // 버튼에 보일 짧은 이름. 자료 목록의 name은 출처 제목("정책브리핑: …")이라 버튼에 그대로 쓰면 어색하다.
@@ -56,7 +56,7 @@ export function render(root, ctx) {
         else ctx.nav("#/");
       },
     },
-    pending ? "전화했어요. 이어서 보기" : "이전 화면으로"
+    pending ? "전화했어요. 제안 이어서 보기" : "이전 화면으로"
   );
 
   ctx.put(
@@ -87,7 +87,7 @@ export function render(root, ctx) {
               el("span", { class: "call-text" }, el("span", { class: "call-name" }, callLabel(first)), HINT[first.id] ? el("span", { class: "call-sub" }, HINT[first.id]) : null)
             )
           : // 자료 목록에 연락처가 아직 없을 때(검수 전 기본 모드). 번호를 코드에 적지 않고 고정 문구만 보여 준다.
-            el("p", { class: "note" }, "연락처를 불러오지 못했어요. 위급할 수 있으면 먼저 119에 전화하세요."),
+            el("p", { class: "note" }, "연락처를 불러오지 못했어요. 어르신이 위급해 보이면 먼저 119에 전화하세요."),
         others.map((s) =>
           el(
             "a",

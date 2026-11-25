@@ -1,14 +1,14 @@
 // 수첩 페이지. 이후 맡는 자리: 김영균(틀), B2(오늘 정리한 내용), B3(질문에 답하기).
 // 주소: #/page/new(이번 답으로 만들기), #/page/<id>(저장한 페이지), #/page/unsaved(저장하지 못한 페이지).
 // 제목(날짜, 상황) 아래에 기본 정보 한 줄. 그 아래는 디자인 개선안 ver2의 순서: 가장 먼저 살펴볼 제안 / 더 살펴볼 제안 /
-// 오늘 적은 내용·고른 돌봄 방법·지난번과 달라진 것(흰 카드 하나) / 이날 읽은 질문 / 이런 일이 생기면 다시 제안을 받아 보세요 / 의료진 질문.
+// 오늘 적은 내용·고른 돌봄 방법·지난번과 달라진 것(흰 카드 하나) / 이날 읽은 질문 / 이럴 때 다시 제안을 받아 보세요 / 의료진 질문.
 // 연락처와 링크는 sources에서만 꺼낸다. AI가 쓴 글(why, 요약, 답)에서 번호나 링크를 꺼내지 않는다.
 // 모양은 11/25 디자인 개선안 ver2의 기록: 노랑 머리(처음 화면, 날짜, 상황, 기본 정보 한 줄) 아래 바탕 위에 흰 카드가 놓인다.
 // 아직 만들지 않은 "상황이 바뀌었어요"와 "가족에게 보낼 글 복사"는 버튼을 두지 않는다.
 
 const CONFIRM_LINE = "제안 내용은 틀릴 수 있어요. 신청하기 전에 공단(1577‑1000)이나 담당 기관에 확인해 주세요.";
-const URGENT_LINE = "위급할 수 있으면 먼저 119에 전화하세요.";
-const REASSURE_LINE = "꼭 다 하지 않아도 괜찮아요. 필요한 것부터 살펴보세요.";
+const URGENT_LINE = "어르신이 위급해 보이면 먼저 119에 전화하세요.";
+const REASSURE_LINE = "아래 제안을 꼭 다 하지 않아도 괜찮아요. 필요한 것부터 살펴보세요.";
 const MEDICAL_LINE = "아래 내용은 참고용이에요. 정확한 판단은 의료진과 상담해 주세요.";
 
 // 머리의 날짜는 "2026년 11월 25일" 꼴.
@@ -51,7 +51,7 @@ async function renderBuilding(root, ctx) {
         "section",
         { class: "sheet" },
         el("h1", { class: "q-title" }, "제안을 불러오지 못했어요"),
-        el("p", { class: "q-lead" }, "적어 주신 답은 그대로 있어요. 인터넷 연결을 확인하고 다시 눌러 주세요."),
+        el("p", { class: "q-lead" }, "적어 주신 답은 그대로 있어요. 인터넷 연결을 확인하고 '다시 불러오기'를 눌러 주세요."),
         el("button", { class: "primary", type: "button", onclick: () => ctx.nav("#/page/new") }, "다시 불러오기")
       )
     );
@@ -183,7 +183,7 @@ function renderPage(root, ctx, page, pageId) {
       { class: "detail" },
       withWhy ? el("section", {}, el("h3", {}, "지금 하면 좋은 이유"), el("p", {}, item.why || card.why)) : null,
       el("section", {}, el("h3", {}, "연락할 곳"), card.contact_note ? el("p", {}, card.contact_note) : null, contactList(ctx, card.contact_ids)),
-      qas.length ? el("section", {}, el("h3", {}, "물어볼 질문"), qas.map(askButton)) : null,
+      qas.length ? el("section", {}, el("h3", {}, "자주 묻는 질문"), qas.map(askButton)) : null,
       el("section", {}, el("h3", {}, "근거"), sourceList(ctx, card.source_ids)),
       el("p", { class: "page-meta" }, CONFIRM_LINE)
     );
@@ -343,7 +343,7 @@ function renderPage(root, ctx, page, pageId) {
         moreBlock,
         recordParts.length ? el("div", { class: "record-card" }, recordParts) : null,
         el("section", { class: "opened-card" }, el("h2", { class: "page-h2" }, "이날 읽은 질문"), openedBox),
-        watch.length ? plainSection(el, "이런 일이 생기면 다시 제안을 받아 보세요", el("ul", { class: "watch" }, watch.map((w) => el("li", {}, w)))) : null,
+        watch.length ? plainSection(el, "이럴 때 다시 제안을 받아 보세요", el("ul", { class: "watch" }, watch.map((w) => el("li", {}, w)))) : null,
         medical.length
           ? plainSection(el, "다음 진료 때 의료진에게 물어볼 질문", el("p", { class: "note" }, MEDICAL_LINE), el("ul", { class: "watch" }, medical.map((m) => el("li", {}, m))))
           : null,

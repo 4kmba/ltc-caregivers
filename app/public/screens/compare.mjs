@@ -1,7 +1,7 @@
 // 돌봄 방법 비교. 이후 맡는 자리: A2.
 // rankMethods(rules.mjs)의 결과를 같은 모양의 카드 목록으로 보여 준다. AI를 쓰지 않는다(스펙 7절).
 // 모양은 11/25 디자인 개선안 ver2의 비교 화면: 흰 머리 아래 바탕 위에 흰 카드. 카드에는 좋은 점·어려운 점을 두 줄로 보이고,
-// 비용 기준·가족 부담·시작하려면은 "더 보기"에 접어 둔다.
+// 비용 기준·가족 부담·시작하려면은 "비용·가족 부담 더 보기"에 접어 둔다.
 // "한눈에 비교" 표는 만들지 않았다. methods.json의 비용·부담은 방법마다 문장이라, 표 칸에 넣을 같은 꼴의 짧은 값이 없다.
 // 디자인 규칙(스펙 8절): 번호를 붙이지 않고, "잘 맞을 수 있음"은 먹색 테두리와 태그 글, 이유 한 줄로 표시한다(노랑 태그는 거들 뿐).
 
@@ -52,7 +52,7 @@ export function render(root, ctx) {
         ? el(
             "details",
             { class: "method-more" },
-            el("summary", {}, el("span", {}, "더 보기"), ctx.icon("down", 20)),
+            el("summary", {}, el("span", {}, "비용·가족 부담 더 보기"), ctx.icon("down", 20)),
             el("dl", { class: "method-table" }, more.flatMap(([k, v]) => [el("dt", {}, k), el("dd", {}, lines(el, v))]))
           )
         : null,
@@ -82,7 +82,7 @@ export function render(root, ctx) {
               "div",
               { class: "compare-more" },
               el("h2", {}, `건너뛴 질문이 ${skipped.length}개 있어요`),
-              el("p", {}, "이전 화면으로 돌아가 답하면 비교가 더 정확해져요."),
+              el("p", {}, "'이전'을 눌러 건너뛴 질문에 답하면 비교가 더 정확해져요."),
               el("ul", {}, skipped.map((s) => el("li", {}, s.q.text)))
             )
           : null,
