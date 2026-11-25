@@ -1,0 +1,10 @@
+# 이미지에 넣지 않는 것: 설치는 이미지 안에서 다시 하고, 키와 개발용 파일은 빼 둔다.
+node_modules
+.env
+.env.*
+!.env.example
+test
+evals
+scripts
+*.log
+.DS_Store

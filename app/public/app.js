@@ -515,11 +515,18 @@ function route() {
   screen.render(root, { ...ctx, params: { head: head ?? "", arg: arg ? decodeURIComponent(arg) : null } });
 }
 
+// 확인 전 카드·답·방식이 하나라도 섞여 있으면 검수 전 시안이라고 알린다.
+function showDraftBanner(c) {
+  const unverified = [c.cards, c.qa, c.methods].some((list) => (list ?? []).some((item) => item.verified === false));
+  document.getElementById("draft-banner")?.toggleAttribute("hidden", !unverified);
+}
+
 async function init() {
   try {
     const res = await fetch("/api/content", { cache: "no-store" });
     if (!res.ok) throw new Error(`content_${res.status}`);
     content = await res.json();
+    showDraftBanner(content);
     indexQuestions();
   } catch {
     fill(
