@@ -236,6 +236,7 @@ async function renderFollowups(sheet, ctx) {
       .slice(0, 2)
       .map((x) => ({ q: x.q, options: x.options.filter((o) => typeof o === "string") }));
     session.followupAnswers = [];
+    session.followupTyped = [];
     if (location.hash !== here) return;
   }
   // 보충 질문이 없으면(AI가 꺼졌거나 실패) 건너뛴다. 이 단계는 기록에 남기지 않는다.
@@ -297,6 +298,7 @@ async function renderFollowups(sheet, ctx) {
         onclick: () => {
           const read = blocks.map((b) => b.read());
           session.followupAnswers = read.filter((r) => r.a).map(({ q, a }) => ({ q, a }));
+          session.followupTyped = read.map((r) => r.typed).filter(Boolean);
           // 걱정 칸과 보충 질문에 직접 적은 글을 함께 본다. 이미 띄운 신호는 다시 띄우지 않는다.
           ctx.checkEmergency([session.worry, ...read.map((r) => r.typed)], ctx.afterQuestions());
         },
