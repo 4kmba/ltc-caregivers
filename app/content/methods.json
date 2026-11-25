@@ -485,7 +485,7 @@
     {
       "id": "hospital-home-services",
       "situation": "hospital",
-      "title": "퇴원 뒤 집으로 와서 재가 서비스 바로 잇기",
+      "title": "퇴원 뒤 집에서 방문요양·주야간보호 바로 이어 쓰기",
       "summary": "퇴원 날짜에 맞춰 방문요양이나 주야간보호를 미리 잡고 집으로 모십니다.",
       "pros": [
         "익숙한 집으로 돌아와요",
@@ -629,7 +629,7 @@
       "first_cards": [
         "S4-02",
         "S3-08",
-        "S3-04"
+        "S3-07"
       ],
       "exclude_cards": [
         "S3-03"

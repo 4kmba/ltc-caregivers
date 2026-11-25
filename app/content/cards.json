@@ -861,6 +861,11 @@
           ]
         },
         {
+          "situation": [
+            "hospital"
+          ]
+        },
+        {
           "treated": [
             "admitted"
           ]
@@ -952,6 +957,11 @@
           ]
         },
         {
+          "situation": [
+            "hospital"
+          ]
+        },
+        {
           "treated": [
             "admitted"
           ]
@@ -996,6 +1006,11 @@
       "when_any": [
         {
           "care": [
+            "hospital"
+          ]
+        },
+        {
+          "situation": [
             "hospital"
           ]
         },
@@ -1128,12 +1143,28 @@
         "fall",
         "caregiver_out"
       ],
-      "when": {
-        "care": [
-          "private_caregiver",
-          "hospital"
-        ]
-      },
+      "when_any": [
+        {
+          "care": [
+            "private_caregiver"
+          ]
+        },
+        {
+          "care": [
+            "hospital"
+          ]
+        },
+        {
+          "situation": [
+            "hospital"
+          ]
+        },
+        {
+          "treated": [
+            "admitted"
+          ]
+        }
+      ],
       "priority": 7,
       "title": "개인 간병인과 비용·근무 조건을 미리 글로 정하기",
       "bucket": "this_month",
