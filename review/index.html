@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>돌봄수첩 검수</title>
+<link rel="stylesheet" href="review.css">
+</head>
+<body>
+<header class="cover">
+  <div class="cover-in">
+    <p class="eyebrow">Team 10 · 내용 검수</p>
+    <h1>돌봄수첩 검수</h1>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<main id="main">
+  <p class="loading" id="loading">내용 파일을 불러오는 중이에요…</p>
+</main>
+
+<footer class="foot">
+  <p>검수 기록은 이 브라우저에만 저장돼요. 끝나면 <b>결과 복사</b>로 이슈에 붙여 주세요. 다른 기기에서 이어 하려면 결과 화면의 <b>기록 파일 저장</b>과 <b>불러오기</b>를 쓰면 돼요.</p>
+  <p>내용 원본: <code>app/content/</code> · 담당: <code>review/assignments.json</code></p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="review.js"></script>
+</body>
+</html>
