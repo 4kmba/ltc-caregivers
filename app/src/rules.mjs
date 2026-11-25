@@ -36,7 +36,7 @@ export function candidateCards(cards, answers, method = null) {
 
 // 규칙 기본 목록: AI가 실패했을 때 후보 가운데 size장을 코드로 고른다.
 // "먼저" 표시가 붙은 카드를 맨 앞에 넣고, 세 구간이 비지 않게 구간마다 하나씩 넣은 뒤 나머지를 채운다.
-const BUCKETS = ["this_week", "this_month", "know_ahead"];
+export const BUCKETS = ["this_week", "this_month", "know_ahead"];
 
 // when에 걸린 조건이 많을수록 이 사람의 상황에 가까운 카드로 보고 앞에 둔다.
 // 조건 수가 같으면 priority 숫자가 작은 카드가 앞이다.
