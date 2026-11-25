@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>질문 화면</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#7A5C00}a:hover{color:#5C4500}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FFFBEA; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="background: #F7C948; padding: 18px 20px 26px; display: flex; align-items: center; justify-content: space-between">
+<div style="font-family: 'Gaegu', sans-serif; font-size: 30px; font-weight: 700; line-height: 1">돌봄 수첩</div>
+<div style="font-size: 15px; font-weight: 500">질문 1 / 6</div>
+</div>
+
+<div aria-hidden="true" style="display: flex; justify-content: space-around; padding: 0 28px; margin-top: -10px">
+<div style="width: 14px; height: 20px; border-radius: 7px; border: 3px solid #5C574C; background: #FFFBEA"></div>
+<div style="width: 14px; height: 20px; border-radius: 7px; border: 3px solid #5C574C; background: #FFFBEA"></div>
+<div style="width: 14px; height: 20px; border-radius: 7px; border: 3px solid #5C574C; background: #FFFBEA"></div>
+<div style="width: 14px; height: 20px; border-radius: 7px; border: 3px solid #5C574C; background: #FFFBEA"></div>
+<div style="width: 14px; height: 20px; border-radius: 7px; border: 3px solid #5C574C; background: #FFFBEA"></div>
+<div style="width: 14px; height: 20px; border-radius: 7px; border: 3px solid #5C574C; background: #FFFBEA"></div>
+<div style="width: 14px; height: 20px; border-radius: 7px; border: 3px solid #5C574C; background: #FFFBEA"></div>
+</div>
+
+<div style="flex-grow: 1; padding: 24px 20px 20px; display: flex; flex-direction: column; gap: 18px">
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 24px; font-weight: 700; line-height: 1.35">어떤 상황인가요?</div>
+<div style="font-size: 15px; color: #5C574C">가장 가까운 것 하나를 골라 주세요.</div>
+</div>
+
+<div role="radiogroup" aria-label="어떤 상황인가요?" style="display: flex; flex-direction: column; gap: 10px">
+
+<button type="button" role="radio" aria-checked="false" style="min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border: 1.5px solid #E9DFC4; border-radius: 12px; background: #FFFFFF; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="width: 24px; height: 24px; border: 2px solid #5C574C; border-radius: 6px; box-sizing: border-box; flex-shrink: 0"></span>
+돌봄을 처음 시작함
+</button>
+
+<button type="button" role="radio" aria-checked="false" style="min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border: 1.5px solid #E9DFC4; border-radius: 12px; background: #FFFFFF; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="width: 24px; height: 24px; border: 2px solid #5C574C; border-radius: 6px; box-sizing: border-box; flex-shrink: 0"></span>
+입원·퇴원
+</button>
+
+<button type="button" role="radio" aria-checked="true" style="min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border: 2px solid #2B2A26; border-radius: 12px; background: #F7C948; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; font-weight: 700; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 6px; background: #2B2A26; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#F7C948" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"></path></svg></span>
+낙상
+</button>
+
+<button type="button" role="radio" aria-checked="false" style="min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border: 1.5px solid #E9DFC4; border-radius: 12px; background: #FFFFFF; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="width: 24px; height: 24px; border: 2px solid #5C574C; border-radius: 6px; box-sizing: border-box; flex-shrink: 0"></span>
+증상 악화
+</button>
+
+<button type="button" role="radio" aria-checked="false" style="min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border: 1.5px solid #E9DFC4; border-radius: 12px; background: #FFFFFF; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="width: 24px; height: 24px; border: 2px solid #5C574C; border-radius: 6px; box-sizing: border-box; flex-shrink: 0"></span>
+보호자 사정이 바뀜
+</button>
+
+<button type="button" role="radio" aria-checked="false" style="min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border: 1.5px solid #E9DFC4; border-radius: 12px; background: #FFFFFF; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="width: 24px; height: 24px; border: 2px solid #5C574C; border-radius: 6px; box-sizing: border-box; flex-shrink: 0"></span>
+이용하던 기관 문제
+</button>
+
+</div>
+</div>
+
+<div style="padding: 12px 20px 28px; display: flex; gap: 10px">
+<button type="button" style="flex: 1; height: 56px; border: 2px solid #2B2A26; border-radius: 12px; background: #FFFBEA; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; font-weight: 500; cursor: pointer">이전</button>
+<button type="button" style="flex: 2; height: 56px; border: none; border-radius: 12px; background: #F7C948; color: #2B2A26; font-family: 'Noto Sans KR', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer">다음</button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
