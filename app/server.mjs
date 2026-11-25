@@ -10,7 +10,7 @@ import { createHandler } from "./src/server/handler.mjs";
 
 const port = Number(process.env.PORT) || 8787;
 // 기본은 내 컴퓨터에서만 연다. 같은 Wi-Fi의 다른 사람이 팀 키로 AI를 부르지 못하게 하려는 것이다.
-// Hugging Face Spaces 같은 컨테이너에서는 HOST=0.0.0.0, PORT=7860을 준다.
+// 컨테이너(app/Dockerfile)에서는 HOST=0.0.0.0, PORT=7860을 준다.
 const host = process.env.HOST || "127.0.0.1";
 const showUnverified = process.env.SHOW_UNVERIFIED === "1";
 const hasKey = Boolean(process.env.ANTHROPIC_API_KEY);
