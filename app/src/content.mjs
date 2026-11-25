@@ -120,6 +120,11 @@ export function validateContent(content) {
       errors.push(`상황 ${s.id}: 비교 화면의 방식은 2～3개여야 하는데 ${methodCount}개입니다`);
     }
     if (s.questions.length > 3) errors.push(`상황 ${s.id}: 상황별 질문은 3개까지입니다`);
+    for (const id of s.must_cards ?? []) {
+      const card = cardById.get(id);
+      if (!card) errors.push(`상황 ${s.id}: 꼭 넣을 카드 ${id}가 없습니다`);
+      else if (!card.situations.includes(s.id)) errors.push(`상황 ${s.id}: 꼭 넣을 카드 ${id}는 이 상황의 카드가 아닙니다`);
+    }
   }
 
   errors.push(...phoneErrors(content));

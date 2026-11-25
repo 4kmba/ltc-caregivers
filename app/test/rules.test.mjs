@@ -126,6 +126,27 @@ test("조건이 많이 걸린 카드부터, 같으면 우선순위가 높은 카
   assert.deepEqual(ids, ["two-p7", "one-p3", "one-p4", "none-p1", "none-p2", "none-p5"]);
 });
 
+test("상황마다 꼭 넣을 카드는 조건이 없어도 먼저 들어간다", () => {
+  const two = { when: { lives_together: ["yes"], mobility: ["bed"] } };
+  const pool = [1, 2, 3, 4, 5, 6].map((n) => card(`two-${n}`, "this_week", n, two));
+  pool.push(card("plain-must", "this_week", 9));
+  const ids = ruleList(pool, { situation: "fall" }, 6, ["plain-must"]).map((c) => c.id);
+  assert.equal(ids.length, 6);
+  assert.ok(ids.includes("plain-must"), ids.join(","));
+});
+
+test("꼭 넣을 카드가 후보에 없으면(조건이 안 맞으면) 넣지 않는다", () => {
+  const pool = [card("a", "this_week", 1), card("b", "this_month", 2)];
+  const ids = ruleList(pool, { situation: "fall" }, 6, ["not-candidate"]).map((c) => c.id);
+  assert.deepEqual(ids.sort(), ["a", "b"]);
+});
+
+test("방식의 먼저 카드가 꼭 넣을 카드보다 앞에 온다", () => {
+  const pool = [card("must", "this_week", 1), card("first", "this_week", 9, { first: true })];
+  const ids = ruleList(pool, { situation: "fall" }, 6, ["must"]).map((c) => c.id);
+  assert.deepEqual(ids.slice(0, 2), ["first", "must"]);
+});
+
 // 돌봄 방식 점수. AI를 쓰지 않고 방식마다 적어 둔 규칙으로 점수를 낸다(스펙 6절).
 const rule = (key, is, score, reason = `${key} 이유`) => ({ key, is, score, reason });
 const methodsFixture = [
