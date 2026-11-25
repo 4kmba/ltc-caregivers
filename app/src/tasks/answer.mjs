@@ -1,0 +1,25 @@
+// 담당 자리: B3 질문에 답하기.
+// evals/answer.jsonl과 prompts/answer.md를 만들면 AI가 켜짐. 순서는 app/README.md.
+// 입력: { qaId, answers }
+// 값: 글 한 덩이. 꺼져 있거나 실패하면 qa.json에 적힌 답 원문(없는 qaId면 빈 글).
+
+export function makeAnswer(content) {
+  const find = (id) => content.qa.find((x) => x.id === id);
+  return {
+    name: "answer",
+    schema: null,
+    // 카드에 적힌 질문과 답 원문을 넣고, 그 사람의 답을 함께 보낸다.
+    buildUser({ qaId, answers }) {
+      const item = find(qaId);
+      return [
+        `질문: ${item?.q ?? ""}`,
+        `카드에 적힌 답: ${item?.a ?? ""}`,
+        `이 사람이 고른 답: ${typeof answers === "string" ? answers : JSON.stringify(answers)}`,
+        "",
+        "카드에 적힌 내용만으로 이 사람의 상황에 맞춰 3～5문장으로 풀어 써 주세요.",
+      ].join("\n");
+    },
+    validate: (data) => (typeof data === "string" && data.trim() !== "" ? data.trim() : null),
+    fallback: ({ qaId }) => find(qaId)?.a ?? "",
+  };
+}
