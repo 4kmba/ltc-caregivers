@@ -4,10 +4,17 @@
 // 값: 글 한 덩이. 꺼져 있거나 실패하면 답을 "질문: 답" 줄로 나열하고, 걱정이 있으면 "걱정: ..." 줄을 덧붙인다.
 import { stripUnsafe } from "../ai/sanitize.mjs";
 
+// "질문: 답" 한 줄. 질문이 물음표로 끝나면 "있나요?: 없어요"처럼 부호가 겹치지 않게 "있나요? 없어요"로 쓴다.
+export function qaLine(q, a) {
+  const question = String(q ?? "").trim();
+  const answer = String(a ?? "").trim();
+  return /[?？]$/.test(question) ? `${question} ${answer}` : `${question}: ${answer}`;
+}
+
 // 서버로 들어온 입력은 모양이 틀릴 수 있다. 배열이 아니거나 객체가 아닌 항목은 빈 값으로 본다.
 function lines(list) {
   if (!Array.isArray(list)) return [];
-  return list.filter((x) => x !== null && typeof x === "object").map(({ q, a }) => `${q ?? ""}: ${a ?? ""}`);
+  return list.filter((x) => x !== null && typeof x === "object").map(({ q, a }) => qaLine(q, a));
 }
 
 const text = (v) => (typeof v === "string" ? v.trim() : "");

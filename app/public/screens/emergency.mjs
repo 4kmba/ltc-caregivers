@@ -13,6 +13,21 @@ const HINT = {
   mental_crisis: "마음이 위급할 때 24시간 상담",
 };
 
+// 버튼에 보일 짧은 이름. 자료 목록의 name은 출처 제목("정책브리핑: …")이라 버튼에 그대로 쓰면 어색하다.
+// 번호는 여기 적지 않고 자료 목록의 phone에서만 꺼낸다.
+const LABEL = {
+  emergency119: "구급 신고",
+  police112: "경찰 신고",
+  hs_line109: "자살예방상담전화",
+  mental_crisis: "정신건강위기상담전화",
+};
+
+function callLabel(s) {
+  if (LABEL[s.id]) return `${s.phone} ${LABEL[s.id]}`;
+  // 이름에 번호가 이미 들어 있으면 번호를 앞에 다시 붙이지 않는다.
+  return s.name.includes(s.phone) ? s.name : `${s.phone} ${s.name}`;
+}
+
 export function render(root, ctx) {
   const { el } = ctx;
   const pending = ctx.pendingEmergency;
@@ -56,7 +71,7 @@ export function render(root, ctx) {
                   ? el(
                       "a",
                       { class: `call-urgent${i === 0 ? "" : " soft"}`, href: `tel:${s.phone.replace(/-/g, "")}` },
-                      el("span", { class: "call-name" }, `${s.phone} ${s.name}`),
+                      el("span", { class: "call-name" }, callLabel(s)),
                       HINT[s.id] ? el("small", {}, HINT[s.id]) : null
                     )
                   : el("p", {}, s.name)

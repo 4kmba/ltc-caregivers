@@ -47,3 +47,12 @@ test("오늘 정리와 질문 답에 연락처가 있으면 null로 대체 값�
   assert.equal(a.validate("https://a.kr"), null);
   assert.equal(a.validate("센터에서 확인해요."), "센터에서 확인해요.");
 });
+
+test("줄바꿈은 그대로 두고 연락처가 든 문장만 뺀다", () => {
+  const text = "등급: 3등급\n받는 돌봄: 방문요양\n궁금하면 1577-1000에 전화하세요. 퇴원 날짜를 먼저 확인해 보세요.";
+  assert.equal(stripUnsafe(text), "등급: 3등급\n받는 돌봄: 방문요양\n퇴원 날짜를 먼저 확인해 보세요.");
+});
+
+test("다 지워진 줄은 빈 줄로 남기지 않는다", () => {
+  assert.equal(stripUnsafe("첫 줄\nwww.example.com 참고\n셋째 줄"), "첫 줄\n셋째 줄");
+});

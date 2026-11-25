@@ -8,13 +8,20 @@ export const LINK = /https?:\/\/|www\./i;
 
 export const hasContact = (s) => PHONE.test(s) || LINK.test(s);
 
-// 문장 끝(. ! ? 뒤 공백)이나 줄바꿈에서 나눠, 연락처가 든 문장을 뺀 나머지를 이어 돌려준다. 문자열이 아니거나 다 지워지면 "".
+// 줄마다 문장 끝(. ! ? 뒤 공백)에서 나눠 연락처가 든 문장을 빼고, 줄바꿈은 그대로 둔다.
+// 다 지워진 줄은 남기지 않는다. 문자열이 아니거나 모두 지워지면 "".
 export function stripUnsafe(text) {
   if (typeof text !== "string") return "";
   return text
-    .split(/(?<=[.!?。])\s+|\n+/)
-    .map((s) => s.trim())
-    .filter((s) => s && !hasContact(s))
-    .join(" ")
+    .split(/\n+/)
+    .map((line) =>
+      line
+        .split(/(?<=[.!?。])\s+/)
+        .map((s) => s.trim())
+        .filter((s) => s && !hasContact(s))
+        .join(" ")
+    )
+    .filter(Boolean)
+    .join("\n")
     .trim();
 }

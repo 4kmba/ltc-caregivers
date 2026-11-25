@@ -227,7 +227,7 @@ function renderPage(root, ctx, page, pageId) {
 
       section(el, "오늘 정리한 내용", el("p", { class: "summary" }, page.summary || "정리할 답이 없어요.")),
       changes.length
-        ? section(el, "지난번과 달라진 답", el("ul", { class: "changes" }, changes.map((c) => el("li", {}, `${ctx.questionText(c.key)}: ${answerText(c.key, c.before)} → ${answerText(c.key, c.after)}`))))
+        ? section(el, "지난번과 달라진 답", el("ul", { class: "changes" }, changes.map((c) => el("li", {}, `${ctx.questionText(c.key)}${/[?？]$/.test(ctx.questionText(c.key)) ? " " : ": "}${answerText(c.key, c.before)} → ${answerText(c.key, c.after)}`))))
         : null,
       page.compare ? section(el, "고른 방식", el("p", { class: "picked" }, page.methodTitle ?? "아직 정하지 않았어요")) : null,
 

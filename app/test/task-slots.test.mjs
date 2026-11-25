@@ -94,3 +94,10 @@ test("모든 AI 자리의 schema는 object마다 additionalProperties false", as
   assert.equal(makeSummary(c).schema, null);
   assert.equal(makeAnswer(c).schema, null);
 });
+
+test("오늘 정리 대체 값: 물음표로 끝나는 질문 뒤에는 쌍점을 붙이지 않는다", () => {
+  const task = makeSummary(content);
+  const text = task.fallback({ answered: [{ q: "장기요양등급이 있나요?", a: "없어요" }], followups: [], worry: "" });
+  assert.ok(text.includes("장기요양등급이 있나요? 없어요"));
+  assert.ok(!text.includes("?:"));
+});

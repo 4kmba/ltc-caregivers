@@ -292,7 +292,7 @@ async function buildPage() {
   const summaryText =
     summary.ok && typeof summary.value === "string" && summary.value.trim()
       ? summary.value
-      : [...answered, ...followups].map(({ q, a }) => `${q}: ${a}`).concat(worry ? [`걱정: ${worry}`] : []).join("\n");
+      : [...answered, ...followups].map(({ q, a }) => (/[?？]$/.test(q) ? `${q} ${a}` : `${q}: ${a}`)).concat(worry ? [`걱정: ${worry}`] : []).join("\n");
   const method = methodOf(session.methodId);
   const pageData = {
     situation: session.situation,
