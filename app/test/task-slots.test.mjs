@@ -65,3 +65,33 @@ test("의료 질문은 안전한 문장만 2개까지, 없으면 null", () => {
   assert.deepEqual(t.validate({ questions: ["가 질문?", "나 질문?", "다 질문?"] }), ["가 질문?", "나 질문?"]);
   assert.equal(t.validate({ questions: ["5mg 드세요"] }), null);
 });
+
+test("놓치던 복용량과 전화번호 꼴을 버린다", () => {
+  const bad = ["5 MG 드세요", "5㎎ 드세요", "10㎖ 드세요", "0.5mcg 드세요", "1000IU 드세요", "하루 1포 드세요", "한 알 드세요", "두 정 드세요", "반 알 드세요", "02)123-4567로 연락", "02 123 4567로 연락", "02.123.4567로 연락", "15771000으로 연락", "0212345678로 연락"];
+  for (const s of bad) assert.deepEqual(dropUnsafeSentences([s]), [], s);
+});
+
+test("숫자나 수 표현이 있어도 안전한 문장은 남긴다", () => {
+  const ok = ["3년 전부터 그러셨어요", "하루 두 번 산책하세요", "2026년 11월에 물어보세요"];
+  assert.deepEqual(dropUnsafeSentences(ok), ok);
+});
+
+test("모든 AI 자리의 schema는 object마다 additionalProperties false", async () => {
+  const { loadContent } = await import("../src/content.mjs");
+  const { makePickCards } = await import("../src/tasks/pick-cards.mjs");
+  const c = loadContent();
+  const check = (node, path) => {
+    if (!node || typeof node !== "object") return;
+    if (node.type === "object") {
+      assert.equal(node.additionalProperties, false, path);
+      assert.deepEqual([...(node.required ?? [])].sort(), Object.keys(node.properties ?? {}).sort(), `${path} required`);
+    }
+    for (const [k, v] of Object.entries(node)) check(v, `${path}.${k}`);
+  };
+  for (const t of [makeFollowups(c), makeMedical(c), makePickCards(c)]) {
+    assert.ok(t.schema, t.name);
+    check(t.schema, t.name);
+  }
+  assert.equal(makeSummary(c).schema, null);
+  assert.equal(makeAnswer(c).schema, null);
+});

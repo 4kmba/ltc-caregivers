@@ -19,10 +19,12 @@ export function makeFollowups(content) {
             type: "object",
             properties: { q: { type: "string" }, options: { type: "array", items: { type: "string" } } },
             required: ["q", "options"],
+            additionalProperties: false,
           },
         },
       },
       required: ["questions"],
+      additionalProperties: false,
     },
     // 스펙 7절에 허용된 것만 넣는다: 고른 상황과 답. 팀원이 고칠 출발점이다.
     buildUser: ({ situation, answers }) =>
