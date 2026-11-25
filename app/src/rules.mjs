@@ -56,3 +56,21 @@ export function ruleList(candidates, answers, size = 6) {
   for (const c of rest) if (!picked.includes(c)) picked.push(c);
   return picked.slice(0, size);
 }
+
+// 돌봄 방식 점수: 고른 상황의 방식마다 답에 맞는 규칙의 점수를 더한다. AI를 쓰지 않는다.
+// reason은 맞은 규칙 가운데 점수가 가장 큰 규칙의 이유 문장이다.
+// 1등이 하나뿐이고 0점보다 클 때만 fits(잘 맞을 수 있음)를 붙인다. 동점이면 결정을 대신하지 않는다.
+export function rankMethods(methods, answers) {
+  const ranked = methods
+    .filter((method) => method.situation === answers.situation)
+    .map((method) => {
+      const matched = method.rules.filter((r) => overlaps(answers[r.key], r.is));
+      const top = [...matched].sort((a, b) => b.score - a.score)[0];
+      return { method, score: matched.reduce((sum, r) => sum + r.score, 0), reason: top?.reason ?? null };
+    })
+    // sort는 같은 점수끼리 원래 순서를 지키므로, 동점이면 파일에 적힌 순서대로 놓인다.
+    .sort((a, b) => b.score - a.score);
+  const [best, second] = ranked;
+  const soleTop = best && best.score > 0 && !(second && second.score === best.score);
+  return ranked.map((r, i) => ({ ...r, fits: soleTop && i === 0 }));
+}

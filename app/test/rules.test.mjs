@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { candidateCards, cardMatches, ruleList } from "../src/rules.mjs";
+import { candidateCards, cardMatches, rankMethods, ruleList } from "../src/rules.mjs";
 
 // 카드 한 장이 보호자의 답에 맞는지 본다. 스펙 6절 "할 일 후보 거르기"의 첫 조각이다.
 
@@ -124,4 +124,41 @@ test("조건이 많이 걸린 카드부터, 같으면 우선순위가 높은 카
   ];
   const ids = ruleList(pool, { situation: "fall" }).map((c) => c.id);
   assert.deepEqual(ids, ["two-p7", "one-p3", "one-p4", "none-p1", "none-p2", "none-p5"]);
+});
+
+// 돌봄 방식 점수. AI를 쓰지 않고 방식마다 적어 둔 규칙으로 점수를 낸다(스펙 6절).
+const rule = (key, is, score, reason = `${key} 이유`) => ({ key, is, score, reason });
+const methodsFixture = [
+  { id: "home", situation: "fall", rules: [rule("daytime_family", ["yes"], 2), rule("risk", ["no"], 1)] },
+  { id: "rehab", situation: "fall", rules: [rule("diagnoses", ["fracture"], 2), rule("risk", ["yes"], 1)] },
+  { id: "stay", situation: "hospital", rules: [rule("risk", ["yes"], 2)] }
+];
+
+test("방식마다 답에 맞는 규칙의 점수를 더하고, 고른 상황의 방식만 돌려준다", () => {
+  const ranked = rankMethods(methodsFixture, { situation: "fall", daytime_family: "yes", risk: "no", diagnoses: ["stroke"] });
+  assert.deepEqual(ranked.map((r) => [r.method.id, r.score]), [["home", 3], ["rehab", 0]]);
+});
+
+test("점수가 높은 방식이 앞에 오고, 같으면 파일에 적힌 순서를 지킨다", () => {
+  const three = [...methodsFixture, { id: "short", situation: "fall", rules: [rule("risk", ["yes"], 1)] }];
+  const ranked = rankMethods(three, { situation: "fall", risk: "yes", diagnoses: ["fracture"] });
+  assert.deepEqual(ranked.map((r) => [r.method.id, r.score]), [["rehab", 3], ["short", 1], ["home", 0]]);
+  // rehab과 short가 1점으로 같으면 파일 순서대로 rehab이 앞이다.
+  const tied = rankMethods(three, { situation: "fall", risk: "yes" });
+  assert.deepEqual(tied.map((r) => [r.method.id, r.score]), [["rehab", 1], ["short", 1], ["home", 0]]);
+});
+
+test("1등이 하나뿐이면 잘 맞을 수 있음과 가장 큰 점수를 준 규칙의 이유를 붙인다", () => {
+  const ranked = rankMethods(methodsFixture, { situation: "fall", daytime_family: "yes", risk: "no" });
+  assert.deepEqual(
+    ranked.map((r) => [r.method.id, r.fits, r.reason]),
+    [["home", true, "daytime_family 이유"], ["rehab", false, null]]
+  );
+});
+
+test("1등이 둘 이상이거나 모두 0점이면 잘 맞을 수 있음을 붙이지 않는다", () => {
+  const tied = rankMethods(methodsFixture, { situation: "fall", daytime_family: "yes", diagnoses: ["fracture"] });
+  assert.deepEqual(tied.map((r) => r.fits), [false, false], "두 방식이 2점으로 같다");
+  const zero = rankMethods(methodsFixture, { situation: "fall" });
+  assert.deepEqual(zero.map((r) => r.fits), [false, false]);
 });
