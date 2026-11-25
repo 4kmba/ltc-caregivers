@@ -1,5 +1,6 @@
 // 인터뷰 요약 5건으로 만든 점검용 사례. prototypes/김영균/scripts/run-cases.mjs의 C2, C3, C5, C6, H1을 옮겼다.
 // 주의: 답은 인터뷰 요약을 보고 고른 것이라 실제 보호자가 직접 답한 결과가 아니다.
+// 걱정 문장 가운데 C5와 H1은 원본에 없어 새로 썼다. 인터뷰에서 나온 말이 아니다.
 // 답의 키와 값은 content/situations.json의 것이고, 실명과 기관명은 넣지 않았다.
 // expect는 인터뷰에서 막혔다고 말한 일에 해당하는 카드 번호다. 규칙 기본 목록에 들어 있어야 한다.
 // 사례의 입력은 { situation, answers, worry } 모양이고, 나머지 입력(methodId, followups)은 테스트가 채운다.

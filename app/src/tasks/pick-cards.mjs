@@ -2,19 +2,20 @@
 // 다른 자리를 만드는 팀원은 이 파일을 보고 따라 한다. 순서는 app/README.md의 "AI 자리"에 있다.
 // 입력 { situation, answers, methodId, worry, followups: [{ q, a }] }에서 꺼내 쓰는 것은 이 다섯 개뿐이다.
 // 지난 페이지, 체크, 돌보는 대상 칸이 입력에 섞여 와도 AI에게 보내지 않는다(스펙 7절).
-import { candidateCards, ruleList, BUCKETS } from "../rules.mjs";
+import { candidateCards, cardMatches, ruleList, BUCKETS } from "../rules.mjs";
 import { validatePlan } from "../ai-check.mjs";
 
 const MIN_ITEMS = 3;
 
 // 후보가 3장보다 적으면 상황과 등급 말고는 조건이 없는 카드로 채운다(스펙 6절).
-// 조건이 등급 하나뿐이고 when_not과 when_any가 없는 카드를, 등급이 달라도 우선순위 순서로 넣는다.
+// 조건이 등급 하나뿐이고 when_not과 when_any가 없는 카드 가운데, 이 사람의 답에도 맞는 카드(cardMatches)만 우선순위 순서로 넣는다.
+// 등급이 맞지 않는 카드(예: 1등급인 사람에게 등급 신청)는 넣지 않는다.
 function fillCandidates(cards, answers, method, candidates) {
   if (candidates.length >= MIN_ITEMS) return candidates;
   const excluded = method?.exclude_cards ?? [];
   const firsts = method?.first_cards ?? [];
   const plain = cards
-    .filter((c) => c.situations.includes(answers.situation) && !excluded.includes(c.id))
+    .filter((c) => cardMatches(c, answers) && !excluded.includes(c.id))
     .filter((c) => !candidates.some((x) => x.id === c.id))
     .filter((c) => Object.keys(c.when ?? {}).every((key) => key === "grade"))
     .filter((c) => Object.keys(c.when_not ?? {}).length === 0 && (c.when_any ?? []).length === 0)

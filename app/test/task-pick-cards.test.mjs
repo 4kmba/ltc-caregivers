@@ -42,10 +42,11 @@ test("후보가 3장보다 적으면 상황과 등급 말고는 조건이 없는
     { id: "f", situations: ["hospital"], bucket: "this_week", why: "f", priority: 6 }
   ];
   const small = makePickCards({ ...content, cards, methods: [] });
-  // 답이 맞는 카드는 c 하나뿐이다. 등급만 걸린 b가 채워지고, 다른 조건이 걸린 a, d, e와 다른 상황의 f는 들어가지 않는다.
+  // 답이 맞는 카드는 c 하나뿐이다. 등급이 g1인 b는 g3인 사람에게 맞지 않으므로 채우지 않는다.
+  // 다른 조건이 걸린 a, d, e와 다른 상황의 f도 들어가지 않는다.
   const ids = small.fallback({ situation: "fall", answers: { grade: "g3", works: "no" }, methodId: null, worry: "", followups: [] })
     .items.map((i) => i.card_id);
-  assert.deepEqual([...ids].sort(), ["b", "c"]);
+  assert.deepEqual([...ids].sort(), ["c"]);
 });
 
 test("쓸 만한 항목이 3개보다 적으면 null", () => {
@@ -127,8 +128,11 @@ function checkExpected(c, methodId, kind) {
 }
 
 for (const c of CASES) {
-  test(`인터뷰 사례 ${c.id}: 막혔던 일이 들어간다`, () => {
+  // 기대 카드가 모두 todo로 빠진 사례는 이 테스트가 아무것도 확인하지 않으므로 todo로 표시한다.
+  const nothingChecked = c.expect.every((w) => gapsOf("none", c.id).includes(w));
+  test(`인터뷰 사례 ${c.id}: 막혔던 일이 들어간다`, nothingChecked ? { todo: "기대 카드가 모두 빠져 확인할 것이 없음" } : {}, () => {
     checkExpected(c, null, "none");
+    assert.ok(!nothingChecked, "확인할 카드가 없음");
   });
 
   for (const want of gapsOf("none", c.id)) {
@@ -150,8 +154,10 @@ for (const c of CASES) {
   const situation = content.situations.find((s) => s.id === c.situation);
   if (situation.compare) {
     const best = () => rankMethods(content.methods, { ...c.answers, situation: c.situation })[0].method;
-    test(`인터뷰 사례 ${c.id}: 1등 방식을 골라도 막혔던 일이 들어가고 출처가 있다`, () => {
+    const methodNothing = c.expect.every((w) => gapsOf("method", c.id).includes(w));
+    test(`인터뷰 사례 ${c.id}: 1등 방식을 골라도 막혔던 일이 들어가고 출처가 있다`, methodNothing ? { todo: "기대 카드가 모두 빠져 확인할 것이 없음" } : {}, () => {
       const { ids } = checkExpected(c, best().id, "method");
+      assert.ok(!methodNothing, "확인할 카드가 없음");
       for (const id of ids) assert.ok(content.cards.find((x) => x.id === id).source_ids.length > 0);
     });
 
