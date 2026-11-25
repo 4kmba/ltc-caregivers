@@ -2,7 +2,7 @@
 // 실행: ANTHROPIC_API_KEY=키 npm run try-call   (app/ 안에서)
 // 확인할 것: 400 오류가 없는지, 글 블록이 JSON으로 풀리는지, 15초 안에 끝나는지.
 import Anthropic from "@anthropic-ai/sdk";
-import { buildRequest } from "../src/ai/client.mjs";
+import { buildRequest, collectText } from "../src/ai/client.mjs";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 if (!apiKey) {
@@ -43,7 +43,10 @@ try {
   console.log("걸린 시간(ms):", Date.now() - started);
   console.log("stop_reason:", res.stop_reason);
   console.log("블록 type:", res.content.map((b) => b.type));
-  const text = res.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+  for (const b of res.content.filter((x) => x.type === "fallback")) {
+    console.log(`대체 모델로 넘어감: ${b.from?.model} → ${b.to?.model}`);
+  }
+  const text = collectText(res.content);
   try {
     console.log("풀어 낸 JSON:", JSON.stringify(JSON.parse(text), null, 2));
   } catch {
