@@ -87,7 +87,7 @@ export function render(root, ctx) {
             )
           : null,
         el("button", { class: "under-link", type: "button", onclick: () => pick(null) }, "방법은 나중에 정할게요"),
-        el("p", { class: "compare-note" }, "어느 방법을 고르든 도움이 될 제안부터 보여 드려요.")
+        el("p", { class: "compare-note" }, "방법을 정하지 않아도, 어느 방법에서나 도움이 될 제안부터 보여 드려요.")
       )
     )
   );

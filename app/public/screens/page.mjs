@@ -6,10 +6,10 @@
 // 모양은 11/25 디자인 개선안 ver2의 기록: 노랑 머리(처음 화면, 날짜, 상황, 기본 정보 한 줄) 아래 바탕 위에 흰 카드가 놓인다.
 // 아직 만들지 않은 "상황이 바뀌었어요"와 "가족에게 보낼 글 복사"는 버튼을 두지 않는다.
 
-const CONFIRM_LINE = "신청하기 전에 공단(1577-1000)이나 안내된 기관에 꼭 확인해 주세요.";
+const CONFIRM_LINE = "제안 내용은 틀릴 수 있어요. 신청하기 전에 공단(1577‑1000)이나 담당 기관에 확인해 주세요.";
 const URGENT_LINE = "위급할 수 있으면 먼저 119에 전화하세요.";
 const REASSURE_LINE = "꼭 다 하지 않아도 괜찮아요. 필요한 것부터 살펴보세요.";
-const MEDICAL_LINE = "참고만 하시고, 정확한 내용은 의료진과 상담하세요.";
+const MEDICAL_LINE = "아래 내용은 참고용이에요. 정확한 판단은 의료진과 상담해 주세요.";
 
 // 머리의 날짜는 "2026년 11월 25일" 꼴.
 const longDate = (t) => new Date(t).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
@@ -118,7 +118,7 @@ function renderPage(root, ctx, page, pageId) {
 
   function save(patch) {
     const ok = ctx.updatePage(pageId, patch);
-    if (!ok) status.textContent = "이 휴대폰에 남기지 못했어요.";
+    if (!ok) status.textContent = "체크한 내용을 이 휴대폰에 저장하지 못했어요.";
     else Object.assign(page, patch);
   }
 
@@ -135,7 +135,7 @@ function renderPage(root, ctx, page, pageId) {
               el("li", {}, el("details", { class: "opened-item" }, el("summary", {}, el("span", {}, o.q), ctx.icon("right", 18)), el("p", { class: "opened-a" }, o.a)))
             )
           )
-        : el("p", { class: "page-meta" }, "제안 아래 질문을 누르면 그때 읽은 답이 여기에 남아요.")
+        : el("p", { class: "page-meta" }, "제안 아래 질문을 누르면, 그때 읽은 답을 여기에 모아 둬요.")
     );
   }
   drawOpened();
@@ -202,7 +202,7 @@ function renderPage(root, ctx, page, pageId) {
         "label",
         { class: first ? "todo-title first-title" : "todo-title", for: boxId },
         card.title,
-        item.isNew ? el("span", { class: "new-tag" }, "이번에 새로 나온 제안") : null
+        item.isNew ? el("span", { class: "new-tag" }, "지난번에 없던 제안") : null
       )
     );
     box.addEventListener("change", () => {
@@ -328,11 +328,11 @@ function renderPage(root, ctx, page, pageId) {
       el(
         "div",
         { class: "page-body" },
-        pageId === "unsaved" ? el("p", { class: "note" }, "이 기록을 휴대폰에 남기지 못했어요. 이 화면을 닫으면 사라져요.") : null,
+        pageId === "unsaved" ? el("p", { class: "note" }, "이 기록을 휴대폰에 저장하지 못했어요. 이 화면을 닫으면 기록이 사라져요.") : null,
         el(
           "div",
           { class: "page-intro" },
-          page.usedAi === false ? el("p", { class: "ai-line" }, "지금은 제안마다 맞춤 설명을 붙이지 못했어요. 제안은 그대로 살펴보실 수 있어요.") : null,
+          page.usedAi === false ? el("p", { class: "ai-line" }, "지금은 AI 연결이 되지 않아 제안마다 맞춤 설명을 붙이지 못했어요. 제안 목록은 그대로 살펴보실 수 있어요.") : null,
           el("p", { class: "page-reassure" }, REASSURE_LINE)
         ),
         urgent ? el("p", { class: "urgent-line" }, URGENT_LINE, " ", el("a", { href: "#/emergency" }, "위급할 때 연락처 보기")) : null,

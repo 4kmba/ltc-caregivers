@@ -43,7 +43,7 @@ export function render(root, ctx) {
       el("a", { class: "recent-go", href: href(latest) }, "이어서 보기", ctx.icon("right", 20))
     );
   } else {
-    recent = el("p", { class: "cover-note" }, "기록은 이 휴대폰에만 남아요. 휴대폰을 바꾸거나 인터넷 사용 기록을 지우면 함께 지워져요.");
+    recent = el("p", { class: "cover-note" }, "작성하신 기록은 이 휴대폰에만 저장돼요. 휴대폰을 바꾸거나 인터넷 사용 기록을 지우면 기록도 함께 지워져요.");
   }
 
   const pastList = past.length
@@ -93,13 +93,13 @@ export function render(root, ctx) {
       el(
         "div",
         { class: "cover-bottom" },
-        el("p", { class: "cover-small" }, "이름, 주소, 연락처는 적지 마세요. 답하신 내용은 제안을 고르는 데만 AI에 보내요."),
-        el("p", { class: "cover-small" }, "신청하기 전에 공단(1577-1000)이나 안내된 기관에 꼭 확인해 주세요."),
+        el("p", { class: "cover-small" }, "개인정보 보호를 위해 이름, 주소, 연락처는 답변에 적지 말아 주세요. 답변하신 내용은 AI가 읽고 알맞은 제안을 고르는 데 쓰여요."),
+        el("p", { class: "cover-small" }, "제안 내용은 틀릴 수 있어요. 신청하기 전에 공단(1577‑1000)이나 담당 기관에 확인해 주세요."),
         el("button", { class: "primary cover-start", type: "button", onclick: () => ctx.nav("#/new") }, ctx.icon("plus", 20), "우리 상황에 맞는 제안 받기"),
         el(
           "div",
           { class: "cover-foot" },
-          el("span", { class: "cover-saved" }, ctx.icon("lock", 16), "이 휴대폰에만 남아요"),
+          el("span", { class: "cover-saved" }, ctx.icon("lock", 16), "기록은 이 휴대폰에만 저장돼요"),
           el("a", { class: "help-link", href: "#/emergency" }, ctx.icon("phone", 18), "위급할 때 연락처")
         )
       )

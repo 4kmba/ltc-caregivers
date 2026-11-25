@@ -4,7 +4,7 @@
 // 모양은 11/25 디자인 개선안 ver2의 질문 화면: 흰 종이 위쪽에 이전·단계·진행 막대·상황 이름, 그 아래 질문과 보기, 맨 아래에 고정된 "다음"과 "나중에 답할게요".
 
 const ADVANCE_MS = 350;
-const AI_NOTICE = "이름, 주소, 연락처는 적지 마세요. 답하신 내용은 제안을 고르는 데만 AI에 보내요.";
+const AI_NOTICE = "개인정보 보호를 위해 이름, 주소, 연락처는 답변에 적지 말아 주세요. 답변하신 내용은 AI가 읽고 알맞은 제안을 고르는 데 쓰여요.";
 
 // 답을 바꾸면 보충 질문을 다시 받는다(답에 따라 비어 있는 정보가 달라지므로).
 function choose(session, field, value) {
@@ -137,7 +137,7 @@ function renderSituations(root, ctx) {
             )
           )
         )
-      : el("p", { class: "note" }, "아직 준비 중이에요. 곧 고를 수 있게 할게요.")
+      : el("p", { class: "note" }, "아직 고를 수 있는 상황이 없어요. 내용 확인이 끝나는 대로 열어 둘게요.")
   );
   ctx.put(root, section);
   ctx.settle();
