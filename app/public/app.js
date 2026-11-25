@@ -20,6 +20,17 @@ const root = document.getElementById("app");
 const PREFS_KEY = "dolbom.prefs.v1";
 const REQUEST_MS = 25000;
 
+// 두 번째부터 쓰는 사람의 기본 정보. 낙상·입원 뒤 자주 바뀌는 칸만 다시 묻는다.
+// 잘 안 바뀌는 칸은 "지난번 기본 정보" 요약 카드로 보여 주고, 고칠 게 있다고 할 때만 보기를 펼친다.
+const BASIC_KEYS = {
+  stable: ["grade", "diagnoses", "lives_together", "works", "daytime_family", "cost_burden"],
+  changing: ["care", "mobility", "talk"],
+};
+// 등급이 없거나 신청 중이면 그사이 결과가 나왔을 수 있어 등급 화면을 다시 묻는다.
+const REASK_GRADE = ["none", "applying"];
+// 수첩 페이지 제목 아래 기본 정보 한 줄에 쓰는 칸.
+const BASIC_LINE_KEYS = ["grade", "care", "diagnoses", "mobility"];
+
 // ---- 화면 도구 ----
 function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
@@ -161,6 +172,13 @@ const qaOf = (id) => content.qa.find((q) => q.id === id) ?? null;
 const sourceOf = (id) => content.sources.find((s) => s.id === id) ?? null;
 const methodOf = (id) => content.methods.find((m) => m.id === id) ?? null;
 
+// "지난번과 달라진 답"에 쓰는 짧은 이름. 칸 하나짜리 기본 정보 화면은 질문 문장뿐이라 짧은 이름을 따로 둔다.
+// 그 밖의 칸은 label(거동, 대화 등), 없으면 질문 문구를 그대로 쓴다.
+const SHORT_NAME = { grade: "등급", care: "받는 돌봄", diagnoses: "진단" };
+function shortName(key) {
+  return SHORT_NAME[key] ?? questionText(key);
+}
+
 function labelOf(key, value) {
   const known = questionMap.get(key);
   const values = Array.isArray(value) ? value : [value];
@@ -194,7 +212,8 @@ function newSession(situationId) {
   session = {
     situation: situationId,
     answers: basic,
-    basicPrefilled: Object.keys(basic).length === basicKeys().length,
+    // 단계 목록이 고치는 도중에 바뀌지 않도록, 처음 열 때의 지난 답을 따로 둔다.
+    lastBasic: { ...basic },
     worry: "",
     followupQs: null,
     followupAnswers: [],
@@ -211,12 +230,43 @@ function conditionalApplies(q, answers) {
   return cardMatches({ situations: [session.situation], when: q.when, when_not: q.when_not }, { ...answers, situation: session.situation });
 }
 
+// 기본 정보 단계. 지난 답이 없으면 다섯 화면을 처음처럼 묻는다.
+// 지난 답이 있으면: 잘 안 바뀌는 칸만 든 화면은 요약 카드 하나로 묶고, 자주 바뀌는 칸이 든 화면은 지난 답을 골라 둔 채 다시 묻는다.
+// 칸이 빠진 화면과, 등급이 없음·신청 중인 등급 화면은 처음처럼 묻는다.
+function basicSteps() {
+  const last = session.lastBasic ?? {};
+  const asScreen = (screen) => ({ id: `basic-${screen.no}`, kind: "basic", screen });
+  if (Object.keys(last).length === 0) return content.basic.map(asScreen);
+  const summarized = [];
+  const asked = [];
+  for (const screen of content.basic) {
+    const keys = screen.fields.map((f) => f.key);
+    const missing = keys.some((k) => !(k in last));
+    const changing = keys.some((k) => BASIC_KEYS.changing.includes(k));
+    const regrade = keys.includes("grade") && REASK_GRADE.includes(last.grade);
+    const stable = keys.every((k) => BASIC_KEYS.stable.includes(k));
+    if (!missing && !changing && !regrade && stable) summarized.push(screen);
+    else asked.push(screen);
+  }
+  return [...(summarized.length ? [{ id: "basic", kind: "basic-summary", screens: summarized }] : []), ...asked.map(asScreen)];
+}
+
+// 보기 이름. "잘 모르겠어요"는 뺀다. 남는 것이 없으면 빈 글.
+function knownLabel(key, value) {
+  const values = (Array.isArray(value) ? value : [value]).filter((v) => v !== "unknown" && v !== undefined && v !== null);
+  return values.length ? labelOf(key, values) : "";
+}
+
+// 수첩 페이지 제목 아래 기본 정보 한 줄.
+function basicLine(answers) {
+  return BASIC_LINE_KEYS.map((k) => knownLabel(k, answers?.[k])).filter(Boolean).join(" · ");
+}
+
 // 질문 단계 목록. 답에 따라 조건부 질문이 붙었다 빠지므로 매번 새로 만든다.
 function steps() {
   const s = situationOf(session.situation);
   const list = [];
-  if (session.basicPrefilled) list.push({ id: "basic", kind: "basic-all" });
-  else for (const screen of content.basic) list.push({ id: `basic-${screen.no}`, kind: "basic", screen });
+  list.push(...basicSteps());
   for (const q of s?.questions ?? []) list.push({ id: `sq-${q.key}`, kind: "pick", q });
   for (const q of content.conditional) if (conditionalApplies(q, session.answers)) list.push({ id: `cq-${q.key}`, kind: "pick", q });
   list.push({ id: "worry", kind: "worry" });
@@ -277,10 +327,13 @@ async function buildPage() {
   const answers = currentAnswers();
   const followups = session.followupAnswers;
   const worry = session.worry.trim();
-  const answered = describeAnswers(answers);
+  // 오늘 정리한 내용에는 기본 정보를 넣지 않는다. 기본 정보는 제목 아래 한 줄로 따로 보여 준다.
+  const basic = new Set(basicKeys());
+  const answered = describeAnswers(Object.fromEntries(Object.entries(answers).filter(([k]) => !basic.has(k))));
+  const hasSummary = answered.length > 0 || followups.length > 0 || Boolean(worry);
   const [pick, summary, medical] = await Promise.all([
     api("pick-cards", { situation: session.situation, answers, methodId: session.methodId ?? undefined, worry, followups }),
-    api("summary", { answered, followups, worry }),
+    hasSummary ? api("summary", { answered, followups, worry }) : Promise.resolve({ ok: true, value: "" }),
     worry ? api("medical", { worry }) : Promise.resolve({ ok: true, value: [] }),
   ]);
   if (!pick.ok || !Array.isArray(pick.value?.items)) return { error: true };
@@ -383,8 +436,11 @@ const ctx = {
   rankMethods,
   newSession,
   steps,
+  basicLine,
+  knownLabel,
   currentAnswers,
   labelOf,
+  shortName,
   questionText,
   situationOf,
   cardOf,

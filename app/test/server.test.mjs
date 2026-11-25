@@ -20,6 +20,8 @@ const fallInput = { situation: fallCase.situation, answers: fallCase.answers, me
 const publicDir = fs.mkdtempSync(path.join(os.tmpdir(), "dolbom-public-"));
 fs.writeFileSync(path.join(publicDir, "index.html"), "<!doctype html><title>돌봄수첩</title>", "utf-8");
 fs.writeFileSync(path.join(publicDir, "app.css"), "body{}", "utf-8");
+fs.mkdirSync(path.join(publicDir, "fonts"));
+fs.writeFileSync(path.join(publicDir, "fonts", "x.woff"), "wOFF");
 // 내보내면 안 되는 것: 점 파일, 점 폴더, 밖을 가리키는 심볼릭 링크(파일, 폴더)
 fs.writeFileSync(path.join(publicDir, ".env"), "SECRET=1", "utf-8");
 fs.mkdirSync(path.join(publicDir, ".git"));
@@ -141,6 +143,12 @@ test("public의 파일을 내보낸다", async () => {
   assert.equal(css.status, 200);
   assert.match(css.headers.get("content-type"), /^text\/css/);
   assert.equal((await fetch(`${base}/missing.js`)).status, 404);
+});
+
+test("글꼴 파일은 font/woff로 내보낸다", async () => {
+  const res = await fetch(`${base}/fonts/x.woff`);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get("content-type"), "font/woff");
 });
 
 test("HTML에는 CSP를, 모든 응답에는 Referrer-Policy를 붙인다", async () => {

@@ -1,5 +1,5 @@
 // 상황 고르기, 기본 정보, 상황별 질문, 걱정 한 줄, 보충 질문. 이후 맡는 자리: A1.
-// 주소: #/new(상황 고르기), #/q/<단계>(basic-1..5 또는 basic, sq-<키>, cq-<키>, worry, more).
+// 주소: #/new(상황 고르기), #/q/<단계>(basic: 지난번 기본 정보 요약, basic-1..5, sq-<키>, cq-<키>, worry, more).
 // 단계 목록과 보낼 답은 app.js(steps, currentAnswers)가 만들고, 이 파일은 그리기만 한다.
 
 const ADVANCE_MS = 350;
@@ -132,7 +132,8 @@ export function render(root, ctx) {
   const sheet = el("section", { class: "sheet" }, topbar(ctx, backHash, stepText));
   ctx.put(root, sheet);
 
-  if (step.kind === "basic" || step.kind === "basic-all" || step.kind === "pick") return renderPick(sheet, ctx, step, nextHash);
+  if (step.kind === "basic-summary") return renderBasicSummary(sheet, ctx, step, nextHash);
+  if (step.kind === "basic" || step.kind === "pick") return renderPick(sheet, ctx, step, nextHash);
   if (step.kind === "worry") return renderWorry(sheet, ctx, nextHash);
   return renderFollowups(sheet, ctx);
 }
@@ -141,14 +142,9 @@ function renderPick(sheet, ctx, step, nextHash) {
   const { el, session } = ctx;
   let fields;
   let title;
-  let lead = null;
   if (step.kind === "basic") {
     title = step.screen.title;
     fields = step.screen.fields.map((f) => ({ field: f, legend: f.label ?? step.screen.title, hint: step.screen.hint }));
-  } else if (step.kind === "basic-all") {
-    title = "지난번에 적은 기본 정보예요";
-    lead = "달라진 곳만 고쳐 주세요.";
-    fields = ctx.content.basic.flatMap((screen) => screen.fields.map((f) => ({ field: f, legend: f.label ? `${screen.title} · ${f.label}` : screen.title, hint: screen.hint })));
   } else {
     title = step.q.text;
     fields = [{ field: step.q, legend: step.q.text, hint: step.q.hint }];
@@ -174,7 +170,6 @@ function renderPick(sheet, ctx, step, nextHash) {
   refresh();
   ctx.put(sheet,
     el("h1", {}, title),
-    lead ? el("p", { class: "meta" }, lead) : null,
     groups,
     next,
     isPick
@@ -193,6 +188,49 @@ function renderPick(sheet, ctx, step, nextHash) {
         )
       : null
   );
+  ctx.settle();
+}
+
+// 지난번 기본 정보 요약 카드. 잘 안 바뀌는 칸의 답을 한두 줄로 보여 주고 [그대로예요] [고칠 게 있어요]를 묻는다.
+// 고칠 게 있다고 하면 그 자리에서 해당 칸의 보기를 펼친다.
+function renderBasicSummary(sheet, ctx, step, nextHash) {
+  const { el, session } = ctx;
+  // 칸 하나짜리 화면의 답은 한 줄에 모으고, 칸 여러 개인 화면(보호자 여건)은 화면마다 한 줄로 둔다.
+  // 칸 이름이 "~는지"처럼 묻는 말이면 보기 이름만으로 뜻이 통하므로 칸 이름을 붙이지 않는다.
+  const part = (f) => {
+    const label = ctx.knownLabel(f.key, session.answers[f.key]);
+    if (!label) return "";
+    return f.label && !/지$/.test(f.label) ? `${f.label} ${label}` : label;
+  };
+  const single = step.screens.filter((sc) => sc.fields.length === 1).flatMap((sc) => sc.fields.map(part));
+  const multi = step.screens.filter((sc) => sc.fields.length > 1).map((sc) => sc.fields.map(part).filter(Boolean).join(" · "));
+  const lines = [single.filter(Boolean).join(" · "), ...multi].filter(Boolean);
+
+  const card = el(
+    "div",
+    { class: "basic-summary" },
+    lines.length ? lines.map((l) => el("p", { class: "basic-summary-line" }, l)) : el("p", { class: "meta" }, "모두 “잘 모르겠어요”로 적혀 있어요.")
+  );
+  const actions = el(
+    "div",
+    { class: "basic-summary-actions" },
+    el("button", { class: "primary", type: "button", onclick: () => ctx.nav(nextHash()) }, "그대로예요"),
+    el("button", { class: "secondary", type: "button", onclick: () => edit() }, "고칠 게 있어요")
+  );
+  const editBox = el("div", { class: "basic-summary-edit" });
+
+  function edit() {
+    const fields = step.screens.flatMap((sc) => sc.fields.map((f) => ({ field: f, legend: f.label ? `${sc.title} · ${f.label}` : sc.title, hint: sc.hint })));
+    const next = el("button", { class: "primary", type: "button", onclick: () => ctx.nav(nextHash()) }, "다음");
+    const refresh = () => (next.disabled = !fields.every(({ field }) => fieldDone(session, field)));
+    const groups = fields.map(({ field, legend, hint }) => choiceGroup(ctx, field, legend, { hint, onPick: refresh }));
+    refresh();
+    actions.hidden = true;
+    ctx.fill(editBox, el("p", { class: "meta" }, "달라진 곳만 고쳐 주세요."), groups, next);
+    editBox.querySelector("button")?.focus();
+  }
+
+  ctx.put(sheet, el("h1", {}, "지난번 기본 정보"), el("p", { class: "meta" }, "그대로인지 봐 주세요."), card, actions, editBox);
   ctx.settle();
 }
 

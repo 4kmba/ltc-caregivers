@@ -48,6 +48,7 @@ const TYPES = {
   ".jpg": "image/jpeg",
   ".webp": "image/webp",
   ".woff2": "font/woff2",
+  ".woff": "font/woff",
   ".json": "application/json; charset=utf-8",
   ".ico": "image/x-icon"
 };

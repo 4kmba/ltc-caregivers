@@ -1,6 +1,6 @@
 // 수첩 페이지. 이후 맡는 자리: 김영균(틀), B2(오늘 정리한 내용), B3(질문에 답하기).
 // 주소: #/page/new(이번 답으로 만들기), #/page/<id>(저장한 페이지), #/page/unsaved(저장하지 못한 페이지).
-// 순서는 스펙 3절 7단계: 오늘 정리한 내용 / 지난번과 달라진 답 / 고른 방식 / 지금은 이 일부터 / 더 해 볼 만한 일 / 이럴 때 다시 열어 보세요 / 그날 열어 본 질문.
+// 제목(날짜, 상황) 아래에 기본 정보 한 줄. 그다음 순서는 스펙 3절 7단계: 오늘 정리한 내용 / 지난번과 달라진 답 / 고른 방식 / 지금은 이 일부터 / 더 해 볼 만한 일 / 이럴 때 다시 열어 보세요 / 그날 열어 본 질문.
 // 연락처와 링크는 sources에서만 꺼낸다. AI가 쓴 글(why, 요약, 답)에서 번호나 링크를 꺼내지 않는다.
 
 const CONFIRM_LINE = "신청하기 전에 공단(1577-1000)이나 안내된 기관에 꼭 확인해 주세요.";
@@ -203,7 +203,10 @@ function renderPage(root, ctx, page, pageId) {
   // 구간 이름이 없는 항목도 버리지 않는다.
   const orphan = rest.filter((it) => !(it.bucket in buckets));
 
-  const changes = Array.isArray(page.changes) ? page.changes : [];
+  // 지난번에 답이 없던 칸(이번에 새로 붙은 질문)은 "달라진 답"이 아니므로 뺀다.
+  const changes = (Array.isArray(page.changes) ? page.changes : []).filter((c) => c && c.before !== undefined && c.before !== null);
+  // 기본 정보 한 줄(등급 · 받는 돌봄 · 진단 · 거동). "잘 모르겠어요"는 뺀다.
+  const basicLine = ctx.basicLine(page.answers);
   const answerText = (key, v) => (v === undefined || v === null ? "답 없음" : ctx.labelOf(key, v));
   const medical = Array.isArray(page.medical) ? page.medical : [];
   const watch = Array.isArray(page.watch) ? page.watch : [];
@@ -220,14 +223,26 @@ function renderPage(root, ctx, page, pageId) {
         el("span", { class: "page-date" }, typeof page.createdAt === "number" ? dateText(page.createdAt) : ""),
         el("span", { class: "page-situation" }, page.situationTitle ?? "")
       ),
+      basicLine ? el("p", { class: "basic-line" }, basicLine) : null,
       status,
       pageId === "unsaved" ? el("p", { class: "note" }, "이 휴대폰에 저장하지 못했어요. 이 화면을 닫으면 페이지가 사라져요.") : null,
       page.usedAi === false ? el("p", { class: "note" }, "지금은 AI 설명 없이 기본 목록을 보여 드려요") : null,
       urgent ? el("p", { class: "urgent-line" }, URGENT_LINE, " ", el("a", { href: "#/emergency" }, "연락처 보기")) : null,
 
-      section(el, "오늘 정리한 내용", el("p", { class: "summary" }, page.summary || "정리할 답이 없어요.")),
+      // 정리할 답이 없으면(기본 정보만 답한 경우) 이 절을 숨긴다. 옛 페이지는 저장된 글을 그대로 보여 준다.
+      typeof page.summary === "string" && page.summary.trim() ? section(el, "오늘 정리한 내용", el("p", { class: "summary" }, page.summary)) : null,
       changes.length
-        ? section(el, "지난번과 달라진 답", el("ul", { class: "changes" }, changes.map((c) => el("li", {}, `${ctx.questionText(c.key)}${/[?？]$/.test(ctx.questionText(c.key)) ? " " : ": "}${answerText(c.key, c.before)} → ${answerText(c.key, c.after)}`))))
+        ? section(
+            el,
+            "지난번과 달라진 답",
+            el(
+              "ul",
+              { class: "changes" },
+              changes.map((c) =>
+                el("li", {}, el("span", { class: "change-name" }, ctx.shortName(c.key)), el("span", { class: "change-values" }, `${answerText(c.key, c.before)} → ${answerText(c.key, c.after)}`))
+              )
+            )
+          )
         : null,
       page.compare ? section(el, "고른 방식", el("p", { class: "picked" }, page.methodTitle ?? "아직 정하지 않았어요")) : null,
 

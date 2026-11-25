@@ -38,11 +38,22 @@ html { font-size: 100%; }
 html.large { font-size: 120%; }
 * { box-sizing: border-box; }
 
+/* 글꼴: Pretendard(SIL OFL 1.1, fonts/OFL.txt). 온디바이스 원칙에 맞춰 외부 글꼴 서버를 쓰지 않고 앱과 함께 올린다.
+   자주 쓰는 한글 2,350자와 앱·내용 파일에 쓰인 글자만 남기고 굵기는 400～700만 둔 파일이다(약 370KB).
+   여기에 없는 글자는 시스템 글꼴로 보인다. 다시 만드는 법은 fonts/README.md. */
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/PretendardVariable-subset.woff") format("woff");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: "IBM Plex Sans KR", system-ui, sans-serif;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
   font-size: 1.125rem; /* 18px */
   line-height: 1.65;
   word-break: keep-all;
@@ -55,7 +66,7 @@ main {
   margin: 0 auto;
 }
 
-h1 { font-size: 1.75rem; line-height: 1.35; font-weight: 600; margin: 0.25rem 0 0.75rem; } /* 질문 28px */
+h1 { font-size: 1.75rem; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: 0.25rem 0 0.75rem; } /* 질문 28px */
 h2 { font-size: 1.25rem; line-height: 1.4; font-weight: 700; margin: 0 0 0.5rem; }
 h3 { font-size: 0.9375rem; line-height: 1.4; font-weight: 700; margin: 0 0 0.25rem; color: var(--pencil); }
 p { margin: 0 0 0.75rem; }
@@ -94,7 +105,7 @@ a { color: var(--mustard-link); text-decoration: underline; text-underline-offse
 .cover { min-height: 100vh; padding: 2.5rem 1rem 2rem; background: var(--cover-yellow); color: var(--on-yellow); }
 .cover a, .cover .meta { color: var(--on-yellow); }
 .cover :focus-visible { outline-color: var(--on-yellow); }
-.cover-title { font-size: clamp(4rem, 24vw, 6.5rem); line-height: 1.05; font-weight: 700; margin: 0 0 1rem; } /* 104px까지 */
+.cover-title { font-size: clamp(4rem, 24vw, 6.5rem); line-height: 1.05; font-weight: 700; letter-spacing: -0.03em; margin: 0 0 1rem; } /* 104px까지 */
 .cover-lead { font-size: 1.25rem; font-weight: 600; }
 .cover-note, .cover-small { font-size: 0.9375rem; }
 .cover-note { margin-top: 1.5rem; padding: 0.75rem 0.875rem; border: 1.5px solid var(--on-yellow); border-radius: 0.5rem; }
@@ -102,7 +113,7 @@ a { color: var(--mustard-link); text-decoration: underline; text-underline-offse
 .cover-history { margin-top: 2rem; }
 .history-list { list-style: none; padding: 0; margin: 0; }
 .history-item { display: grid; min-height: 2.75rem; padding: 0.625rem 0.875rem; margin-top: 0.5rem; border-left: 6px solid var(--on-yellow); background: var(--paper); color: var(--ink) !important; text-decoration: none; border-radius: 0 0.5rem 0.5rem 0; }
-.history-date { font-weight: 700; font-variant-numeric: tabular-nums; }
+.history-date { font-weight: 700; letter-spacing: -0.01em; }
 .history-line { font-size: 0.9375rem; color: var(--pencil); }
 .simcheong { display: block; max-width: 8rem; height: auto; margin: 0 0 1rem; }
 
@@ -140,7 +151,7 @@ textarea { min-height: 5.5rem; }
 /* 수첩 페이지 */
 .page-band { height: 0.5rem; margin: 0 -1rem; background: var(--cover-yellow); }
 .page-title { display: grid; gap: 0.25rem; margin-bottom: 1rem; }
-.page-date { font-size: clamp(2.75rem, 16vw, 4rem); line-height: 1.05; font-weight: 700; font-variant-numeric: tabular-nums; } /* 64px까지 */
+.page-date { font-size: clamp(2.75rem, 16vw, 4rem); line-height: 1.05; font-weight: 700; letter-spacing: -0.03em; } /* 64px까지 */
 .page-situation { font-size: 1.25rem; font-weight: 600; }
 .page-section { margin: 1.5rem 0; padding-top: 1rem; border-top: 1px solid var(--rule); }
 .summary { white-space: pre-line; }
@@ -204,3 +215,15 @@ textarea { min-height: 5.5rem; }
   .page-band, .emergency-band { margin-left: -1.75rem; margin-right: -1.75rem; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* 다시 쓸 때 요약 카드 */
+.basic-summary { margin: 1rem 0; padding: 0.875rem 1rem; border: 1.5px solid var(--rule); border-left: 6px solid var(--cover-yellow); border-radius: 0.625rem; }
+.basic-summary-line { margin: 0; font-weight: 600; }
+.basic-summary-line + .basic-summary-line { margin-top: 0.25rem; }
+.basic-summary-actions .secondary { margin-top: 0.5rem; }
+.basic-summary-edit:empty { display: none; }
+.basic-line { margin: -0.5rem 0 1rem; color: var(--pencil); font-size: 0.9375rem; }
+.changes { list-style: none; padding: 0; }
+.changes li { padding: 0.375rem 0; border-top: 1px solid var(--rule); }
+.changes li:first-child { border-top: 0; }
+.change-name { font-weight: 700; margin-right: 0.75rem; }
