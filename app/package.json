@@ -3,9 +3,17 @@
   "private": true,
   "type": "module",
   "description": "돌봄수첩: 장기요양 가족 보호자의 돌봄 결정을 날짜별 수첩 페이지로 정리하는 통합 제품 (Team 10)",
-  "engines": { "node": ">=22.9" },
+  "engines": {
+    "node": ">=22.9"
+  },
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "check:content": "node scripts/check-content.mjs"
+    "check:content": "node scripts/check-content.mjs",
+    "try-call": "node scripts/try-call.mjs",
+    "eval": "node scripts/eval.mjs",
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0"
   }
 }
