@@ -1,0 +1,1701 @@
+{
+  "note": "자료 목록. 연락처와 링크는 이 파일에만 적는다. checks에 서로 다른 두 사람이 있어야 이 자료를 가리키는 카드와 답이 화면에 나온다.",
+  "sources": [
+    {
+      "id": "bokjiro",
+      "kind": "page",
+      "name": "복지로",
+      "org": "보건복지부·한국사회보장정보원",
+      "url": "https://www.bokjiro.go.kr",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "bokjiro_membership",
+      "kind": "page",
+      "name": "복지로 '복지멤버십' 가입 안내",
+      "org": "보건복지부·한국사회보장정보원",
+      "url": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1307629_1118.html",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "bokjiro_portal",
+      "kind": "page",
+      "name": "복지로",
+      "org": "보건복지부·한국사회보장정보원",
+      "url": "https://www.bokjiro.go.kr/ssis-tbu/index.do",
+      "phone": "129",
+      "summary": "정부 복지서비스를 찾아보고 신청하는 포털이다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "call129",
+      "kind": "page",
+      "name": "보건복지상담센터",
+      "org": "보건복지부",
+      "url": "https://www.129.go.kr",
+      "phone": "129",
+      "summary": "보건복지 제도를 국번 없이 129로 상담한다(무료, 평일 9시～18시). 긴급복지지원, 노인학대 같은 긴급지원상담은 24시간 받는다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "care_agency",
+      "kind": "place",
+      "name": "이용하는 장기요양기관의 담당자",
+      "org": "",
+      "url": null,
+      "phone": null,
+      "summary": "방문요양, 주야간보호, 단기보호, 요양원의 사회복지사나 간호 담당자입니다.",
+      "checks": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "community_center",
+      "kind": "place",
+      "name": "주민센터 (행정복지센터)",
+      "org": "",
+      "url": null,
+      "phone": null,
+      "summary": "장기요양 말고 지자체 돌봄 지원과 긴급 지원을 묻는 곳입니다.",
+      "checks": [],
+      "from": [
+        "백민경"
+      ]
+    },
+    {
+      "id": "copay_notice",
+      "kind": "page",
+      "name": "장기요양 본인부담금 감경에 관한 고시 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/행정규칙/장기요양본인부담금감경에관한고시",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "dementia_call",
+      "kind": "page",
+      "name": "치매상담콜센터",
+      "org": "중앙치매센터",
+      "url": "https://www.nid.or.kr/support/callcenter.aspx",
+      "phone": "1899-9988",
+      "summary": "보건복지부가 열고 중앙치매센터가 운영한다. 연중무휴 7시～22시에 치매 상담을 받는다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "dementia_center",
+      "kind": "page",
+      "name": "치매안심센터·보건소 찾기",
+      "org": "중앙치매센터",
+      "url": "https://www.nid.or.kr/info/facility_new2.aspx",
+      "phone": null,
+      "summary": "지역을 골라 치매안심센터, 보건소, 치매안심병원 같은 기관의 주소와 전화번호를 찾는다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "dementia_law",
+      "kind": "page",
+      "name": "치매관리법 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/치매관리법",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "doctor",
+      "kind": "place",
+      "name": "다니는 병원의 주치의",
+      "org": "",
+      "url": null,
+      "phone": null,
+      "summary": "약, 증상, 진료에 관한 일을 묻는 곳입니다.",
+      "checks": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "easylaw_dementia_check",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 치매 노인 > 치매 조기검진 (2026-10-15 기준)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=854&ccfNo=1&cciNo=2&cnpClsNo=2",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "easylaw_dementia_cost",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 치매 노인 > 치매 치료비 지원 (2026-10-15 기준)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=854&ccfNo=2&cciNo=1&cnpClsNo=1",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "easylaw_dementia_family",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 치매 노인 > 치매환자 가족 및 보호자 지원 (2026-10-15 기준, 2026년 치매정책 사업안내 인용)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=854&ccfNo=2&cciNo=4&cnpClsNo=1",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "easylaw_dementia_wander",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 치매 노인 > 실종 예방(배회가능 어르신 인식표, 지문 사전등록, 배회감지기)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://easylaw.go.kr/CSP/CnpClsMainBtr.laf?popMenu=ov&csmSeq=854&ccfNo=3&cciNo=1&cnpClsNo=1",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "elder_abuse",
+      "kind": "page",
+      "name": "대한민국 정책브리핑 노인학대 신고 1577-1389 안내",
+      "org": "대한민국 정책브리핑",
+      "url": "https://www.korea.kr/multi/visualNewsView.do?newsId=148896269",
+      "phone": "1577-1389",
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "elder_law",
+      "kind": "page",
+      "name": "노인복지법 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/노인복지법",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "elder_rule",
+      "kind": "page",
+      "name": "노인복지법 시행규칙 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/노인복지법시행규칙",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "emergency119",
+      "kind": "page",
+      "name": "119 신고",
+      "org": "소방청 119 안전신고센터",
+      "url": "https://www.119.go.kr/Center119/sense01.do",
+      "phone": "119",
+      "summary": "교통사고, 급성질환 등 응급환자가 생기면 119로 신고한다. 휴대폰으로도 지역번호 없이 걸면 가장 가까운 소방관서가 받고, 119구급대 이송은 무료다.",
+      "emergency_only": true,
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "equal_law",
+      "kind": "page",
+      "name": "남녀고용평등과 일·가정 양립 지원에 관한 법률 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/남녀고용평등과일ㆍ가정양립지원에관한법률",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "gov24_dementia_call",
+      "kind": "page",
+      "name": "정부24 치매상담콜센터 운영",
+      "org": "정부24",
+      "url": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/135200000124",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "gov24_dementia_cost",
+      "kind": "page",
+      "name": "정부24 치매치료관리비 지원",
+      "org": "정부24",
+      "url": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/135200000125",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "gov24_emergency_welfare",
+      "kind": "page",
+      "name": "정부24 긴급복지 생계지원 신청",
+      "org": "정부24",
+      "url": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/135200005003",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "gov24_welfare_tool",
+      "kind": "page",
+      "name": "정부24 노인복지용구제공",
+      "org": "정부24",
+      "url": "https://www.gov.kr/portal/service/serviceInfo/GMW000000110",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "guri_dementia_family",
+      "kind": "page",
+      "name": "구리시 치매안심센터 가족지원 프로그램 안내",
+      "org": "구리시",
+      "url": "https://www.guri.go.kr/health/contents.do?key=2557",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "hospital_sw",
+      "kind": "place",
+      "name": "병원 사회복지팀 (의료사회복지사)",
+      "org": "",
+      "url": null,
+      "phone": null,
+      "summary": "입원 중이면 퇴원 뒤 돌봄 계획, 간병, 쓸 수 있는 제도를 상담합니다. 어디 있는지 모르면 병동 간호사실이나 원무과에 묻습니다.",
+      "checks": [],
+      "from": [
+        "백민경",
+        "김영균"
+      ]
+    },
+    {
+      "id": "hs_appeal",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 등급판정 결과에 대한 이의신청",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.easylaw.go.kr/CSP/OnhunqueansInfoRetrieve.laf?onhunqnaAstSeq=97&onhunqueSeq=6348",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_apply",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 장기요양인정신청",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=1963&ccfNo=3&cciNo=1&cnpClsNo=2",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_call",
+      "kind": "page",
+      "name": "정책브리핑: 치매상담전화센터 (2025.4.7.)",
+      "org": "대한민국 정책브리핑",
+      "url": "https://www.korea.kr/news/policyNewsView.do?newsId=148941244",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_cap",
+      "kind": "page",
+      "name": "정책브리핑: 본인부담상한 초과 의료비 환급 (2025.8.27.)",
+      "org": "대한민국 정책브리핑",
+      "url": "https://www.korea.kr/news/policyNewsView.do?newsId=148948287",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_choose",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 장기요양기관 선택",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=2038&ccfNo=3&cciNo=2&cnpClsNo=1",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_copay",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 본인부담금",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=2038&ccfNo=3&cciNo=3&cnpClsNo=1",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_delirium",
+      "kind": "page",
+      "name": "서울대학교병원 의학정보: 섬망",
+      "org": "서울대학교병원",
+      "url": "https://www.snuh.org/health/nMedInfo/nView.do?category=DIS&medid=AC000010",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_doctor",
+      "kind": "page",
+      "name": "노인장기요양보험: 의사소견서 발급기관",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/201/selectDodEduCpetMdcAdminList.web?menuId=npe0000000080&prevPath=%2Fnpbs%2Fr%2Fa%2F201%2FselectLtcoSrch.web",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_grade",
+      "kind": "page",
+      "name": "국가건강정보포털: 장기요양등급결정과 이용",
+      "org": "질병관리청",
+      "url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=6751",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_kinds",
+      "kind": "page",
+      "name": "찾기쉬운 생활법령정보: 급여의 종류",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=2038&ccfNo=3&cciNo=1&cnpClsNo=1",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_line109",
+      "kind": "page",
+      "name": "정책브리핑: 자살예방 상담번호 109 통합",
+      "org": "대한민국 정책브리핑",
+      "url": "https://www.korea.kr/news/policyNewsView.do?newsId=148921684",
+      "phone": "109",
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "hs_rest",
+      "kind": "page",
+      "name": "복지로: 장기요양 가족휴가제 (2025.8.6.)",
+      "org": "보건복지부·한국사회보장정보원",
+      "url": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1308416_1118.html",
+      "phone": null,
+      "summary": "",
+      "checks": [],
+      "from": [
+        "한수연"
+      ]
+    },
+    {
+      "id": "incheon_elder_protect",
+      "kind": "page",
+      "name": "인천광역시 노인보호전문기관 운영 안내",
+      "org": "인천광역시",
+      "url": "https://www.incheon.go.kr/welfare/WE050405",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "integ_care_law",
+      "kind": "page",
+      "name": "의료ㆍ요양 등 지역 돌봄의 통합지원에 관한 법률 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/의료ㆍ요양등지역돌봄의통합지원에관한법률",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "kdca",
+      "kind": "page",
+      "name": "질병관리청 국가건강정보포털",
+      "org": "질병관리청",
+      "url": "https://health.kdca.go.kr",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "kdca_drug",
+      "kind": "page",
+      "name": "질병관리청 국가건강정보포털 노인 약물복용",
+      "org": "질병관리청",
+      "url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5428",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "kdca_tbi",
+      "kind": "page",
+      "name": "질병관리청 국가건강정보포털 외상성 뇌손상",
+      "org": "질병관리청",
+      "url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5864",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "local_health_dementia",
+      "kind": "page",
+      "name": "수원시보건소 치매조기검진·배회가능 어르신 인식표 안내 (지자체 예시)",
+      "org": "수원시",
+      "url": "https://health.suwon.go.kr/sub.asp?page_code=sub050601",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "ltc",
+      "kind": "page",
+      "name": "노인장기요양보험 홈페이지·고객센터",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr",
+      "phone": "1577-1000",
+      "summary": "장기요양 인정 신청, 급여 종류, 비용 기준을 안내하는 공식 사이트다. 대표전화는 평일 9시～18시에 받는다(유료 전화).",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        },
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균",
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_after_grade",
+      "kind": "page",
+      "name": "등급을 받은 뒤 이용 절차",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/202/npeb202m01.web?menuId=npe0000002729",
+      "phone": "1577-1000",
+      "summary": "장기요양인정서와 개인별장기요양이용계획서를 받은 뒤, 장기요양기관을 골라 급여계약을 맺고 서비스를 이용한다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_apply",
+      "kind": "page",
+      "name": "장기요양인정 신청과 등급 변경",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/201/npeb201m01.web?menuId=npe0000002728",
+      "phone": "1577-1000",
+      "summary": "65세 이상, 또는 치매·뇌혈관질환·파킨슨병 같은 노인성 질병이 있는 65세 미만이 공단 방문, 우편, 팩스, 인터넷, 「건강보험25시」 앱으로 신청한다. 이미 등급이 있어도 상태가 바뀌면 등급변경을 신청할 수 있고, 최근 6개월 안에 입·퇴원이나 수술로 상태가 바뀌었다면 심의가 보류될 수 있다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_benefit_kinds",
+      "kind": "page",
+      "name": "재가급여·시설급여 종류",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/303/npeb303m01.web?menuId=npe0000002735",
+      "phone": "1577-1000",
+      "summary": "집에서 받는 재가급여(방문요양, 인지활동형 방문요양, 방문목욕, 방문간호, 주·야간보호, 월 9일 이내 단기보호, 복지용구)와 입소하는 시설급여(노인요양시설, 노인요양공동생활가정)를 설명한다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_benefit_notice",
+      "kind": "page",
+      "name": "장기요양급여 제공기준 및 급여비용 산정방법 등에 관한 고시 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/행정규칙/장기요양급여제공기준및급여비용산정방법등에관한고시",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "ltc_copay",
+      "kind": "page",
+      "name": "본인부담금 기준",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/101/npeb101m01.web?menuId=npe0000002723",
+      "phone": "1577-1000",
+      "summary": "본인부담금은 재가급여 급여비용의 15%, 시설급여 급여비용의 20%다. 국민기초생활보장법에 따른 의료급여 수급자는 전액 면제된다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_copay_reduce",
+      "kind": "page",
+      "name": "본인부담금 감경",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/503/npeb503m01.web?menuId=npe0000002743",
+      "phone": "1577-1000",
+      "summary": "소득과 건강보험료 기준에 따라 본인부담금을 60% 또는 40% 감경한다. 감경 대상자의 본인부담률은 60% 감경이면 재가급여 6%·시설급여 8%, 40% 감경이면 재가급여 9%·시설급여 12%다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_decree",
+      "kind": "page",
+      "name": "노인장기요양보험법 시행령 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/노인장기요양보험법시행령",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "ltc_fall_env_pilot",
+      "kind": "page",
+      "name": "낙상예방 재가환경지원 시범사업",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/r/o/299/npro299m01.web?menuId=npe0000002732",
+      "phone": "1577-1000",
+      "summary": "낙상 위험이 큰 재가 수급자의 집에 안전 시공을 지원한다(1인당 생애 100만원 한도, 본인부담 15%). 본인 또는 가족 소유 집에 사는 경우만 해당하고 아파트·임대 거주자, 시설 입소자, 병·의원 입원자는 제외된다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_family_cash",
+      "kind": "page",
+      "name": "가족요양비(특별현금급여)",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/305/npeb305m01.web?menuId=npe0000002737",
+      "phone": "1577-1000",
+      "summary": "섬·벽지 거주처럼 정해진 사유로 장기요양기관을 이용하기 어려워 가족 등에게 방문요양에 상당하는 돌봄을 받을 때 매월 240,450원을 지급한다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_family_leave",
+      "kind": "page",
+      "name": "장기요양 가족휴가제",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/701/npeb701m01.web?menuId=npe0000002854",
+      "phone": "1577-1000",
+      "summary": "집에서 돌보는 가족이 쉴 수 있도록 연간 단기보호 12일 또는 종일 방문요양 24회를 이용할 수 있다. 1～2등급 전체, 치매가 있는 3～5등급, 인지지원등급이 대상이다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_find_agency",
+      "kind": "page",
+      "name": "장기요양기관 찾기",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/r/a/201/selectLtcoSrch.web?menuId=npe0000002783",
+      "phone": "1577-1000",
+      "summary": "지역과 급여종류로 전국 장기요양기관을 검색한다. 치매전담형 장기요양기관도 따로 찾을 수 있다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_home_medical_pilot",
+      "kind": "page",
+      "name": "장기요양 재택의료센터 시범사업",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/612/npeb612m01.web?menuId=npe0000002733",
+      "phone": "1577-1000",
+      "summary": "거동이 불편해 의사가 재택의료가 필요하다고 판단한 재가 수급자에게 의사·간호사·사회복지사 팀이 집으로 찾아간다(의사 월 1회 이상, 간호사 월 2회 이상).",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_integrated_home",
+      "kind": "page",
+      "name": "통합재가서비스",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/610/npeb610m01.web?menuId=npe0000002731",
+      "phone": "1577-1000",
+      "summary": "하나의 기관이 주·야간보호, 요양, 목욕, 간호를 수급자 상태에 맞춰 묶어 제공한다. 1～5등급 수급자가 대상이다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_law",
+      "kind": "page",
+      "name": "노인장기요양보험법 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/노인장기요양보험법",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "ltc_monthly_limit",
+      "kind": "page",
+      "name": "월 한도액과 급여비용",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/502/npeb502m01.web?menuId=npe0000002742",
+      "phone": "1577-1000",
+      "summary": "재가급여는 등급별 월 한도액 안에서 이용한다. 등급별 월 한도액과 서비스별 급여비용(2026.1.1. 기준) 표, 간편 계산기가 있다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "ltc_rule",
+      "kind": "page",
+      "name": "노인장기요양보험법 시행규칙 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/노인장기요양보험법시행규칙",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "ltc_welfare_tool",
+      "kind": "page",
+      "name": "복지용구",
+      "org": "국민건강보험공단",
+      "url": "https://www.longtermcare.or.kr/npbs/e/b/304/npeb304m01.web?menuId=npe0000002736",
+      "phone": "1577-1000",
+      "summary": "시설에 입소하지 않은 수급자가 이동변기, 성인용보행기, 안전손잡이, 수동휠체어, 전동침대 같은 용구를 사거나 빌릴 수 있다. 본인부담 15%(감경 대상자 6% 또는 9%, 기초생활수급자 0%), 연간 한도 160만원.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "medical_law",
+      "kind": "page",
+      "name": "의료법 제47조의3 간병서비스의 관리ㆍ감독 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/의료법",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "medical_rule",
+      "kind": "page",
+      "name": "의료법 시행규칙 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/의료법시행규칙",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mental",
+      "kind": "page",
+      "name": "국가정신건강정보포털",
+      "org": "국립정신건강센터",
+      "url": "https://www.mentalhealth.go.kr",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mental_crisis",
+      "kind": "contact",
+      "name": "정신건강위기상담전화",
+      "org": "보건복지부",
+      "url": null,
+      "phone": "1577-0199",
+      "summary": "24시간 받는 정신건강 위기 상담 전화입니다.",
+      "checks": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "missing_law",
+      "kind": "page",
+      "name": "실종아동등의 보호 및 지원에 관한 법률 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/법령/실종아동등의보호및지원에관한법률",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "moel_call",
+      "kind": "contact",
+      "name": "고용노동부 고객상담센터",
+      "org": "고용노동부",
+      "url": null,
+      "phone": "1350",
+      "summary": "가족돌봄휴가와 휴직을 쓸 수 있는지 상담합니다.",
+      "checks": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "moel_family_care_card",
+      "kind": "page",
+      "name": "고용노동부 카드뉴스 가족돌봄휴가",
+      "org": "고용노동부",
+      "url": "https://www.moel.go.kr/news/cardinfo/view.do?bbs_seq=20240500630",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "moel_family_care_qa",
+      "kind": "page",
+      "name": "고용노동부 빠른인터넷상담 가족돌봄휴직 연간 기산",
+      "org": "고용노동부",
+      "url": "https://www.moel.go.kr/minwon/fastcounsel/fastcounselView.do?inetDcssMngId=202406181143494230063",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_care_guideline",
+      "kind": "page",
+      "name": "보건복지부 보도자료 병원 간병서비스 질 체계적으로 관리한다 (2026-06-16, 간병서비스 제공 표준지침·표준계약서)",
+      "org": "보건복지부",
+      "url": "https://mohw.go.kr/board.es?act=view&bid=0027&list_no=1490867&mid=a10503010100&nPage=1&tag=",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_dementia",
+      "kind": "page",
+      "name": "보건복지부 치매 조기검진 안내",
+      "org": "보건복지부",
+      "url": "https://www.mohw.go.kr/menu.es?mid=a10712010100",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_elder_care",
+      "kind": "page",
+      "name": "보건복지부 노인맞춤돌봄서비스 안내",
+      "org": "보건복지부",
+      "url": "https://www.mohw.go.kr/menu.es?mid=a10712010400",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_fall_env",
+      "kind": "page",
+      "name": "보건복지부 보도자료 재가 어르신 낙상사고 예방 위해 주거 환경 개선을 지원한다 (2026-06-14)",
+      "org": "보건복지부",
+      "url": "https://mohw.go.kr/board.es?act=view&bid=0027&list_no=1490828&mid=a10503000000",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_ltc_2026",
+      "kind": "page",
+      "name": "보건복지부 보도자료 2026년도 장기요양보험료율 0.9448% (2025-11-04, 가족휴가제·방문간호 면제·주야간보호 내 단기보호)",
+      "org": "보건복지부",
+      "url": "https://www.mohw.go.kr/board.es?act=view&bid=0027&list_no=1487817&mid=a10503000000",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_ltc_hospital_care",
+      "kind": "page",
+      "name": "보건복지부 보도자료 요양병원 의료혁신 및 간병서비스 제도화 위한 대국민 토론회 개최 (2026-07-28)",
+      "org": "보건복지부",
+      "url": "https://mohw.go.kr/board.es?act=view&bid=0027&list_no=1491444&mid=a10503000000",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_nursing_2026",
+      "kind": "page",
+      "name": "보건복지부 보도자료 비수도권 상급종합병원 간호·간병통합서비스 제공 병동 확대 (2026-04-23)",
+      "org": "보건복지부",
+      "url": "https://mohw.go.kr/board.es?act=view&bid=0027&list_no=1490266&mid=a10503010100&nPage=2&tag=",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis",
+      "kind": "page",
+      "name": "국민건강보험공단 누리집",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_2026_changes",
+      "kind": "page",
+      "name": "국민건강보험공단 2026년 달라지는 건강·장기요양제도 안내",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/renewal_popup/poster/20260204_poster_longdesc_1.html",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_copay_cap",
+      "kind": "page",
+      "name": "국민건강보험공단 본인부담액상한제 제도개요",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/nhis/policy/wbhada14200m01.do",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_copay_cap_2026",
+      "kind": "page",
+      "name": "국민건강보험공단 2026년도 본인부담상한액 안내",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/nhis/etc/20260113_banner_pop01.do",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_family_cash_area",
+      "kind": "page",
+      "name": "가족요양비 지급 및 의사소견서 제출 제외대상 섬·벽지지역 고시 (보건복지부고시 제2026-198호)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=92",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_ltc_apply",
+      "kind": "page",
+      "name": "국민건강보험공단 장기요양인정 신청 및 조사 절차",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/static/html/wbda/c/wbdac02.html",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_ltc_benefit_notice",
+      "kind": "page",
+      "name": "장기요양급여 제공기준 및 급여비용 산정방법 등에 관한 고시 (보건복지부고시 제2026-189호, 2026-10-01 시행)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=1637",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_ltc_cost",
+      "kind": "page",
+      "name": "국민건강보험공단 노인장기요양보험 재원조달 및 급여비용 (본인일부부담금)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/static/html/wbda/c/wbdac05.html",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_ltc_decree",
+      "kind": "page",
+      "name": "노인장기요양보험법 시행령 현행 전문 (국민건강보험공단 건강Law)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=31",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_ltc_eval_notice",
+      "kind": "page",
+      "name": "장기요양기관 평가방법 등에 관한 고시 (보건복지부고시 제2025-209호)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=102",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_ltc_law",
+      "kind": "page",
+      "name": "노인장기요양보험법 현행 전문 (국민건강보험공단 건강Law)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=30",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_ltc_rule",
+      "kind": "page",
+      "name": "노인장기요양보험법 시행규칙 현행 전문 (국민건강보험공단 건강Law)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=32",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_nursing_find",
+      "kind": "page",
+      "name": "국민건강보험공단 웹진: 간호·간병통합서비스 이용 안내(2023-09, 병원 찾기 경로와 이용 조건)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/static/alim/paper/oldpaper/202309/sub/section2_5.html",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_special_calc",
+      "kind": "page",
+      "name": "국민건강보험공단 본인일부부담금 산정특례 제도",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/nhis/policy/wbhada15400m01.do",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nhis_welfare_tool_notice",
+      "kind": "page",
+      "name": "복지용구 급여범위 및 급여기준 등에 관한 고시 (보건복지부고시 제2026-13호)",
+      "org": "국민건강보험공단",
+      "url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=96",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "nid",
+      "kind": "page",
+      "name": "중앙치매센터 치매정보포털",
+      "org": "중앙치매센터",
+      "url": "https://www.nid.or.kr",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균",
+        "백민경"
+      ]
+    },
+    {
+      "id": "nid_service_navi",
+      "kind": "page",
+      "name": "알짜정보내비게이션(치매 지원서비스 찾기)",
+      "org": "중앙치매센터",
+      "url": "https://www.nid.or.kr/support/c_service_2024.aspx",
+      "phone": "1899-9988",
+      "summary": "나이, 거주지, 치매 진단 여부, 가구 구성, 소득을 고르면 받을 수 있는 치매 지원서비스와 시설을 찾아 준다.",
+      "checks": [
+        {
+          "by": "유정민",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "police112",
+      "kind": "contact",
+      "name": "경찰 112",
+      "org": "경찰청",
+      "url": null,
+      "phone": "112",
+      "summary": "폭력이나 위협이 있을 때 신고합니다.",
+      "emergency_only": true,
+      "checks": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "police_prereg",
+      "kind": "page",
+      "name": "경찰민원24 지문 등 사전등록 안내",
+      "org": "경찰청",
+      "url": "https://minwon24.police.go.kr/cvlcpt/cvlcptGdInfo.do?cvlcptId=MW-076",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "safe182",
+      "kind": "page",
+      "name": "경찰청 안전Dream (실종 예방 사전등록)",
+      "org": "경찰청",
+      "url": "https://www.safe182.go.kr",
+      "phone": "182",
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "welfare_tool_notice",
+      "kind": "page",
+      "name": "복지용구 급여범위 및 급여기준 등에 관한 고시 (국가법령정보센터)",
+      "org": "법제처 국가법령정보센터",
+      "url": "https://www.law.go.kr/행정규칙/복지용구급여범위및급여기준등에관한고시",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-10-29"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "worklife_family_care",
+      "kind": "page",
+      "name": "고용노동부 일생활균형 가족돌봄휴가 안내",
+      "org": "고용노동부",
+      "url": "https://www.worklife.kr/website_renew/index/workerSupport/family_care_leave.asp",
+      "phone": null,
+      "summary": "",
+      "checks": [
+        {
+          "by": "김영균",
+          "date": "2026-11-07"
+        }
+      ],
+      "from": [
+        "김영균"
+      ]
+    }
+  ]
+}

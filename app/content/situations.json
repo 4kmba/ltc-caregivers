@@ -1,0 +1,629 @@
+{
+  "note": "상황과 질문. basic은 처음 한 번만 묻고 저장하는 기본 정보, situations는 상황 카드와 상황별 질문, conditional은 답에 따라 붙는 질문, topics는 주제별 화면의 주제다.",
+  "basic": [
+    {
+      "no": 1,
+      "title": "장기요양등급이 있나요?",
+      "fields": [
+        {
+          "key": "grade",
+          "type": "one",
+          "options": [
+            {
+              "value": "none",
+              "label": "없어요"
+            },
+            {
+              "value": "applying",
+              "label": "신청 중이에요"
+            },
+            {
+              "value": "g1",
+              "label": "1등급"
+            },
+            {
+              "value": "g2",
+              "label": "2등급"
+            },
+            {
+              "value": "g3",
+              "label": "3등급"
+            },
+            {
+              "value": "g4",
+              "label": "4등급"
+            },
+            {
+              "value": "g5",
+              "label": "5등급"
+            },
+            {
+              "value": "cognitive",
+              "label": "인지지원등급"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "no": 2,
+      "title": "지금 어떤 돌봄을 받고 계세요?",
+      "hint": "여러 개 고를 수 있어요.",
+      "fields": [
+        {
+          "key": "care",
+          "type": "many",
+          "exclusive": [
+            "unknown"
+          ],
+          "options": [
+            {
+              "value": "family",
+              "label": "가족만 돌봐요"
+            },
+            {
+              "value": "home_visit",
+              "label": "방문요양"
+            },
+            {
+              "value": "daycare",
+              "label": "주야간보호"
+            },
+            {
+              "value": "nursing_home",
+              "label": "요양원"
+            },
+            {
+              "value": "hospital",
+              "label": "요양병원·병원에 입원 중"
+            },
+            {
+              "value": "private_caregiver",
+              "label": "개인 간병인"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "no": 3,
+      "title": "진단받은 병이 있나요?",
+      "hint": "여러 개 고를 수 있어요.",
+      "fields": [
+        {
+          "key": "diagnoses",
+          "type": "many",
+          "exclusive": [
+            "none",
+            "unknown"
+          ],
+          "options": [
+            {
+              "value": "dementia",
+              "label": "치매"
+            },
+            {
+              "value": "parkinson",
+              "label": "파킨슨"
+            },
+            {
+              "value": "stroke",
+              "label": "뇌졸중"
+            },
+            {
+              "value": "fracture",
+              "label": "골절·낙상"
+            },
+            {
+              "value": "other",
+              "label": "기타"
+            },
+            {
+              "value": "none",
+              "label": "없어요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "no": 4,
+      "title": "걷기와 대화는 어떠세요?",
+      "fields": [
+        {
+          "key": "mobility",
+          "label": "거동",
+          "type": "one",
+          "options": [
+            {
+              "value": "walk",
+              "label": "혼자 걸으세요"
+            },
+            {
+              "value": "assist",
+              "label": "부축이 필요해요"
+            },
+            {
+              "value": "bed",
+              "label": "주로 누워 지내세요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        },
+        {
+          "key": "talk",
+          "label": "대화",
+          "type": "one",
+          "options": [
+            {
+              "value": "normal",
+              "label": "평소처럼 말씀하세요"
+            },
+            {
+              "value": "sometimes",
+              "label": "가끔 엉뚱한 말씀을 하세요"
+            },
+            {
+              "value": "hard",
+              "label": "대화가 어려워요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "no": 5,
+      "title": "돌보는 가족의 여건은 어떠세요?",
+      "fields": [
+        {
+          "key": "lives_together",
+          "label": "함께 사는지",
+          "type": "one",
+          "options": [
+            {
+              "value": "yes",
+              "label": "함께 살아요"
+            },
+            {
+              "value": "no",
+              "label": "따로 살아요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        },
+        {
+          "key": "works",
+          "label": "일을 하는지",
+          "type": "one",
+          "options": [
+            {
+              "value": "yes",
+              "label": "일을 해요"
+            },
+            {
+              "value": "no",
+              "label": "일을 하지 않아요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        },
+        {
+          "key": "daytime_family",
+          "label": "평일 낮에 곁에 있을 가족",
+          "type": "one",
+          "options": [
+            {
+              "value": "yes",
+              "label": "있어요"
+            },
+            {
+              "value": "no",
+              "label": "없어요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        },
+        {
+          "key": "cost_burden",
+          "label": "비용 부담",
+          "type": "one",
+          "options": [
+            {
+              "value": "high",
+              "label": "커요"
+            },
+            {
+              "value": "medium",
+              "label": "보통이에요"
+            },
+            {
+              "value": "low",
+              "label": "크지 않아요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "situations": [
+    {
+      "id": "fall",
+      "title": "갑자기 넘어지셨어요",
+      "hint": "넘어져서 다쳤거나 걷기 어려워졌어요",
+      "compare": true,
+      "priority": "P0",
+      "questions": [
+        {
+          "key": "treated",
+          "text": "병원 진료를 받았나요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "admitted",
+              "label": "입원했어요"
+            },
+            {
+              "value": "home",
+              "label": "진료 후 집으로 왔어요"
+            },
+            {
+              "value": "not_yet",
+              "label": "아직 받지 않았어요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ],
+      "from": [
+        "백민경",
+        "김영균"
+      ],
+      "watch": [
+        "한 달 안에 또 넘어지신다",
+        "입원이 길어지며 정신이 흐려지거나 기운이 크게 떨어진다",
+        "교대 일정이 자주 비어 어르신이 혼자 계시게 된다"
+      ]
+    },
+    {
+      "id": "symptom",
+      "title": "증상이 나빠졌어요",
+      "hint": "가족을 못 알아보거나, 성격·행동이 달라졌어요",
+      "compare": true,
+      "priority": "P0",
+      "questions": [
+        {
+          "key": "change",
+          "text": "어떤 변화가 가장 큰가요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "memory",
+              "label": "기억 (가족을 못 알아봄 등)"
+            },
+            {
+              "value": "behavior",
+              "label": "성격·행동 (화, 의심, 배회)"
+            },
+            {
+              "value": "daily",
+              "label": "일상생활 (식사, 대소변)"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        },
+        {
+          "key": "risk",
+          "text": "혼자 있을 때 위험했던 일이 있었나요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "yes",
+              "label": "있었어요"
+            },
+            {
+              "value": "no",
+              "label": "없었어요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ],
+          "hint": "배회, 가스불, 낙상 같은 일이요."
+        },
+        {
+          "key": "sudden_change",
+          "text": "최근 며칠이나 몇 주 사이에 갑자기 달라졌나요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "yes",
+              "label": "네, 갑자기 달라졌어요"
+            },
+            {
+              "value": "no",
+              "label": "아니요, 천천히 변했어요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ],
+      "from": [
+        "백민경",
+        "김영균"
+      ],
+      "watch": [
+        "혼자 있을 때 위험한 일이 처음 생긴다",
+        "센터에 적응하지 못하고 계속 집에 가겠다고 하신다",
+        "가족이 다치거나 위협을 느끼는 일이 생긴다"
+      ]
+    },
+    {
+      "id": "hospital",
+      "title": "입원했거나 곧 퇴원해요",
+      "hint": "병원에 계시거나 퇴원 날짜가 다가와요",
+      "compare": true,
+      "priority": "P0",
+      "questions": [
+        {
+          "key": "hospital_stay",
+          "text": "병원에는 앞으로 얼마나 더 계실 것 같나요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "soon",
+              "label": "곧 퇴원해요"
+            },
+            {
+              "value": "long",
+              "label": "계속 계실 예정이에요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ],
+      "from": [
+        "김영균"
+      ],
+      "watch": [
+        "퇴원 뒤 한 주 안에 식사나 잠이 크게 달라진다",
+        "단기보호가 끝날 때까지 집에서 돌볼 방법이 정해지지 않는다",
+        "입원이 길어지며 정신이 흐려지거나 기운이 크게 떨어진다"
+      ]
+    },
+    {
+      "id": "unknown",
+      "title": "잘 모르겠어요",
+      "hint": "무엇부터 해야 할지 모르겠어요",
+      "compare": false,
+      "priority": "P0",
+      "questions": [],
+      "watch": [
+        "식사, 잠, 대소변 습관이 갑자기 달라진다",
+        "혼자 있을 때 위험한 일이 생긴다",
+        "주 보호자가 더는 버티기 어렵다"
+      ],
+      "from": [
+        "백민경",
+        "김영균"
+      ]
+    },
+    {
+      "id": "caregiver_out",
+      "title": "주 보호자가 돌볼 수 없게 됐어요",
+      "hint": "아프거나, 출장·출근 때문에 돌볼 수 없어요",
+      "compare": true,
+      "priority": "P0",
+      "questions": [
+        {
+          "key": "reason",
+          "text": "왜 돌볼 수 없게 됐나요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "illness",
+              "label": "질병이나 입원"
+            },
+            {
+              "value": "work",
+              "label": "출장이나 출근 공백"
+            },
+            {
+              "value": "exhausted",
+              "label": "지쳐서 쉬어야 해요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        },
+        {
+          "key": "duration",
+          "text": "얼마 동안인가요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "days",
+              "label": "며칠"
+            },
+            {
+              "value": "weeks",
+              "label": "몇 주"
+            },
+            {
+              "value": "open",
+              "label": "기한이 없어요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        },
+        {
+          "key": "other_family",
+          "text": "대신 돌볼 수 있는 다른 가족이 있나요?",
+          "type": "one",
+          "options": [
+            {
+              "value": "yes",
+              "label": "있어요"
+            },
+            {
+              "value": "no",
+              "label": "없어요"
+            },
+            {
+              "value": "unknown",
+              "label": "잘 모르겠어요"
+            }
+          ]
+        }
+      ],
+      "from": [
+        "백민경"
+      ],
+      "watch": [
+        "교대 일정이 자주 바뀌거나 비는 날이 생긴다",
+        "기관에서 시간을 늘리기 어렵다고 한다",
+        "주 보호자의 회복이 길어진다"
+      ]
+    },
+    {
+      "id": "suspect",
+      "title": "기억력이나 행동이 걱정돼 알아보는 중이에요",
+      "hint": "진단이나 등급을 받기 전이에요",
+      "compare": false,
+      "priority": "P0",
+      "questions": [],
+      "watch": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "new_grade",
+      "title": "등급을 받은 지 얼마 안 됐어요",
+      "hint": "어떤 서비스를 어떻게 쓸지 정해야 해요",
+      "compare": false,
+      "priority": "P0",
+      "questions": [],
+      "watch": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "facility",
+      "title": "시설을 생각 중이에요",
+      "hint": "집에서 돌보기 어려워졌어요",
+      "compare": true,
+      "priority": "P1",
+      "questions": [],
+      "from": [
+        "김영균"
+      ],
+      "watch": []
+    }
+  ],
+  "conditional": [
+    {
+      "key": "service_fit",
+      "when": {
+        "care": [
+          "home_visit",
+          "daycare"
+        ]
+      },
+      "when_not": {
+        "care": [
+          "nursing_home"
+        ]
+      },
+      "text": "지금 받는 방문요양이나 주야간보호는 어떠세요?",
+      "type": "one",
+      "options": [
+        {
+          "value": "ok",
+          "label": "지금대로 괜찮아요"
+        },
+        {
+          "value": "change",
+          "label": "바꾸고 싶어요"
+        },
+        {
+          "value": "unknown",
+          "label": "잘 모르겠어요"
+        }
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "id": "grade",
+      "title": "등급 신청과 소견서"
+    },
+    {
+      "id": "cost",
+      "title": "비용과 지원"
+    },
+    {
+      "id": "place",
+      "title": "기관 고르기"
+    },
+    {
+      "id": "health",
+      "title": "증상과 약",
+      "medical": true
+    },
+    {
+      "id": "me",
+      "title": "보호자 자신 돌보기"
+    }
+  ]
+}
