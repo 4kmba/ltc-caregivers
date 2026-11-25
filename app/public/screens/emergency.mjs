@@ -56,7 +56,7 @@ export function render(root, ctx) {
         else ctx.nav("#/");
       },
     },
-    pending ? "이미 연락했어요. 정리 이어서 보기" : "돌아가기"
+    pending ? "전화했어요. 이어서 보기" : "이전 화면으로"
   );
 
   ctx.put(
@@ -67,11 +67,11 @@ export function render(root, ctx) {
       el(
         "div",
         { class: "emergency-top" },
-        el("p", { class: "emergency-kicker" }, ctx.icon("alert"), "즉시 도움이 필요할 수 있어요"),
-        el("h1", { id: "emergency-title", class: "emergency-title" }, "정리보다 전화가 먼저예요"),
+        el("p", { class: "emergency-kicker" }, ctx.icon("alert"), "위급할 수 있어요"),
+        el("h1", { id: "emergency-title", class: "emergency-title" }, "지금 전화부터 하세요"),
         pending
-          ? el("p", { class: "emergency-lead", role: "alert" }, "적어 주신 말에 위급할 수 있는 신호가 있어요. 돌봄수첩은 위급한지 판단하지 않으니, 걱정되면 지금 전화하세요.")
-          : el("p", { class: "emergency-lead" }, "돌봄수첩은 위급한지 판단하지 않아요. 걱정되면 지금 전화하세요."),
+          ? el("p", { class: "emergency-lead", role: "alert" }, "적어 주신 내용에 위급할 수 있는 말이 있어요. 돌봄수첩은 위급한지 판단할 수 없어요. 조금이라도 걱정되면 지금 전화하세요.")
+          : el("p", { class: "emergency-lead" }, "돌봄수첩은 위급한지 판단할 수 없어요. 조금이라도 걱정되면 지금 전화하세요."),
         quotes.length ? quotes.map((q) => el("blockquote", { class: "emergency-quote" }, q)) : null
       ),
       el(
@@ -85,7 +85,7 @@ export function render(root, ctx) {
               ctx.icon("phone", 26)
             )
           : // 자료 목록에 연락처가 아직 없을 때(검수 전 기본 모드). 번호를 코드에 적지 않고 고정 문구만 보여 준다.
-            el("p", { class: "note" }, "연락처 목록을 불러오지 못했어요. 위급할 수 있는 상황이면 먼저 119에 전화하세요."),
+            el("p", { class: "note" }, "연락처를 불러오지 못했어요. 위급할 수 있으면 먼저 119에 전화하세요."),
         others.map((s) =>
           el(
             "a",
@@ -98,7 +98,7 @@ export function render(root, ctx) {
       el(
         "div",
         { class: "emergency-bottom" },
-        moreNote ? el("p", { class: "emergency-note" }, "폭력이 걱정되면 112, 죽음이나 자살을 말씀하시면 자살예방상담전화 109도 함께 보여 드려요.") : null,
+        moreNote ? el("p", { class: "emergency-note" }, "폭력이 걱정되면 112에, 죽고 싶다는 말을 들으셨으면 109에 전화하세요.") : null,
         close
       )
     )

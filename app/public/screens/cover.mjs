@@ -12,14 +12,6 @@ const shortDate = (t) => {
 };
 const longDate = (t) => new Date(t).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
 
-function remainText(page) {
-  const items = Array.isArray(page.items) ? page.items : [];
-  const checks = new Set(Array.isArray(page.checks) ? page.checks : []);
-  const left = items.filter((it) => !checks.has(it?.card_id)).length;
-  if (items.length === 0) return null;
-  return left === 0 ? "할 일 모두 확인" : `할 일 ${left}개 남음`;
-}
-
 export function render(root, ctx) {
   const { el } = ctx;
   const pages = ctx.notebook.listPages().slice(0, TABS);
@@ -43,13 +35,13 @@ export function render(root, ctx) {
                 { class: `cover-tab tab-${i + 1}`, href: `#/page/${encodeURIComponent(p.id)}` },
                 el("span", { class: "cover-tab-date", "aria-hidden": hasDate ? "true" : null }, hasDate ? shortDate(p.createdAt) : "날짜 없음"),
                 hasDate ? el("span", { class: "visually-hidden" }, longDate(p.createdAt)) : null,
-                el("span", { class: "cover-tab-line" }, [ctx.situationOf(p.situation)?.short ?? p.situationTitle, remainText(p)].filter(Boolean).join(", "))
+                el("span", { class: "cover-tab-line" }, ctx.situationOf(p.situation)?.short ?? p.situationTitle ?? "")
               )
             );
           })
         )
       )
-    : el("p", { class: "cover-note" }, "기록은 이 휴대폰에만 저장돼요. 휴대폰을 바꾸거나 브라우저 기록을 지우면 수첩도 사라져요.");
+    : el("p", { class: "cover-note" }, "기록은 이 휴대폰에만 남아요. 휴대폰을 바꾸거나 인터넷 사용 기록을 지우면 함께 지워져요.");
 
   ctx.put(
     root,
@@ -61,20 +53,20 @@ export function render(root, ctx) {
         { class: "cover-top" },
         ctx.simcheong("default"),
         el("h1", { class: "cover-title" }, "돌봄", el("br"), "수첩"),
-        el("p", { class: "cover-lead" }, "상황이 바뀔 때마다 한 장씩 정리해요")
+        el("p", { class: "cover-lead" }, "질문 몇 가지에 답하면 지금 도움이 될 제안을 골라 드려요")
       ),
       tabs,
       el(
         "div",
         { class: "cover-bottom" },
-        el("p", { class: "cover-small" }, "답하신 내용은 맞는 할 일을 찾기 위해 AI에 보내요. 이름, 주소, 연락처는 적지 마세요."),
+        el("p", { class: "cover-small" }, "이름, 주소, 연락처는 적지 마세요. 답하신 내용은 제안을 고르는 데만 AI에 보내요."),
         el("p", { class: "cover-small" }, "신청하기 전에 공단(1577-1000)이나 안내된 기관에 꼭 확인해 주세요."),
-        el("button", { class: "cover-start", type: "button", onclick: () => ctx.nav("#/new") }, "새로 정리하기"),
+        el("button", { class: "cover-start", type: "button", onclick: () => ctx.nav("#/new") }, "우리 상황에 맞는 제안 받기"),
         el(
           "div",
           { class: "cover-foot" },
-          el("span", { class: "cover-saved" }, ctx.icon("lock", 16), "이 휴대폰에만 저장돼요"),
-          el("a", { class: "cover-help", href: "#/emergency" }, "즉시 도움이 필요할 때")
+          el("span", { class: "cover-saved" }, ctx.icon("lock", 16), "이 휴대폰에만 남아요"),
+          el("a", { class: "cover-help", href: "#/emergency" }, "위급할 때 연락처")
         )
       )
     )

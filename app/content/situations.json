@@ -452,9 +452,9 @@
     },
     {
       "id": "unknown",
-      "title": "잘 모르겠어요",
+      "title": "무엇부터 해야 할지 모르겠어요",
       "short": "무엇부터 할지",
-      "hint": "무엇부터 해야 할지 모르겠어요",
+      "hint": "어떤 도움을 받을 수 있는지부터 알고 싶어요",
       "compare": false,
       "priority": "P0",
       "questions": [],
@@ -579,7 +579,7 @@
     },
     {
       "id": "facility",
-      "title": "시설을 생각 중이에요",
+      "title": "요양원 같은 시설을 알아보고 있어요",
       "short": "시설 고민",
       "hint": "집에서 돌보기 어려워졌어요",
       "compare": true,

@@ -36,11 +36,11 @@ export function render(root, ctx) {
         el(
           "div",
           { class: "head-row" },
-          el("a", { class: "icon-button", href: back, "aria-label": "질문으로 돌아가기" }, ctx.icon("back")),
+          el("a", { class: "icon-button", href: back, "aria-label": "이전 화면으로" }, ctx.icon("back")),
           el("span", { class: "q-situation" }, ctx.situationOf(session.situation)?.title ?? "")
         ),
-        el("h1", { class: "compare-title" }, "고를 수 있는 돌봄 방식"),
-        el("p", { class: "compare-lead" }, "참고용 정리입니다. 결정은 가족과 의료진이 함께 하세요.")
+        el("h1", { class: "compare-title" }, "고를 수 있는 돌봄 방법"),
+        el("p", { class: "compare-lead" }, "비교해 보시라고 나란히 놓았어요. 결정은 가족과 의료진이 함께 해 주세요.")
       ),
       el(
         "div",
@@ -65,23 +65,23 @@ export function render(root, ctx) {
                 ["걸리는 점", method.cons],
                 ["비용 기준", method.cost],
                 ["가족 부담", method.burden],
-                ["바로 시작", method.start_now],
+                ["시작하려면", method.start_now],
               ])
             ),
-            el("button", { class: fits ? "method-pick filled" : "method-pick", type: "button", onclick: () => pick(method.id) }, "이 방식으로 정리하기")
+            el("button", { class: fits ? "method-pick filled" : "method-pick", type: "button", onclick: () => pick(method.id) }, "이 방법으로 제안 받기")
           )
         ),
         skipped.length
           ? el(
               "div",
               { class: "compare-more" },
-              el("h2", {}, "더 확인하면 좋은 것"),
-              el("p", {}, `건너뛴 질문이 ${skipped.length}개 있어요. 답하면 비교가 더 정확해져요.`),
+              el("h2", {}, `건너뛴 질문이 ${skipped.length}개 있어요`),
+              el("p", {}, "이전 화면으로 돌아가 답하면 비교가 더 정확해져요."),
               el("ul", {}, skipped.map((s) => el("li", {}, s.q.text)))
             )
           : null,
-        el("button", { class: "not-yet", type: "button", onclick: () => pick(null) }, "아직 못 정했어요"),
-        el("p", { class: "compare-note" }, "아직 못 정했어도 어느 방식을 고르든 필요한 할 일을 정리해 드려요.")
+        el("button", { class: "not-yet", type: "button", onclick: () => pick(null) }, "방법은 나중에 정할게요"),
+        el("p", { class: "compare-note" }, "어느 방법을 고르든 도움이 될 제안부터 보여 드려요.")
       )
     )
   );

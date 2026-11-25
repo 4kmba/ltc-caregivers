@@ -6,7 +6,8 @@
 // 아직 만들지 않은 "상황이 바뀌었어요"와 "카톡으로 보낼 글 복사"는 버튼을 두지 않는다.
 
 const CONFIRM_LINE = "신청하기 전에 공단(1577-1000)이나 안내된 기관에 꼭 확인해 주세요.";
-const URGENT_LINE = "위급할 수 있는 상황이면 먼저 119에 전화하세요.";
+const URGENT_LINE = "위급할 수 있으면 먼저 119에 전화하세요.";
+const REASSURE_LINE = "꼭 다 하지 않아도 괜찮아요. 필요한 것부터 살펴보세요.";
 const MEDICAL_LINE = "참고만 하시고, 정확한 내용은 의료진과 상담하세요.";
 
 // 머리 띠의 날짜는 "11.25" 꼴. 낭독기에는 "11월 25일"로 읽히게 한다.
@@ -27,7 +28,7 @@ export function render(root, ctx) {
 function renderMissing(root, ctx) {
   const { el } = ctx;
   ctx.put(root,
-    el("section", { class: "sheet" }, el("h1", { class: "q-title" }, "이 페이지를 찾지 못했어요"), el("p", { class: "q-lead" }, "지웠거나 다른 휴대폰에서 만든 페이지일 수 있어요."), el("a", { class: "primary link-button", href: "#/" }, "표지로"))
+    el("section", { class: "sheet" }, el("h1", { class: "q-title" }, "이 기록을 찾지 못했어요"), el("p", { class: "q-lead" }, "지웠거나 다른 휴대폰에서 만든 기록일 수 있어요."), el("a", { class: "primary link-button", href: "#/" }, "처음 화면으로"))
   );
   ctx.settle();
 }
@@ -42,7 +43,7 @@ async function renderBuilding(root, ctx) {
   if (ctx.emergencyBeforeBuild()) return;
 
   const here = location.hash;
-  ctx.put(root, el("section", { class: "sheet loading-sheet" }, ctx.simcheong("default"), el("h1", { class: "q-title" }, "정리하는 중"), el("p", { class: "loading", role: "status" }, "답에 맞는 할 일을 고르고 있어요. 잠시만 기다려 주세요.")));
+  ctx.put(root, el("section", { class: "sheet loading-sheet" }, ctx.simcheong("default"), el("h1", { class: "q-title" }, "제안을 고르는 중이에요"), el("p", { class: "loading", role: "status" }, "10초쯤 걸려요.")));
   ctx.settle();
 
   const result = await ctx.buildPage();
@@ -52,9 +53,9 @@ async function renderBuilding(root, ctx) {
       el(
         "section",
         { class: "sheet" },
-        el("h1", { class: "q-title" }, "목록을 불러오지 못했어요"),
-        el("p", { class: "q-lead" }, "인터넷 연결이나 서버에 문제가 있어요. 답은 그대로 있으니 다시 시도해 주세요."),
-        el("button", { class: "primary", type: "button", onclick: () => ctx.nav("#/page/new") }, "다시 시도")
+        el("h1", { class: "q-title" }, "제안을 불러오지 못했어요"),
+        el("p", { class: "q-lead" }, "적어 주신 답은 그대로 있어요. 인터넷 연결을 확인하고 다시 눌러 주세요."),
+        el("button", { class: "primary", type: "button", onclick: () => ctx.nav("#/page/new") }, "다시 불러오기")
       )
     );
     ctx.settle();
@@ -81,7 +82,7 @@ function contactList(ctx, ids) {
         {},
         el("span", { class: "contact-name" }, s.name),
         s.phone ? el("a", { class: "call", href: `tel:${s.phone.replace(/-/g, "")}` }, ctx.icon("phone", 18), `${s.phone} 전화하기`) : null,
-        s.url ? el("a", { class: "text-link", href: s.url, target: "_blank", rel: "noopener noreferrer" }, "누리집 열기") : null
+        s.url ? el("a", { class: "text-link", href: s.url, target: "_blank", rel: "noopener noreferrer" }, "홈페이지 열기") : null
       )
     )
   );
@@ -115,7 +116,7 @@ function renderPage(root, ctx, page, pageId) {
 
   function save(patch) {
     const ok = ctx.updatePage(pageId, patch);
-    if (!ok) status.textContent = "이 휴대폰에 저장하지 못했어요.";
+    if (!ok) status.textContent = "이 휴대폰에 남기지 못했어요.";
     else Object.assign(page, patch);
   }
 
@@ -132,7 +133,7 @@ function renderPage(root, ctx, page, pageId) {
               el("li", {}, el("details", { class: "opened-item" }, el("summary", {}, el("span", {}, o.q), ctx.icon("right", 18)), el("p", { class: "opened-a" }, o.a)))
             )
           )
-        : el("p", { class: "page-meta" }, "할 일의 질문을 누르면 그때 본 답이 여기에 남아요.")
+        : el("p", { class: "page-meta" }, "제안 아래 질문을 누르면 그때 읽은 답이 여기에 남아요.")
     );
   }
   drawOpened();
@@ -159,7 +160,7 @@ function renderPage(root, ctx, page, pageId) {
       if (!open) return ctx.fill(slot);
       const saved = opened.find((o) => o.qaId === qa.id);
       if (saved) return show(saved.a);
-      ctx.fill(slot, el("p", { class: "loading" }, "답을 정리하는 중이에요."));
+      ctx.fill(slot, el("p", { class: "loading" }, "답을 가져오는 중이에요."));
       const res = await ctx.api("answer", { qaId: qa.id, answers: page.answers });
       const text = res.ok && typeof res.value === "string" && res.value.trim() ? res.value : qa.a;
       if (!opened.some((o) => o.qaId === qa.id)) {
@@ -178,10 +179,10 @@ function renderPage(root, ctx, page, pageId) {
     return el(
       "div",
       { class: "detail" },
-      withWhy ? el("section", {}, el("h3", {}, "왜 지금"), el("p", {}, item.why || card.why)) : null,
+      withWhy ? el("section", {}, el("h3", {}, "지금 하면 좋은 이유"), el("p", {}, item.why || card.why)) : null,
       el("section", {}, el("h3", {}, "연락할 곳"), card.contact_note ? el("p", {}, card.contact_note) : null, contactList(ctx, card.contact_ids)),
       qas.length ? el("section", {}, el("h3", {}, "물어볼 질문"), qas.map(askButton)) : null,
-      el("section", {}, el("h3", {}, "출처"), sourceList(ctx, card.source_ids)),
+      el("section", {}, el("h3", {}, "근거"), sourceList(ctx, card.source_ids)),
       el("p", { class: "page-meta" }, CONFIRM_LINE)
     );
   }
@@ -199,7 +200,7 @@ function renderPage(root, ctx, page, pageId) {
         "label",
         { class: highlight ? "todo-title first-title" : "todo-title", for: boxId },
         highlight ? el("span", { class: "highlight" }, card.title) : card.title,
-        item.isNew ? el("span", { class: "new-tag" }, "새로 추가됨") : null
+        item.isNew ? el("span", { class: "new-tag" }, "이번에 새로 나온 제안") : null
       )
     );
     box.addEventListener("change", () => {
@@ -214,7 +215,7 @@ function renderPage(root, ctx, page, pageId) {
   // 지금은 이 일부터: 먹색 테두리 흰 카드. 형광펜 제목 한 줄, "왜 지금", 괘선 위 "연락할 곳과 출처 보기".
   function firstCard(item) {
     const card = ctx.cardOf(item.card_id);
-    const more = toggleRow(ctx, "연락할 곳과 출처 보기", "first-more");
+    const more = toggleRow(ctx, "연락처와 근거 보기", "first-more");
     const box = el("div", { class: "first-detail" });
     more.addEventListener("click", () => {
       const open = more.getAttribute("aria-expanded") !== "true";
@@ -224,7 +225,7 @@ function renderPage(root, ctx, page, pageId) {
     return el(
       "section",
       { class: "first-card" },
-      el("h2", { class: "page-h2" }, "지금은 이 일부터"),
+      el("h2", { class: "page-h2" }, "가장 먼저 살펴볼 제안"),
       checkRow(card, item, { highlight: true }),
       el("p", { class: "first-why" }, item.why || card.why),
       more,
@@ -235,7 +236,7 @@ function renderPage(root, ctx, page, pageId) {
   // 더 해 볼 만한 일의 한 줄. 누르면 "왜 지금"과 연락할 곳이 펼쳐진다.
   function todo(item) {
     const card = ctx.cardOf(item.card_id);
-    const more = el("button", { class: "more", type: "button", "aria-expanded": "false" }, "자세히 보기");
+    const more = el("button", { class: "more", type: "button", "aria-expanded": "false" }, "연락처와 근거 보기");
     const body = el("div", { class: "todo-body" }, more);
     more.addEventListener("click", () => {
       const open = more.getAttribute("aria-expanded") !== "true";
@@ -266,7 +267,7 @@ function renderPage(root, ctx, page, pageId) {
     ? el(
         "details",
         { class: "more-todos" },
-        el("summary", {}, el("span", {}, `더 해 볼 만한 일 ${rest.length}개`), ctx.icon("down", 18)),
+        el("summary", {}, el("span", {}, `더 살펴볼 제안 ${rest.length}개`), ctx.icon("down", 18)),
         moreGroups.map((g) => el("div", { class: "bucket" }, el("h3", {}, buckets[g.b]), el("ul", { class: "todo-ul" }, g.list.map(todo)))),
         orphan.length ? el("ul", { class: "todo-ul" }, orphan.map(todo)) : null
       )
@@ -280,25 +281,26 @@ function renderPage(root, ctx, page, pageId) {
       el(
         "header",
         { class: "page-head" },
-        el("a", { class: "page-back", href: "#/" }, ctx.icon("back", 20), "표지"),
+        el("a", { class: "page-back", href: "#/" }, ctx.icon("back", 20), "처음 화면"),
         hasDate ? el("p", { class: "page-date" }, el("span", { "aria-hidden": "true" }, shortDate(page.createdAt)), el("span", { class: "visually-hidden" }, longDate(page.createdAt))) : null,
         el("h1", { class: "page-situation" }, page.situationTitle ?? ""),
         basicLine ? el("p", { class: "basic-line" }, basicLine) : null
       ),
-      page.usedAi === false ? el("p", { class: "ai-line" }, "지금은 AI 설명 없이 기본 목록을 보여 드려요") : null,
+      page.usedAi === false ? el("p", { class: "ai-line" }, "지금은 제안마다 맞춤 설명을 붙이지 못했어요. 제안은 그대로 살펴보실 수 있어요.") : null,
+      el("p", { class: "page-reassure" }, REASSURE_LINE),
       status,
       el(
         "div",
         { class: "page-body" },
-        pageId === "unsaved" ? el("p", { class: "note" }, "이 휴대폰에 저장하지 못했어요. 이 화면을 닫으면 페이지가 사라져요.") : null,
-        urgent ? el("p", { class: "urgent-line" }, URGENT_LINE, " ", el("a", { href: "#/emergency" }, "연락처 보기")) : null,
+        pageId === "unsaved" ? el("p", { class: "note" }, "이 기록을 휴대폰에 남기지 못했어요. 이 화면을 닫으면 사라져요.") : null,
+        urgent ? el("p", { class: "urgent-line" }, URGENT_LINE, " ", el("a", { href: "#/emergency" }, "위급할 때 연락처 보기")) : null,
 
         // 정리할 답이 없으면(기본 정보만 답한 경우) 이 절을 숨긴다. 옛 페이지는 저장된 글을 그대로 보여 준다.
-        typeof page.summary === "string" && page.summary.trim() ? section(el, "오늘 정리한 내용", el("p", { class: "summary" }, page.summary)) : null,
+        typeof page.summary === "string" && page.summary.trim() ? section(el, "오늘 적은 내용", el("p", { class: "summary" }, page.summary)) : null,
         changes.length
           ? section(
               el,
-              "지난번과 달라진 답",
+              "지난번과 달라진 것",
               el(
                 "ul",
                 { class: "changes" },
@@ -319,12 +321,12 @@ function renderPage(root, ctx, page, pageId) {
               )
             )
           : null,
-        page.compare ? section(el, "고른 방식", el("p", { class: "picked" }, page.methodTitle ?? "아직 정하지 않았어요")) : null,
+        page.compare ? section(el, "고른 돌봄 방법", el("p", { class: "picked" }, page.methodTitle ?? "아직 정하지 않았어요")) : null,
 
-        first ? firstCard(first) : section(el, "지금은 이 일부터", el("p", {}, "지금 답으로는 보여 드릴 할 일이 없어요.")),
+        first ? firstCard(first) : section(el, "가장 먼저 살펴볼 제안", el("p", {}, "지금 답에 맞는 제안을 찾지 못했어요. 다른 상황을 골라 다시 받아 보세요.")),
         moreBlock,
-        section(el, "그날 열어 본 질문", openedBox),
-        watch.length ? section(el, "이럴 때 다시 열어 보세요", el("ul", { class: "watch" }, watch.map((w) => el("li", {}, w)))) : null,
+        section(el, "이날 읽은 질문", openedBox),
+        watch.length ? section(el, "이런 일이 생기면 다시 제안을 받아 보세요", el("ul", { class: "watch" }, watch.map((w) => el("li", {}, w)))) : null,
         medical.length
           ? section(el, "다음 진료 때 의료진에게 물어볼 질문", el("p", { class: "note" }, MEDICAL_LINE), el("ul", { class: "watch" }, medical.map((m) => el("li", {}, m))))
           : null,
@@ -342,14 +344,14 @@ function renderPage(root, ctx, page, pageId) {
                 class: "delete-button",
                 type: "button",
                 onclick: () => {
-                  if (!window.confirm("이 페이지를 지울까요? 지우면 되살릴 수 없어요.")) return;
+                  if (!window.confirm("이 기록을 지울까요? 지우면 되살릴 수 없어요.")) return;
                   if (pageId !== "unsaved") ctx.notebook.deletePage(pageId);
                   ctx.nav("#/");
                 },
               },
-              "이 페이지 지우기"
+              "이 기록 지우기"
             ),
-            el("a", { class: "help-link", href: "#/emergency" }, "즉시 도움이 필요할 때")
+            el("a", { class: "help-link", href: "#/emergency" }, "위급할 때 연락처")
           )
         )
       )

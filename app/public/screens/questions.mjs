@@ -4,7 +4,7 @@
 // 모양은 11/25 디자인 캔버스의 질문 화면: 노랑 위쪽 띠(뒤로, 상황 이름, n / m, 진행 막대) 아래에 질문과 보기, 맨 아래에 고정된 "다음".
 
 const ADVANCE_MS = 350;
-const AI_NOTICE = "답하신 내용은 맞는 할 일을 찾기 위해 AI에 보내요. 이름, 주소, 연락처는 적지 마세요.";
+const AI_NOTICE = "이름, 주소, 연락처는 적지 마세요. 답하신 내용은 제안을 고르는 데만 AI에 보내요.";
 
 // 답을 바꾸면 보충 질문을 다시 받는다(답에 따라 비어 있는 정보가 달라지므로).
 function choose(session, field, value) {
@@ -90,7 +90,7 @@ function frame(ctx, { backHash, title, stepText, progress }) {
       el(
         "div",
         { class: "q-head-row" },
-        el("a", { class: "icon-button", href: backHash, "aria-label": backHash === "#/" ? "표지로 돌아가기" : "이전 질문으로" }, ctx.icon("back")),
+        el("a", { class: "icon-button", href: backHash, "aria-label": backHash === "#/" ? "처음 화면으로" : "이전 화면으로" }, ctx.icon("back")),
         el("span", { class: "q-situation" }, title ?? ""),
         el("span", { class: "q-step" }, stepText ?? "")
       ),
@@ -107,10 +107,10 @@ function renderSituations(root, ctx) {
   const { el, content } = ctx;
   // ready가 아닌 상황(검수를 마치지 못한 상황)은 내지 않는다. 개발 모드에서는 서버가 ready를 넓게 준다.
   const ready = content.situations.filter((s) => s.ready);
-  const { section, body } = frame(ctx, { backHash: "#/", title: "새로 정리하기" });
+  const { section, body } = frame(ctx, { backHash: "#/", title: "제안 받기" });
   ctx.put(
     body,
-    el("h1", { class: "q-title" }, "지금 어떤 상황인가요?"),
+    el("h1", { class: "q-title" }, "지금 어떤 일이 있나요?"),
     el("p", { class: "q-lead" }, "가장 가까운 것 하나를 골라 주세요."),
     ready.length
       ? el(
@@ -132,7 +132,7 @@ function renderSituations(root, ctx) {
             )
           )
         )
-      : el("p", { class: "note" }, "아직 두 사람이 확인을 마친 상황이 없어요. 검수가 끝나면 여기에 상황이 나와요.")
+      : el("p", { class: "note" }, "아직 준비 중이에요. 곧 고를 수 있게 할게요.")
   );
   ctx.put(root, section);
   ctx.settle();
@@ -161,7 +161,7 @@ export function render(root, ctx) {
   const parts = frame(ctx, {
     backHash,
     title: ctx.situationOf(session.situation)?.title,
-    stepText: followups ? "보충 질문" : `${index + 1} / ${counted}`,
+    stepText: followups ? "조금 더 여쭤볼게요" : `${index + 1} / ${counted}`,
     progress: followups ? 1 : (index + 1) / counted,
   });
   ctx.put(root, parts.section);
@@ -237,7 +237,7 @@ function renderBasicSummary({ body, actions }, ctx, step, nextHash) {
   const part = (f) => {
     const label = ctx.knownLabel(f.key, session.answers[f.key]);
     if (!label) return "";
-    return f.label && !/지$/.test(f.label) ? `${f.label} ${label}` : label;
+    return f.label && !/지$/.test(f.label) ? `${f.label}: ${label}` : label;
   };
   const single = step.screens.filter((sc) => sc.fields.length === 1).flatMap((sc) => sc.fields.map(part));
   const multi = step.screens.filter((sc) => sc.fields.length > 1).map((sc) => sc.fields.map(part).filter(Boolean).join(" · "));
@@ -256,16 +256,16 @@ function renderBasicSummary({ body, actions }, ctx, step, nextHash) {
     const refresh = () => (next.disabled = !fields.every(({ field }) => fieldDone(session, field)));
     const groups = fields.map(({ field, legend, hint }) => choiceGroup(ctx, field, legend, { hint, onPick: refresh }));
     refresh();
-    ctx.fill(editBox, el("p", { class: "q-lead" }, "달라진 곳만 고쳐 주세요."), el("div", { class: "q-fields" }, groups));
+    ctx.fill(editBox, el("p", { class: "q-lead" }, "바뀐 것만 다시 골라 주세요."), el("div", { class: "q-fields" }, groups));
     ctx.fill(actions, next);
     editBox.querySelector("button")?.focus();
   }
 
-  ctx.put(body, el("h1", { class: "q-title" }, "지난번 기본 정보"), el("p", { class: "q-lead" }, "그대로인지 봐 주세요."), card, editBox);
+  ctx.put(body, el("h1", { class: "q-title" }, "지난번에 적은 내용이에요"), el("p", { class: "q-lead" }, "지금도 맞나요?"), card, editBox);
   ctx.put(
     actions,
-    el("button", { class: "primary", type: "button", onclick: () => ctx.nav(nextHash()) }, "그대로예요"),
-    el("button", { class: "secondary", type: "button", onclick: () => edit() }, "고칠 게 있어요")
+    el("button", { class: "primary", type: "button", onclick: () => ctx.nav(nextHash()) }, "지금도 맞아요"),
+    el("button", { class: "secondary", type: "button", onclick: () => edit() }, "바뀐 게 있어요")
   );
   ctx.settle();
 }
@@ -305,7 +305,7 @@ async function renderFollowups({ body, actions }, ctx) {
   const { el, session } = ctx;
   const here = location.hash;
   if (session.followupQs === null) {
-    ctx.put(body, el("h1", { class: "q-title" }, "조금만 더 여쭤볼게요"), el("p", { class: "loading", role: "status" }, "질문을 준비하는 중이에요."));
+    ctx.put(body, el("h1", { class: "q-title" }, "조금만 더 여쭤볼게요"), el("p", { class: "loading", role: "status" }, "이어서 여쭤볼 것을 고르고 있어요."));
     ctx.settle();
     const res = await ctx.api("followups", { situation: session.situation, answers: ctx.currentAnswers() });
     const list = res.ok && Array.isArray(res.value) ? res.value : [];

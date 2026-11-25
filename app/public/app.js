@@ -438,7 +438,7 @@ function footer({ help = true } = {}) {
     size.setAttribute("aria-pressed", String(on));
     size.textContent = on ? "글자 보통" : "글자 크게";
   });
-  return el("footer", { class: `site-footer${help ? "" : " size-only"}` }, help ? el("a", { class: "help-link", href: "#/emergency" }, "즉시 도움이 필요할 때") : null, size);
+  return el("footer", { class: `site-footer${help ? "" : " size-only"}` }, help ? el("a", { class: "help-link", href: "#/emergency" }, "위급할 때 연락처") : null, size);
 }
 
 // 새 화면을 그린 뒤 화면 낭독기가 새 제목부터 읽도록 제목에 초점을 옮긴다.
