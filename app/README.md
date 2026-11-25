@@ -2,7 +2,7 @@
 
 네 사람의 프로토타입을 한 제품으로 합친 돌봄수첩의 코드와 내용입니다. 기준 스펙은 [통합 스펙](../docs/specs/spec-integrated-care-plan.md)입니다. `prototypes/`의 개인 프로토타입은 HW6 제출물이라 고치지 않습니다.
 
-내용 파일 다섯 개와 점검 코드, 처음부터 수첩 페이지까지 이어지는 화면과 서버, AI 호출 통로와 기능 틀, 팀원이 채울 AI 자리가 있습니다. 비교 화면과 심청이 그림은 팀원이 채울 자리로 비워 두었습니다.
+내용 파일 다섯 개와 점검 코드, 처음부터 기록까지 이어지는 화면과 서버, AI 호출 통로와 기능 틀, 팀원이 채울 AI 자리가 있습니다. 비교 화면과 심청이 그림은 팀원이 채울 자리로 비워 두었습니다.
 
 ## 내용 파일
 
@@ -11,8 +11,8 @@
 | 파일 | 담는 것 | 어디서 왔나 |
 |---|---|---|
 | `situations.json` | 기본 정보 5화면, 상황 카드 8개와 상황별 질문, 답에 따라 붙는 질문, 주제 5개 | 김영균 질문, 백민경 상황과 꼬리 질문 |
-| `methods.json` | 돌봄 방식 12개 (상황 4개에 3개씩) | 백민경 방식 9개, 입원·퇴원 방식 3개는 새로 씀 |
-| `cards.json` | 할 일 카드 45장 | 김영균 정적 버전 카드 |
+| `methods.json` | 돌봄 방법 12개 (상황 4개에 3개씩) | 백민경 방식 9개, 입원·퇴원 방식 3개는 새로 씀 |
+| `cards.json` | 제안 카드 45장 | 김영균 정적 버전 카드 |
 | `qa.json` | 질문과 답 195개 | 김영균 카드의 질문 180개, 한수연 FAQ 15개 |
 | `sources.json` | 자료 99개 (출처 링크, 전화번호, 연락할 곳) | 김영균 출처 61개, 유정민 자료 20개, 한수연 출처 12개, 연락할 곳 |
 
@@ -38,6 +38,15 @@
 
 같은 사람이 두 번 적으면 한 명으로 셉니다. 어느 상황을 누가 맡을지는 유정민, 백민경, 한수연 세 사람이 정합니다(스펙 5절).
 
+### 문구도 함께 봅니다
+
+자료와 내용이 맞는지에 더해, 카드와 답의 글이 보호자가 한 번 읽고 바로 판단할 수 있게 쓰였는지도 봅니다. 기준은 [화면 문구 원칙](../docs/ux-writing.md)의 "카드와 답 검수에 더할 기준"입니다.
+
+- 제안의 제목이 보호자가 할 수 있는 행동으로 끝나는지 봅니다("~알아 두기", "~신청하기", "~물어보기"). "~해야 합니다"처럼 의무로 읽히는 말은 피합니다.
+- 한 제안에 행동이 두 가지 이상 섞이지 않았는지 봅니다.
+- 제도 이름(산정특례, 본인부담상한제 등)이 처음 나올 때 한 줄로 풀어 썼는지 봅니다.
+- 용어표의 말을 쓰는지 봅니다. 예를 들어 할 일 카드는 "제안", 하루치 결과는 "기록", 돌봄 방식 카드는 "돌봄 방법"으로 부릅니다.
+
 ## 점검 실행
 
 Node 22.9 이상이 필요합니다. 처음 한 번 `npm install`로 Anthropic SDK를 설치합니다.
@@ -60,14 +69,14 @@ AI 기능은 모두 `src/ai/task.mjs`의 `runTask`를 지납니다. `prompts/<�
 
 팀원이 채울 자리는 아래와 같습니다. 입력과 값은 11/28에 맡은 사람과 확정합니다. 입력을 바꾸면 자리 파일, 브라우저가 보내는 칸 표(`public/app.js`의 `SEND`), 화면 세 곳을 함께 고쳐야 합니다.
 
-AI가 쓴 글에서는 전화번호와 링크가 든 문장을 `src/ai/sanitize.mjs`의 `stripUnsafe`가 지웁니다. 카드 고르기의 "왜 지금", 오늘 정리, 질문 답이 이 점검을 지나고, 다 지워져 남는 글이 없으면 대체 값으로 갑니다.
+AI가 쓴 글에서는 전화번호와 링크가 든 문장을 `src/ai/sanitize.mjs`의 `stripUnsafe`가 지웁니다. 카드 고르기의 "지금 하면 좋은 이유", 오늘 정리, 질문 답이 이 점검을 지나고, 다 지워져 남는 글이 없으면 대체 값으로 갑니다.
 
 | 자리 | 파일과 만드는 함수 | 화면 위치 | 입력 | 값 | 대체 값 (스펙 7절) |
 |---|---|---|---|---|---|
-| 본보기: 카드 고르기 | `src/tasks/pick-cards.mjs`, `makePickCards(content)` | 수첩 페이지의 할 일 목록 (`public/app.js`의 `buildPage`가 부름) | `{ situation, answers, methodId, worry, followups: [{ q, a }] }` | `{ items: [{ card_id, bucket, why }] }` | 규칙 기본 목록 |
+| 본보기: 카드 고르기 | `src/tasks/pick-cards.mjs`, `makePickCards(content)` | 기록의 제안 목록 (`public/app.js`의 `buildPage`가 부름) | `{ situation, answers, methodId, worry, followups: [{ q, a }] }` | `{ items: [{ card_id, bucket, why }] }` | 규칙 기본 목록 |
 | A1 보충 질문 | `src/tasks/followups.mjs`, `makeFollowups(content)` | 질문 화면의 보충 질문 (`public/screens/questions.mjs`의 `renderFollowups`) | `{ situation, answers }` | `[{ q, options: string[] }]` 2개까지 | `[]` (건너뜀) |
-| B2 오늘 정리 | `src/tasks/summary.mjs`, `makeSummary(content)` | 수첩 페이지의 "오늘 정리한 내용" (`public/screens/page.mjs`, 값은 `buildPage`가 채움) | `{ answered: [{ q, a }], followups: [{ q, a }], worry }` | 글 한 덩이 | 답을 `"질문: 답"` 줄로 나열 |
-| B3 질문에 답하기 | `src/tasks/answer.mjs`, `makeAnswer(content)` | 수첩 페이지의 질문 카드 (`public/screens/page.mjs`) | `{ qaId, answers }` | 글 한 덩이 | `qa.json`에 적힌 답 원문 |
+| B2 오늘 정리 | `src/tasks/summary.mjs`, `makeSummary(content)` | 기록의 "오늘 적은 내용" (`public/screens/page.mjs`, 값은 `buildPage`가 채움) | `{ answered: [{ q, a }], followups: [{ q, a }], worry }` | 글 한 덩이 | 답을 `"질문: 답"` 줄로 나열 |
+| B3 질문에 답하기 | `src/tasks/answer.mjs`, `makeAnswer(content)` | 기록의 질문 (`public/screens/page.mjs`) | `{ qaId, answers }` | 글 한 덩이 | `qa.json`에 적힌 답 원문 |
 | B4 의료 질문 돌려 주기 | `src/tasks/medical.mjs`, `makeMedical(content)` | 수첩 페이지의 "다음 진료 때 의료진에게 물어볼 질문" (`public/screens/page.mjs`, 값은 `buildPage`가 채움) | `{ worry }` | `string[]` 2개까지 | `[]` |
 
 ### 기능 하나 만드는 법
