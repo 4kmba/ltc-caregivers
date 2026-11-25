@@ -25,3 +25,15 @@ export function detectEmergency(texts) {
   const joined = compact(texts.filter(Boolean).join(""));
   return RULES.filter((rule) => rule.words.some((w) => joined.includes(compact(w)))).map((rule) => rule.kind);
 }
+
+// 응급 신호가 하나라도 있으면 띄우는 연락처. 값은 sources.json의 자료 번호다.
+const ALWAYS = ["emergency119", "mental_crisis"];
+// 신호의 종류에 따라 더 띄우는 연락처: 폭력은 경찰 112, 죽음이나 자살은 자살예방상담전화 109.
+const BY_KIND = { violence: "police112", suicide: "hs_line109" };
+
+// 찾은 신호의 종류를 받아 화면에 띄울 자료를 순서대로 돌려준다. 번호와 이름은 자료 목록에서 꺼낸다.
+export function emergencyContacts(kinds, sources) {
+  if (kinds.length === 0) return [];
+  const extra = Object.entries(BY_KIND).filter(([kind]) => kinds.includes(kind)).map(([, id]) => id);
+  return [...ALWAYS, ...extra].map((id) => sources.find((s) => s.id === id));
+}
