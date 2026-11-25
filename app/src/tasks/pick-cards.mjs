@@ -43,7 +43,8 @@ export function makePickCards(content) {
     const answers = { ...input.answers, situation: input.situation };
     const method = content.methods.find((m) => m.id === input.methodId) ?? null;
     const candidates = fillCandidates(content.cards, answers, method, candidateCards(content.cards, answers, method));
-    return { answers, candidates };
+    const must = content.situations.find((x) => x.id === input.situation)?.must_cards ?? [];
+    return { answers, candidates, must };
   }
 
   // 질문 번호가 아닌 보호자가 본 문구로 답을 적어 주려고, 키마다 질문 문구와 보기 문구를 모아 둔다.
@@ -117,8 +118,8 @@ export function makePickCards(content) {
 
     // AI 없이 보여 줄 규칙 기본 목록. "왜 지금"에는 카드에 적힌 "왜 필요한가"를 그대로 쓴다.
     fallback(input) {
-      const { answers, candidates } = prepare(input);
-      return { items: ruleList(candidates, answers).map((c) => ({ card_id: c.id, bucket: c.bucket, why: c.why })) };
+      const { answers, candidates, must } = prepare(input);
+      return { items: ruleList(candidates, answers, undefined, must).map((c) => ({ card_id: c.id, bucket: c.bucket, why: c.why })) };
     }
   };
 }

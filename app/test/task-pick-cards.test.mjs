@@ -22,7 +22,8 @@ test("이름은 pick-cards다", () => {
 test("대체 값은 규칙 기본 목록이다", () => {
   const c = CASES[0];
   const answers = { ...c.answers, situation: c.situation };
-  const expected = ruleList(candidatesOf(c), answers);
+  const must = content.situations.find((x) => x.id === c.situation)?.must_cards ?? [];
+  const expected = ruleList(candidatesOf(c), answers, undefined, must);
   const { items } = task.fallback(toInput(c));
   assert.deepEqual(items.map((i) => i.card_id), expected.map((x) => x.id));
   for (const item of items) {
@@ -109,12 +110,12 @@ test("schema는 항목마다 번호, 구간, 이유를 모두 요구한다", () 
 
 // 스펙 11절: AI를 끄고 인터뷰 요약 5건을 넣으면, 막혔다고 말한 일의 카드가 들어가고 모든 할 일에 출처가 있다.
 //
-// 아래 카드는 지금 규칙 기본 목록(rules.mjs의 ruleList)이 6장에 담지 못한다. 조건이 when_any나 상황뿐이라
-// bySpecificity에서 뒤로 밀리기 때문이다. rules.mjs는 이 과제의 범위 밖이라 고치지 않고, todo로 표시해 둔다.
-// 규칙을 고쳐 통과하면 node가 todo 테스트가 통과했다고 알려 주니, 그때 이 표에서 지운다.
+// 상황마다 꼭 넣을 카드(situations.json의 must_cards)를 둔 뒤에도 아래 카드는 6장에 들지 못한다.
+// S3-09(산정특례·본인부담상한제)는 진단 조건이 있고 우선순위가 8이라 입원 상황의 다른 카드에 밀린다.
+// 꼭 넣을 카드에 더할지는 팀이 정한다. 규칙이나 내용을 고쳐 통과하면 node가 알려 주니, 그때 이 표에서 지운다.
 const KNOWN_GAPS = {
-  none: { C2: ["S3-07", "S3-09"], C5: ["S3-01"], C6: ["S3-10"] },
-  method: { C2: ["S3-07", "S3-09"], C6: ["S3-10"] }
+  none: { C2: ["S3-09"] },
+  method: { C2: ["S3-09"] }
 };
 const gapsOf = (kind, id) => KNOWN_GAPS[kind][id] ?? [];
 

@@ -35,7 +35,7 @@ export function candidateCards(cards, answers, method = null) {
 }
 
 // 규칙 기본 목록: AI가 실패했을 때 후보 가운데 size장을 코드로 고른다.
-// "먼저" 표시가 붙은 카드를 맨 앞에 넣고, 세 구간이 비지 않게 구간마다 하나씩 넣은 뒤 나머지를 채운다.
+// "먼저" 표시가 붙은 카드와 상황의 꼭 넣을 카드를 맨 앞에 넣고, 세 구간이 비지 않게 구간마다 하나씩 넣은 뒤 나머지를 채운다.
 export const BUCKETS = ["this_week", "this_month", "know_ahead"];
 
 // when에 걸린 조건이 많을수록 이 사람의 상황에 가까운 카드로 보고 앞에 둔다.
@@ -45,9 +45,16 @@ function bySpecificity(a, b) {
   return n(b) - n(a) || a.priority - b.priority;
 }
 
-export function ruleList(candidates, answers, size = 6) {
+// mustIds는 상황마다 적어 둔 "꼭 넣을 카드"(situations.json의 must_cards)다.
+// 조건이 없어 누구에게나 필요한 카드는 조건 수로 줄 세우면 뒤로 밀리므로, 방식의 먼저 카드 다음에 넣는다.
+// 후보에 없는 번호(조건이 맞지 않는 카드)는 넣지 않는다.
+export function ruleList(candidates, answers, size = 6, mustIds = []) {
   const picked = candidates.filter((c) => c.first);
-  const rest = candidates.filter((c) => !c.first).sort(bySpecificity);
+  for (const id of mustIds) {
+    const card = candidates.find((c) => c.id === id);
+    if (card && !picked.includes(card)) picked.push(card);
+  }
+  const rest = candidates.filter((c) => !picked.includes(c)).sort(bySpecificity);
   for (const bucket of BUCKETS) {
     if (picked.some((c) => c.bucket === bucket)) continue;
     const one = rest.find((c) => c.bucket === bucket);
