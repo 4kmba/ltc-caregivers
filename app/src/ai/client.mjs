@@ -22,7 +22,7 @@ export function buildRequest({ system, user, schema }) {
 }
 
 // 마지막 fallback 블록 뒤의 글만 이어 붙인다. 그 앞의 글은 거절된 모델이 쓰다 만 것이다.
-function collectText(content) {
+export function collectText(content) {
   const blocks = Array.isArray(content) ? content : [];
   const lastFallback = blocks.map((b) => b?.type).lastIndexOf("fallback");
   return blocks

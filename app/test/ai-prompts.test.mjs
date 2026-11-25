@@ -35,3 +35,8 @@ test("기본 폴더는 app/prompts 절대 경로이고 common.md가 있다", () 
   assert.ok(path.isAbsolute(PROMPTS_DIR));
   assert.ok(fs.existsSync(path.join(PROMPTS_DIR, "common.md")));
 });
+
+test("HTML 주석은 지운다", () => {
+  const dir = tempDir({ "common.md": "<!-- 메모 -->\n공통", "x.md": "기능 <!-- 한 줄\n여러 줄 -->끝" });
+  assert.equal(loadPrompt("x", dir), "공통\n\n기능 끝");
+});

@@ -36,7 +36,13 @@ function write(storage, pages) {
 }
 
 export function createNotebook(storage, now = Date.now) {
-  const newestFirst = (pages) => [...pages].sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  const time = (p) => (typeof p.createdAt === "number" && Number.isFinite(p.createdAt) ? p.createdAt : 0);
+  // 같은 시각이면 배열 뒤쪽(나중에 저장한 것)이 먼저 온다.
+  const newestFirst = (pages) =>
+    pages
+      .map((p, i) => ({ p, i }))
+      .sort((x, y) => time(y.p) - time(x.p) || y.i - x.i)
+      .map((x) => x.p);
 
   return {
     savePage(page) {
@@ -81,9 +87,9 @@ export function createNotebook(storage, now = Date.now) {
 
 // 지난 답과 새 답을 비교해 바뀐 것만 돌려준다. 순서는 새 답 기준, 그다음 지난 답에만 있던 것.
 export function changedAnswers(prev, next) {
-  if (!prev) return [];
-  const a = prev ?? {};
-  const b = next ?? {};
+  if (!isObject(prev) || !isObject(next)) return [];
+  const a = prev;
+  const b = next;
   const keys = [...Object.keys(b), ...Object.keys(a).filter((k) => !(k in b))];
   return keys
     .filter((k) => JSON.stringify(a[k]) !== JSON.stringify(b[k]))
@@ -92,9 +98,10 @@ export function changedAnswers(prev, next) {
 
 // 지난 페이지에서 끝낸 카드는 done, 지난 페이지에 없던 카드는 isNew. 원본은 바꾸지 않는다.
 export function carryChecks(prevPage, nextItems) {
-  const checks = new Set(prevPage?.checks ?? []);
-  const before = new Set((prevPage?.items ?? []).map((x) => x.card_id));
-  return nextItems.map((item) => {
+  const list = (v) => (Array.isArray(v) ? v : []);
+  const checks = new Set(list(prevPage?.checks));
+  const before = new Set(list(prevPage?.items).map((x) => x?.card_id));
+  return list(nextItems).filter(isObject).map((item) => {
     const copy = { ...item };
     if (checks.has(item.card_id)) copy.done = true;
     if (prevPage && !before.has(item.card_id)) copy.isNew = true;

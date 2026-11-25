@@ -127,3 +127,25 @@ test("저장소가 던지면 savePage는 null, 나머지는 빈 기록", () => {
   assert.equal(book.getPage("x"), null);
   assert.doesNotThrow(() => book.clearAll());
 });
+
+test("손으로 고친 페이지에서도 carryChecks가 던지지 않는다", () => {
+  const next = [{ card_id: "A" }, null, 3, { card_id: "B" }];
+  for (const prevPage of [{ checks: 5, items: [] }, { checks: [], items: {} }, { checks: ["A"], items: [null] }]) {
+    const result = carryChecks(prevPage, next);
+    assert.deepEqual(result.map((x) => x.card_id), ["A", "B"]);
+  }
+  assert.equal(carryChecks({ checks: ["A"], items: [null] }, next)[0].done, true);
+});
+
+test("객체가 아닌 값이면 changedAnswers는 빈 목록", () => {
+  assert.deepEqual(changedAnswers("x", { a: 1 }), []);
+  assert.deepEqual(changedAnswers({ a: 1 }, null), []);
+  assert.deepEqual(changedAnswers([1], { a: 1 }), []);
+});
+
+test("createdAt이 같으면 나중에 저장한 것이 먼저 온다", () => {
+  const book = createNotebook(fakeStorage(), () => 7);
+  const a = book.savePage(page());
+  const b = book.savePage(page());
+  assert.deepEqual(book.listPages().map((p) => p.id), [b, a]);
+});
