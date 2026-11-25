@@ -1,7 +1,7 @@
 // 상황 고르기, 기본 정보, 상황별 질문, 걱정 한 줄, 보충 질문. 이후 맡는 자리: A1.
 // 주소: #/new(상황 고르기), #/q/<단계>(basic: 지난번 기본 정보 요약, basic-1..5, sq-<키>, cq-<키>, worry, more).
 // 단계 목록과 보낼 답은 app.js(steps, currentAnswers)가 만들고, 이 파일은 그리기만 한다.
-// 모양은 11/25 디자인 캔버스의 질문 화면: 노랑 위쪽 띠(뒤로, 상황 이름, n / m, 진행 막대) 아래에 질문과 보기, 맨 아래에 고정된 "다음".
+// 모양은 11/25 디자인 개선안 ver2의 질문 화면: 흰 종이 위쪽에 이전·단계·진행 막대·상황 이름, 그 아래 질문과 보기, 맨 아래에 고정된 "다음"과 "나중에 답할게요".
 
 const ADVANCE_MS = 350;
 const AI_NOTICE = "이름, 주소, 연락처는 적지 마세요. 답하신 내용은 제안을 고르는 데만 AI에 보내요.";
@@ -38,13 +38,12 @@ function fieldDone(session, field) {
 }
 
 // 보기 버튼 하나. 왼쪽 표시(하나만 고르면 동그라미, 여러 개면 둥근 네모)와 고른 뒤의 체크는 꾸밈이라 낭독기가 읽지 않는다.
-// "잘 모르겠어요"는 점선 테두리로 다른 보기와 구분한다.
 function choiceButton(ctx, { label, value, single, chosen }) {
   const { el } = ctx;
   const stateAttr = single ? "aria-checked" : "aria-pressed";
   return el(
     "button",
-    { class: `choice${single ? "" : " many"}${value === "unknown" ? " unknown" : ""}`, type: "button", role: single ? "radio" : null, [stateAttr]: String(chosen) },
+    { class: `choice${single ? "" : " many"}`, type: "button", role: single ? "radio" : null, [stateAttr]: String(chosen) },
     el("span", { class: "choice-mark", "aria-hidden": "true" }, ctx.icon("check", 14)),
     el("span", { class: "choice-label" }, label)
   );
@@ -72,13 +71,24 @@ function choiceGroup(ctx, field, legendText, { onPick, hint } = {}) {
   );
 }
 
-// 질문 화면의 틀. 노랑 띠 안에 뒤로 화살표(44px), 가운데 상황 이름, 오른쪽 단계 표시와 아래 진행 막대.
-// body에 질문과 보기를, actions에 맨 아래 고정 버튼을 넣는다.
-function frame(ctx, { backHash, title, stepText, progress }) {
+// 질문 화면의 틀(디자인 ver2). 흰 종이 위쪽에 왼쪽 "이전"(48px), 오른쪽 단계 표시("3 / 6"), 6px 진행 막대, 그 아래 상황 이름.
+// step은 { current, total } 또는 글자. body에 질문과 보기를, actions에 맨 아래 고정 버튼을 넣는다.
+function frame(ctx, { backHash, title, step, progress }) {
   const { el } = ctx;
   const bar = el("span", { class: "q-progress-bar" });
   // 진행 막대 길이는 CSSOM으로 정한다(CSP가 HTML의 style 속성을 막으므로).
   if (typeof progress === "number") bar.style.width = `${Math.round(Math.min(1, Math.max(0, progress)) * 100)}%`;
+  const stepNode =
+    step && typeof step === "object"
+      ? el(
+          "span",
+          { class: "q-step" },
+          el("span", { "aria-hidden": "true" }, String(step.current), el("span", { class: "q-step-total" }, ` / ${step.total}`)),
+          el("span", { class: "visually-hidden" }, `전체 ${step.total}단계 중 ${step.current}단계`)
+        )
+      : step
+        ? el("span", { class: "q-step" }, step)
+        : null;
   const body = el("div", { class: "q-body" });
   const actions = el("div", { class: "q-actions" });
   const section = el(
@@ -87,14 +97,9 @@ function frame(ctx, { backHash, title, stepText, progress }) {
     el(
       "div",
       { class: "q-head" },
-      el(
-        "div",
-        { class: "q-head-row" },
-        el("a", { class: "icon-button", href: backHash, "aria-label": backHash === "#/" ? "처음 화면으로" : "이전 화면으로" }, ctx.icon("back")),
-        el("span", { class: "q-situation" }, title ?? ""),
-        el("span", { class: "q-step" }, stepText ?? "")
-      ),
-      typeof progress === "number" ? el("div", { class: "q-progress", "aria-hidden": "true" }, bar) : null
+      el("div", { class: "q-head-row" }, el("a", { class: "back-link", href: backHash }, ctx.icon("back", 24), "이전"), stepNode),
+      typeof progress === "number" ? el("div", { class: "q-progress", "aria-hidden": "true" }, bar) : null,
+      title ? el("p", { class: "q-situation" }, title) : null
     ),
     body,
     actions
@@ -161,7 +166,7 @@ export function render(root, ctx) {
   const parts = frame(ctx, {
     backHash,
     title: ctx.situationOf(session.situation)?.title,
-    stepText: followups ? "조금 더 여쭤볼게요" : `${index + 1} / ${counted}`,
+    step: followups ? "조금 더 여쭤볼게요" : { current: index + 1, total: counted },
     progress: followups ? 1 : (index + 1) / counted,
   });
   ctx.put(root, parts.section);
@@ -221,7 +226,7 @@ function renderPick({ body, actions }, ctx, step, nextHash) {
               ctx.nav(nextHash());
             },
           },
-          "이 질문 건너뛰기"
+          "나중에 답할게요"
         )
       : null
   );

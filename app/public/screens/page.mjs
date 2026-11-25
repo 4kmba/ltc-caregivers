@@ -1,20 +1,17 @@
 // 수첩 페이지. 이후 맡는 자리: 김영균(틀), B2(오늘 정리한 내용), B3(질문에 답하기).
 // 주소: #/page/new(이번 답으로 만들기), #/page/<id>(저장한 페이지), #/page/unsaved(저장하지 못한 페이지).
-// 제목(날짜, 상황) 아래에 기본 정보 한 줄. 그다음 순서는 스펙 3절 7단계: 오늘 정리한 내용 / 지난번과 달라진 답 / 고른 방식 / 지금은 이 일부터 / 더 해 볼 만한 일 / 이럴 때 다시 열어 보세요 / 그날 열어 본 질문.
+// 제목(날짜, 상황) 아래에 기본 정보 한 줄. 그 아래는 디자인 개선안 ver2의 순서: 가장 먼저 살펴볼 제안 / 더 살펴볼 제안 /
+// 오늘 적은 내용·고른 돌봄 방법·지난번과 달라진 것(흰 카드 하나) / 이날 읽은 질문 / 이런 일이 생기면 다시 제안을 받아 보세요 / 의료진 질문.
 // 연락처와 링크는 sources에서만 꺼낸다. AI가 쓴 글(why, 요약, 답)에서 번호나 링크를 꺼내지 않는다.
-// 모양은 11/25 디자인 캔버스의 수첩 페이지: 노랑 머리 띠(표지로, 날짜, 상황, 기본 정보 한 줄) 아래에 소제목과 내용이 30px 간격으로 놓인다.
-// 아직 만들지 않은 "상황이 바뀌었어요"와 "카톡으로 보낼 글 복사"는 버튼을 두지 않는다.
+// 모양은 11/25 디자인 개선안 ver2의 기록: 노랑 머리(처음 화면, 날짜, 상황, 기본 정보 한 줄) 아래 바탕 위에 흰 카드가 놓인다.
+// 아직 만들지 않은 "상황이 바뀌었어요"와 "가족에게 보낼 글 복사"는 버튼을 두지 않는다.
 
 const CONFIRM_LINE = "신청하기 전에 공단(1577-1000)이나 안내된 기관에 꼭 확인해 주세요.";
 const URGENT_LINE = "위급할 수 있으면 먼저 119에 전화하세요.";
 const REASSURE_LINE = "꼭 다 하지 않아도 괜찮아요. 필요한 것부터 살펴보세요.";
 const MEDICAL_LINE = "참고만 하시고, 정확한 내용은 의료진과 상담하세요.";
 
-// 머리 띠의 날짜는 "11.25" 꼴. 낭독기에는 "11월 25일"로 읽히게 한다.
-const shortDate = (t) => {
-  const d = new Date(t);
-  return `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, "0")}`;
-};
+// 머리의 날짜는 "2026년 11월 25일" 꼴.
 const longDate = (t) => new Date(t).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
 
 export function render(root, ctx) {
@@ -66,6 +63,11 @@ async function renderBuilding(root, ctx) {
 
 function section(el, title, ...children) {
   return el("section", { class: "page-section" }, el("h2", { class: "page-h2" }, title), ...children);
+}
+
+// 흰 카드 없이 바탕 위에 놓이는 절(다시 제안 받을 때, 의료진 질문).
+function plainSection(el, title, ...children) {
+  return el("section", { class: "page-section plain-section" }, el("h2", { class: "page-h2" }, title), ...children);
 }
 
 // 자료 번호 목록을 링크와 전화 버튼으로 바꾼다. 없는 번호(검수 전이라 빠진 자료)는 건너뛴다.
@@ -188,7 +190,7 @@ function renderPage(root, ctx, page, pageId) {
   }
 
   // 체크 상자와 제목. 체크는 선택이고, 누르면 이 페이지에만 저장한다.
-  function checkRow(card, item, { highlight = false } = {}) {
+  function checkRow(card, item, { first = false } = {}) {
     const boxId = `check-${card.id}`;
     const box = el("input", { type: "checkbox", id: boxId, class: "check" });
     box.checked = checks.has(card.id);
@@ -198,8 +200,8 @@ function renderPage(root, ctx, page, pageId) {
       box,
       el(
         "label",
-        { class: highlight ? "todo-title first-title" : "todo-title", for: boxId },
-        highlight ? el("span", { class: "highlight" }, card.title) : card.title,
+        { class: first ? "todo-title first-title" : "todo-title", for: boxId },
+        card.title,
         item.isNew ? el("span", { class: "new-tag" }, "이번에 새로 나온 제안") : null
       )
     );
@@ -212,7 +214,7 @@ function renderPage(root, ctx, page, pageId) {
     return row;
   }
 
-  // 지금은 이 일부터: 먹색 테두리 흰 카드. 형광펜 제목 한 줄, "왜 지금", 괘선 위 "연락할 곳과 출처 보기".
+  // 가장 먼저 살펴볼 제안: 2px 먹색 테두리 흰 카드. 체크 상자와 제목, 이유, 괘선 위 "연락처와 근거 보기".
   function firstCard(item) {
     const card = ctx.cardOf(item.card_id);
     const more = toggleRow(ctx, "연락처와 근거 보기", "first-more");
@@ -226,14 +228,14 @@ function renderPage(root, ctx, page, pageId) {
       "section",
       { class: "first-card" },
       el("h2", { class: "page-h2" }, "가장 먼저 살펴볼 제안"),
-      checkRow(card, item, { highlight: true }),
+      checkRow(card, item, { first: true }),
       el("p", { class: "first-why" }, item.why || card.why),
       more,
       box
     );
   }
 
-  // 더 해 볼 만한 일의 한 줄. 누르면 "왜 지금"과 연락할 곳이 펼쳐진다.
+  // 더 살펴볼 제안의 한 줄. 누르면 "왜 지금"과 연락할 곳이 펼쳐진다.
   function todo(item) {
     const card = ctx.cardOf(item.card_id);
     const more = el("button", { class: "more", type: "button", "aria-expanded": "false" }, "연락처와 근거 보기");
@@ -268,10 +270,46 @@ function renderPage(root, ctx, page, pageId) {
         "details",
         { class: "more-todos" },
         el("summary", {}, el("span", {}, `더 살펴볼 제안 ${rest.length}개`), ctx.icon("down", 18)),
-        moreGroups.map((g) => el("div", { class: "bucket" }, el("h3", {}, buckets[g.b]), el("ul", { class: "todo-ul" }, g.list.map(todo)))),
-        orphan.length ? el("ul", { class: "todo-ul" }, orphan.map(todo)) : null
+        el(
+          "div",
+          { class: "more-todos-body" },
+          moreGroups.map((g) => el("div", { class: "bucket" }, el("h3", {}, buckets[g.b]), el("ul", { class: "todo-ul" }, g.list.map(todo)))),
+          orphan.length ? el("ul", { class: "todo-ul" }, orphan.map(todo)) : null
+        )
       )
     : null;
+
+  // 오늘 적은 내용 / 고른 돌봄 방법 / 지난번과 달라진 것. 있는 것만 흰 카드 하나에 괘선으로 나눠 담는다.
+  // 정리할 답이 없으면(기본 정보만 답한 경우) 오늘 적은 내용을 숨긴다. 옛 기록은 저장된 글을 그대로 보여 준다.
+  const recordParts = [
+    typeof page.summary === "string" && page.summary.trim() ? section(el, "오늘 적은 내용", el("p", { class: "summary" }, page.summary)) : null,
+    page.compare ? section(el, "고른 돌봄 방법", el("p", { class: "picked" }, page.methodTitle ?? "아직 정하지 않았어요")) : null,
+    changes.length
+      ? section(
+          el,
+          "지난번과 달라진 것",
+          el(
+            "ul",
+            { class: "changes" },
+            changes.map((c) =>
+              el(
+                "li",
+                {},
+                el("span", { class: "change-name" }, ctx.shortName(c.key)),
+                el(
+                  "span",
+                  { class: "change-row" },
+                  el("s", { class: "change-before" }, answerText(c.key, c.before)),
+                  ctx.icon("arrow", 18),
+                  el("span", { class: "visually-hidden" }, "에서"),
+                  el("b", { class: "change-after" }, answerText(c.key, c.after))
+                )
+              )
+            )
+          )
+        )
+      : null,
+  ].filter(Boolean);
 
   ctx.put(
     root,
@@ -281,54 +319,33 @@ function renderPage(root, ctx, page, pageId) {
       el(
         "header",
         { class: "page-head" },
-        el("a", { class: "page-back", href: "#/" }, ctx.icon("back", 20), "처음 화면"),
-        hasDate ? el("p", { class: "page-date" }, el("span", { "aria-hidden": "true" }, shortDate(page.createdAt)), el("span", { class: "visually-hidden" }, longDate(page.createdAt))) : null,
+        el("a", { class: "back-link", href: "#/" }, ctx.icon("back", 24), "처음 화면"),
+        hasDate ? el("p", { class: "page-date" }, longDate(page.createdAt)) : null,
         el("h1", { class: "page-situation" }, page.situationTitle ?? ""),
         basicLine ? el("p", { class: "basic-line" }, basicLine) : null
       ),
-      page.usedAi === false ? el("p", { class: "ai-line" }, "지금은 제안마다 맞춤 설명을 붙이지 못했어요. 제안은 그대로 살펴보실 수 있어요.") : null,
-      el("p", { class: "page-reassure" }, REASSURE_LINE),
       status,
       el(
         "div",
         { class: "page-body" },
         pageId === "unsaved" ? el("p", { class: "note" }, "이 기록을 휴대폰에 남기지 못했어요. 이 화면을 닫으면 사라져요.") : null,
+        el(
+          "div",
+          { class: "page-intro" },
+          page.usedAi === false ? el("p", { class: "ai-line" }, "지금은 제안마다 맞춤 설명을 붙이지 못했어요. 제안은 그대로 살펴보실 수 있어요.") : null,
+          el("p", { class: "page-reassure" }, REASSURE_LINE)
+        ),
         urgent ? el("p", { class: "urgent-line" }, URGENT_LINE, " ", el("a", { href: "#/emergency" }, "위급할 때 연락처 보기")) : null,
 
-        // 정리할 답이 없으면(기본 정보만 답한 경우) 이 절을 숨긴다. 옛 페이지는 저장된 글을 그대로 보여 준다.
-        typeof page.summary === "string" && page.summary.trim() ? section(el, "오늘 적은 내용", el("p", { class: "summary" }, page.summary)) : null,
-        changes.length
-          ? section(
-              el,
-              "지난번과 달라진 것",
-              el(
-                "ul",
-                { class: "changes" },
-                changes.map((c) =>
-                  el(
-                    "li",
-                    {},
-                    el("span", { class: "change-name" }, ctx.shortName(c.key)),
-                    " ",
-                    el("s", { class: "change-before" }, answerText(c.key, c.before)),
-                    " ",
-                    ctx.icon("arrow", 16),
-                    el("span", { class: "visually-hidden" }, "에서"),
-                    " ",
-                    el("b", { class: "change-after" }, answerText(c.key, c.after))
-                  )
-                )
-              )
-            )
-          : null,
-        page.compare ? section(el, "고른 돌봄 방법", el("p", { class: "picked" }, page.methodTitle ?? "아직 정하지 않았어요")) : null,
-
-        first ? firstCard(first) : section(el, "가장 먼저 살펴볼 제안", el("p", {}, "지금 답에 맞는 제안을 찾지 못했어요. 다른 상황을 골라 다시 받아 보세요.")),
+        first
+          ? firstCard(first)
+          : el("section", { class: "first-card" }, el("h2", { class: "page-h2" }, "가장 먼저 살펴볼 제안"), el("p", {}, "지금 답에 맞는 제안을 찾지 못했어요. 다른 상황을 골라 다시 받아 보세요.")),
         moreBlock,
-        section(el, "이날 읽은 질문", openedBox),
-        watch.length ? section(el, "이런 일이 생기면 다시 제안을 받아 보세요", el("ul", { class: "watch" }, watch.map((w) => el("li", {}, w)))) : null,
+        recordParts.length ? el("div", { class: "record-card" }, recordParts) : null,
+        el("section", { class: "opened-card" }, el("h2", { class: "page-h2" }, "이날 읽은 질문"), openedBox),
+        watch.length ? plainSection(el, "이런 일이 생기면 다시 제안을 받아 보세요", el("ul", { class: "watch" }, watch.map((w) => el("li", {}, w)))) : null,
         medical.length
-          ? section(el, "다음 진료 때 의료진에게 물어볼 질문", el("p", { class: "note" }, MEDICAL_LINE), el("ul", { class: "watch" }, medical.map((m) => el("li", {}, m))))
+          ? plainSection(el, "다음 진료 때 의료진에게 물어볼 질문", el("p", { class: "note" }, MEDICAL_LINE), el("ul", { class: "watch" }, medical.map((m) => el("li", {}, m))))
           : null,
 
         el(
@@ -351,7 +368,7 @@ function renderPage(root, ctx, page, pageId) {
               },
               "이 기록 지우기"
             ),
-            el("a", { class: "help-link", href: "#/emergency" }, "위급할 때 연락처")
+            el("a", { class: "help-link", href: "#/emergency" }, ctx.icon("phone", 18), "위급할 때 연락처")
           )
         )
       )
