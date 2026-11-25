@@ -59,6 +59,34 @@ function fill(parent, ...children) {
   return put(parent, ...children);
 }
 
+// 아이콘. 꾸밈용이라 화면 낭독기가 읽지 않게 aria-hidden을 붙인 인라인 SVG다(이모지 쓰지 않음).
+const ICONS = {
+  back: ["M15 6l-6 6 6 6"],
+  down: ["M6 9l6 6 6-6"],
+  right: ["M9 6l6 6-6 6"],
+  arrow: ["M5 12h14M13 6l6 6-6 6"],
+  check: ["M5 12l5 5 9-10"],
+  alert: ["M12 9v4M12 17h.01", "M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"],
+  phone: ["M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"],
+  lock: ["M8 11V7a4 4 0 0 1 8 0v4"],
+};
+function icon(name, size = 22) {
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  for (const [k, v] of Object.entries({ "aria-hidden": "true", focusable: "false", width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": name === "check" ? 3 : 2, "stroke-linecap": "round", "stroke-linejoin": "round", class: `icon icon-${name}` })) svg.setAttribute(k, String(v));
+  if (name === "lock") {
+    const rect = document.createElementNS(NS, "rect");
+    for (const [k, v] of Object.entries({ x: 5, y: 11, width: 14, height: 10, rx: 2 })) rect.setAttribute(k, String(v));
+    svg.appendChild(rect);
+  }
+  for (const d of ICONS[name] ?? []) {
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", d);
+    svg.appendChild(path);
+  }
+  return svg;
+}
+
 // 심청이 그림 자리(B5). 파일이 없으면 숨긴다. 오류 처리를 src보다 먼저 붙여야 놓치지 않는다.
 function simcheong(name = "default") {
   const img = document.createElement("img");
@@ -258,8 +286,10 @@ function knownLabel(key, value) {
 }
 
 // 수첩 페이지 제목 아래 기본 정보 한 줄.
+// 등급 보기의 "없어요", "신청 중이에요"는 한 줄 안에서 무엇의 답인지 알 수 없어 따로 적는다.
+const GRADE_LINE = { none: "등급 없음", applying: "등급 신청 중" };
 function basicLine(answers) {
-  return BASIC_LINE_KEYS.map((k) => knownLabel(k, answers?.[k])).filter(Boolean).join(" · ");
+  return BASIC_LINE_KEYS.map((k) => (k === "grade" && GRADE_LINE[answers?.[k]]) || knownLabel(k, answers?.[k])).filter(Boolean).join(" · ");
 }
 
 // 질문 단계 목록. 답에 따라 조건부 질문이 붙었다 빠지므로 매번 새로 만든다.
@@ -291,10 +321,15 @@ function checkEmergency(texts, next) {
   const fresh = kinds.filter((k) => !session.emergencyKinds.includes(k));
   if (fresh.length === 0) return nav(next);
   session.emergencyKinds = [...session.emergencyKinds, ...fresh];
-  pendingEmergency = { kinds: session.emergencyKinds, next };
+  pendingEmergency = { kinds: session.emergencyKinds, next, quote: signalTexts(texts) };
   nav("#/emergency");
 }
 let pendingEmergency = null;
+
+// 응급 신호가 잡힌 글만 골라 응급 화면에 인용한다. 이 브라우저 안에서만 쓰고 서버로 보내지 않는다.
+function signalTexts(texts) {
+  return texts.filter((t) => typeof t === "string" && t.trim() && detectEmergency([t]).length > 0).map((t) => t.trim());
+}
 
 // 페이지를 만들기 직전, 걱정 칸과 보충 질문에 직접 적은 글을 한 번 더 본다.
 // 뒤로 가기와 앞으로 가기로 앞 단계의 확인을 지나쳤어도 AI를 부르기 전에 걸러지게 한다.
@@ -304,7 +339,7 @@ function emergencyBeforeBuild() {
   const fresh = kinds.filter((k) => !session.emergencyKinds.includes(k));
   if (fresh.length === 0) return false;
   session.emergencyKinds = [...session.emergencyKinds, ...fresh];
-  pendingEmergency = { kinds: session.emergencyKinds, next: "#/page/new" };
+  pendingEmergency = { kinds: session.emergencyKinds, next: "#/page/new", quote: signalTexts([session.worry, ...(session.followupTyped ?? [])]) };
   nav("#/emergency", { replace: true });
   return true;
 }
@@ -395,19 +430,20 @@ function nav(hash, { replace = false } = {}) {
 }
 
 // 모든 화면 아래: "즉시 도움이 필요할 때"와 글자 크기.
-function footer() {
+// 표지, 수첩 페이지, 응급 화면은 화면 안에 그 링크를 따로 두므로 help: false로 글자 크기만 남긴다.
+function footer({ help = true } = {}) {
   const size = el("button", { class: "text-button size-toggle", type: "button", "aria-pressed": String(prefs.large) }, prefs.large ? "글자 보통" : "글자 크게");
   size.addEventListener("click", () => {
     const on = toggleLarge();
     size.setAttribute("aria-pressed", String(on));
     size.textContent = on ? "글자 보통" : "글자 크게";
   });
-  return el("footer", { class: "site-footer" }, el("a", { class: "help-link", href: "#/emergency" }, "즉시 도움이 필요할 때"), size);
+  return el("footer", { class: `site-footer${help ? "" : " size-only"}` }, help ? el("a", { class: "help-link", href: "#/emergency" }, "즉시 도움이 필요할 때") : null, size);
 }
 
 // 새 화면을 그린 뒤 화면 낭독기가 새 제목부터 읽도록 제목에 초점을 옮긴다.
-function settle() {
-  put(root, footer());
+function settle(opts = {}) {
+  put(root, footer(opts));
   window.scrollTo(0, 0);
   const heading = root.querySelector("h1");
   if (heading) {
@@ -420,6 +456,7 @@ const ctx = {
   el,
   put,
   fill,
+  icon,
   simcheong,
   get content() {
     return content;

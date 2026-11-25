@@ -2,7 +2,8 @@
 // 두 가지로 열린다.
 // - 직접 적은 글에서 응급 신호를 찾았을 때(app.js checkEmergency): 찾은 신호에 맞는 연락처를 보여 주고, 닫으면 하던 단계로 간다.
 // - 모든 화면 아래 링크로 열었을 때: 신호 종류와 상관없이 연락처를 모두 보여 준다.
-// 연락처는 emergencyContacts(emergency.mjs)가 sources에서 꺼낸 것만 쓴다. 색에만 기대지 않도록 빨강 띠 아래에 제목을 둔다.
+// 연락처는 emergencyContacts(emergency.mjs)가 sources에서 꺼낸 것만 쓴다. 색에만 기대지 않도록 경고 문구와 제목을 붙인다.
+// 모양은 11/25 디자인 캔버스의 응급 화면: 위쪽 빨강 테두리, 첫 연락처는 빨강 채움 버튼, 나머지는 먹색 테두리 버튼.
 
 const ALL_KINDS = ["medical", "violence", "suicide"];
 
@@ -28,16 +29,24 @@ function callLabel(s) {
   return s.name.includes(s.phone) ? s.name : `${s.phone} ${s.name}`;
 }
 
+const tel = (phone) => `tel:${phone.replace(/-/g, "")}`;
+
 export function render(root, ctx) {
   const { el } = ctx;
   const pending = ctx.pendingEmergency;
   const kinds = pending?.kinds?.length ? pending.kinds : ALL_KINDS;
-  const contacts = ctx.contactsFor(kinds);
+  const contacts = ctx.contactsFor(kinds).filter((s) => s.phone);
+  const [first, ...others] = contacts;
+  // 보호자가 적은 글 가운데 신호가 잡힌 것. 이 브라우저 안에서만 보여 주고 서버로 보내지 않는다.
+  const quotes = Array.isArray(pending?.quote) ? pending.quote : [];
+  // 폭력이나 자살 연락처가 이번 목록에 없을 때만 112·109 안내를 붙인다.
+  const shown = new Set(contacts.map((s) => s.id));
+  const moreNote = !(shown.has("police112") && shown.has("hs_line109"));
 
   const close = el(
     "button",
     {
-      class: "secondary",
+      class: "emergency-close",
       type: "button",
       onclick: () => {
         const next = pending?.next;
@@ -47,41 +56,52 @@ export function render(root, ctx) {
         else ctx.nav("#/");
       },
     },
-    pending ? "안내를 닫고 이어서 하기" : "돌아가기"
+    pending ? "이미 연락했어요. 정리 이어서 보기" : "돌아가기"
   );
 
-  ctx.put(root,
+  ctx.put(
+    root,
     el(
       "section",
       { class: "emergency", "aria-labelledby": "emergency-title" },
-      el("div", { class: "emergency-band", "aria-hidden": "true" }),
-      el("h1", { id: "emergency-title" }, "즉시 도움이 필요할 때"),
-      pending
-        ? el("p", { role: "alert" }, "적어 주신 내용에 위급할 수 있는 상황이 있어요. 할 일 목록보다 먼저 전화해 주세요.")
-        : el("p", {}, "위급할 수 있는 상황이면 먼저 아래로 전화하세요."),
-      contacts.length
-        ? el(
-            "ul",
-            { class: "emergency-list" },
-            contacts.map((s, i) =>
-              el(
-                "li",
-                {},
-                s.phone
-                  ? el(
-                      "a",
-                      { class: `call-urgent${i === 0 ? "" : " soft"}`, href: `tel:${s.phone.replace(/-/g, "")}` },
-                      el("span", { class: "call-name" }, callLabel(s)),
-                      HINT[s.id] ? el("small", {}, HINT[s.id]) : null
-                    )
-                  : el("p", {}, s.name)
-              )
+      el(
+        "div",
+        { class: "emergency-top" },
+        el("p", { class: "emergency-kicker" }, ctx.icon("alert"), "즉시 도움이 필요할 수 있어요"),
+        el("h1", { id: "emergency-title", class: "emergency-title" }, "정리보다 전화가 먼저예요"),
+        pending
+          ? el("p", { class: "emergency-lead", role: "alert" }, "적어 주신 말에 위급할 수 있는 신호가 있어요. 돌봄수첩은 위급한지 판단하지 않으니, 걱정되면 지금 전화하세요.")
+          : el("p", { class: "emergency-lead" }, "돌봄수첩은 위급한지 판단하지 않아요. 걱정되면 지금 전화하세요."),
+        quotes.length ? quotes.map((q) => el("blockquote", { class: "emergency-quote" }, q)) : null
+      ),
+      el(
+        "div",
+        { class: "emergency-calls" },
+        first
+          ? el(
+              "a",
+              { class: "call-first", href: tel(first.phone) },
+              el("span", { class: "call-text" }, el("span", { class: "call-name" }, callLabel(first)), HINT[first.id] ? el("span", { class: "call-sub" }, HINT[first.id]) : null),
+              ctx.icon("phone", 26)
             )
+          : // 자료 목록에 연락처가 아직 없을 때(검수 전 기본 모드). 번호를 코드에 적지 않고 고정 문구만 보여 준다.
+            el("p", { class: "note" }, "연락처 목록을 불러오지 못했어요. 위급할 수 있는 상황이면 먼저 119에 전화하세요."),
+        others.map((s) =>
+          el(
+            "a",
+            { class: "call-other", href: tel(s.phone) },
+            el("span", { class: "call-text" }, el("span", { class: "call-name" }, LABEL[s.id] ?? s.name), el("span", { class: "call-number" }, s.phone)),
+            ctx.icon("right")
           )
-        : // 자료 목록에 연락처가 아직 없을 때(검수 전 기본 모드). 번호를 코드에 적지 않고 고정 문구만 보여 준다.
-          el("p", { class: "note" }, "연락처 목록을 불러오지 못했어요. 위급할 수 있는 상황이면 먼저 119에 전화하세요."),
-      close
+        )
+      ),
+      el(
+        "div",
+        { class: "emergency-bottom" },
+        moreNote ? el("p", { class: "emergency-note" }, "폭력이 걱정되면 112, 죽음이나 자살을 말씀하시면 자살예방상담전화 109도 함께 보여 드려요.") : null,
+        close
+      )
     )
   );
-  ctx.settle();
+  ctx.settle({ help: false });
 }

@@ -1,6 +1,7 @@
 // 상황 고르기, 기본 정보, 상황별 질문, 걱정 한 줄, 보충 질문. 이후 맡는 자리: A1.
 // 주소: #/new(상황 고르기), #/q/<단계>(basic: 지난번 기본 정보 요약, basic-1..5, sq-<키>, cq-<키>, worry, more).
 // 단계 목록과 보낼 답은 app.js(steps, currentAnswers)가 만들고, 이 파일은 그리기만 한다.
+// 모양은 11/25 디자인 캔버스의 질문 화면: 노랑 위쪽 띠(뒤로, 상황 이름, n / m, 진행 막대) 아래에 질문과 보기, 맨 아래에 고정된 "다음".
 
 const ADVANCE_MS = 350;
 const AI_NOTICE = "답하신 내용은 맞는 할 일을 찾기 위해 AI에 보내요. 이름, 주소, 연락처는 적지 마세요.";
@@ -36,14 +37,25 @@ function fieldDone(session, field) {
   return field.type === "many" ? Array.isArray(v) && v.length > 0 : Boolean(v);
 }
 
+// 보기 버튼 하나. 왼쪽 표시(하나만 고르면 동그라미, 여러 개면 둥근 네모)와 고른 뒤의 체크는 꾸밈이라 낭독기가 읽지 않는다.
+// "잘 모르겠어요"는 점선 테두리로 다른 보기와 구분한다.
+function choiceButton(ctx, { label, value, single, chosen }) {
+  const { el } = ctx;
+  const stateAttr = single ? "aria-checked" : "aria-pressed";
+  return el(
+    "button",
+    { class: `choice${single ? "" : " many"}${value === "unknown" ? " unknown" : ""}`, type: "button", role: single ? "radio" : null, [stateAttr]: String(chosen) },
+    el("span", { class: "choice-mark", "aria-hidden": "true" }, ctx.icon("check", 14)),
+    el("span", { class: "choice-label" }, label)
+  );
+}
+
 // 보기 묶음. 하나만 고르는 보기는 라디오로, 여러 개 고르는 보기는 누름 버튼으로 읽힌다.
 function choiceGroup(ctx, field, legendText, { onPick, hint } = {}) {
   const { el, session } = ctx;
   const single = field.type !== "many";
   const stateAttr = single ? "aria-checked" : "aria-pressed";
-  const buttons = field.options.map((opt) =>
-    el("button", { class: `choice${single ? "" : " many"}`, type: "button", role: single ? "radio" : null, [stateAttr]: String(isChosen(session, field, opt.value)) }, opt.label)
-  );
+  const buttons = field.options.map((opt) => choiceButton(ctx, { label: opt.label, value: opt.value, single, chosen: isChosen(session, field, opt.value) }));
   buttons.forEach((b, k) =>
     b.addEventListener("click", () => {
       choose(session, field, field.options[k].value);
@@ -55,19 +67,39 @@ function choiceGroup(ctx, field, legendText, { onPick, hint } = {}) {
     "fieldset",
     { class: "field" },
     el("legend", {}, legendText),
-    hint ? el("p", { class: "meta" }, hint) : !single ? el("p", { class: "meta" }, "여러 개 고를 수 있어요.") : null,
+    hint ? el("p", { class: "q-hint" }, hint) : !single ? el("p", { class: "q-hint" }, "여러 개 고를 수 있어요.") : null,
     el("div", { class: "choices", role: single ? "radiogroup" : null }, buttons)
   );
 }
 
-function topbar(ctx, backHash, stepText) {
+// 질문 화면의 틀. 노랑 띠 안에 뒤로 화살표(44px), 가운데 상황 이름, 오른쪽 단계 표시와 아래 진행 막대.
+// body에 질문과 보기를, actions에 맨 아래 고정 버튼을 넣는다.
+function frame(ctx, { backHash, title, stepText, progress }) {
   const { el } = ctx;
-  return el(
-    "div",
-    { class: "topbar" },
-    el("a", { class: "text-button", href: backHash }, backHash === "#/" ? "표지로" : "이전"),
-    stepText ? el("span", { class: "step" }, stepText) : null
+  const bar = el("span", { class: "q-progress-bar" });
+  // 진행 막대 길이는 CSSOM으로 정한다(CSP가 HTML의 style 속성을 막으므로).
+  if (typeof progress === "number") bar.style.width = `${Math.round(Math.min(1, Math.max(0, progress)) * 100)}%`;
+  const body = el("div", { class: "q-body" });
+  const actions = el("div", { class: "q-actions" });
+  const section = el(
+    "section",
+    { class: "q-screen" },
+    el(
+      "div",
+      { class: "q-head" },
+      el(
+        "div",
+        { class: "q-head-row" },
+        el("a", { class: "icon-button", href: backHash, "aria-label": backHash === "#/" ? "표지로 돌아가기" : "이전 질문으로" }, ctx.icon("back")),
+        el("span", { class: "q-situation" }, title ?? ""),
+        el("span", { class: "q-step" }, stepText ?? "")
+      ),
+      typeof progress === "number" ? el("div", { class: "q-progress", "aria-hidden": "true" }, bar) : null
+    ),
+    body,
+    actions
   );
+  return { section, body, actions };
 }
 
 // ---- 상황 고르기 ----
@@ -75,43 +107,40 @@ function renderSituations(root, ctx) {
   const { el, content } = ctx;
   // ready가 아닌 상황(검수를 마치지 못한 상황)은 내지 않는다. 개발 모드에서는 서버가 ready를 넓게 준다.
   const ready = content.situations.filter((s) => s.ready);
-  ctx.put(root,
-    el(
-      "section",
-      { class: "sheet" },
-      topbar(ctx, "#/", null),
-      el("h1", {}, "지금 어떤 상황인가요?"),
-      el("p", { class: "meta" }, "가장 가까운 것 하나를 골라 주세요."),
-      ready.length
-        ? el(
-            "div",
-            { class: "choices situations" },
-            ready.map((s) =>
-              el(
-                "button",
-                {
-                  class: "choice situation",
-                  type: "button",
-                  onclick: () => {
-                    const session = ctx.newSession(s.id);
-                    ctx.nav(`#/q/${ctx.steps()[0].id}`);
-                    return session;
-                  },
+  const { section, body } = frame(ctx, { backHash: "#/", title: "새로 정리하기" });
+  ctx.put(
+    body,
+    el("h1", { class: "q-title" }, "지금 어떤 상황인가요?"),
+    el("p", { class: "q-lead" }, "가장 가까운 것 하나를 골라 주세요."),
+    ready.length
+      ? el(
+          "div",
+          { class: "choices situations" },
+          ready.map((s) =>
+            el(
+              "button",
+              {
+                class: "choice situation",
+                type: "button",
+                onclick: () => {
+                  ctx.newSession(s.id);
+                  ctx.nav(`#/q/${ctx.steps()[0].id}`);
                 },
-                el("span", { class: "choice-title" }, s.title),
-                s.hint ? el("span", { class: "choice-hint" }, s.hint) : null
-              )
+              },
+              el("span", { class: "choice-title" }, s.title),
+              s.hint ? el("span", { class: "choice-hint" }, s.hint) : null
             )
           )
-        : el("p", { class: "note" }, "아직 두 사람이 확인을 마친 상황이 없어요. 검수가 끝나면 여기에 상황이 나와요.")
-    )
+        )
+      : el("p", { class: "note" }, "아직 두 사람이 확인을 마친 상황이 없어요. 검수가 끝나면 여기에 상황이 나와요.")
   );
+  ctx.put(root, section);
   ctx.settle();
 }
 
 // ---- 질문 단계 ----
 export function render(root, ctx) {
-  const { el, params } = ctx;
+  const { params } = ctx;
   if (params.head === "new") return renderSituations(root, ctx);
   const session = ctx.session;
   if (!session) return ctx.nav("#/new", { replace: true });
@@ -128,17 +157,22 @@ export function render(root, ctx) {
   };
   // 보충 질문은 몇 개일지 모르므로 단계 수에서 뺀다.
   const counted = list.filter((s) => s.kind !== "followups").length;
-  const stepText = step.kind === "followups" ? "보충 질문" : `${index + 1} / ${counted}`;
-  const sheet = el("section", { class: "sheet" }, topbar(ctx, backHash, stepText));
-  ctx.put(root, sheet);
+  const followups = step.kind === "followups";
+  const parts = frame(ctx, {
+    backHash,
+    title: ctx.situationOf(session.situation)?.title,
+    stepText: followups ? "보충 질문" : `${index + 1} / ${counted}`,
+    progress: followups ? 1 : (index + 1) / counted,
+  });
+  ctx.put(root, parts.section);
 
-  if (step.kind === "basic-summary") return renderBasicSummary(sheet, ctx, step, nextHash);
-  if (step.kind === "basic" || step.kind === "pick") return renderPick(sheet, ctx, step, nextHash);
-  if (step.kind === "worry") return renderWorry(sheet, ctx, nextHash);
-  return renderFollowups(sheet, ctx);
+  if (step.kind === "basic-summary") return renderBasicSummary(parts, ctx, step, nextHash);
+  if (step.kind === "basic" || step.kind === "pick") return renderPick(parts, ctx, step, nextHash);
+  if (step.kind === "worry") return renderWorry(parts, ctx, nextHash);
+  return renderFollowups(parts, ctx);
 }
 
-function renderPick(sheet, ctx, step, nextHash) {
+function renderPick({ body, actions }, ctx, step, nextHash) {
   const { el, session } = ctx;
   let fields;
   let title;
@@ -150,14 +184,16 @@ function renderPick(sheet, ctx, step, nextHash) {
     fields = [{ field: step.q, legend: step.q.text, hint: step.q.hint }];
   }
   const isPick = step.kind === "pick";
-  // 칸 하나에 하나만 고르는 질문은 고르면 바로 넘어간다.
-  const auto = fields.length === 1 && fields[0].field.type !== "many";
+  const one = fields.length === 1;
+  // 칸 하나에 하나만 고르는 질문은 고르면 바로 넘어간다. 지난 답이 골라져 있어도 새로 누를 때만 넘어간다.
+  const auto = one && fields[0].field.type !== "many";
   let advancing = false;
   const next = el("button", { class: "primary", type: "button", onclick: () => ctx.nav(nextHash()) }, "다음");
   const refresh = () => (next.disabled = !isPick && !fields.every(({ field }) => fieldDone(session, field)));
+  // 칸 하나짜리 질문은 제목이 질문이므로 묶음 이름은 낭독기에만 들려주고, 설명은 제목 아래에 둔다.
   const groups = fields.map(({ field, legend, hint }) =>
-    choiceGroup(ctx, field, fields.length === 1 ? el("span", { class: "visually-hidden" }, legend) : legend, {
-      hint,
+    choiceGroup(ctx, field, one ? el("span", { class: "visually-hidden" }, legend) : legend, {
+      hint: one ? null : hint,
       onPick: () => {
         refresh();
         if (auto && !advancing) {
@@ -168,15 +204,16 @@ function renderPick(sheet, ctx, step, nextHash) {
     })
   );
   refresh();
-  ctx.put(sheet,
-    el("h1", {}, title),
-    groups,
+  const lead = one ? fields[0].hint ?? (fields[0].field.type === "many" ? "여러 개 고를 수 있어요." : null) : null;
+  ctx.put(body, el("h1", { class: "q-title" }, title), lead ? el("p", { class: "q-lead" }, lead) : null, el("div", { class: "q-fields" }, groups));
+  ctx.put(
+    actions,
     next,
     isPick
       ? el(
           "button",
           {
-            class: "text-button block",
+            class: "skip-button",
             type: "button",
             onclick: () => {
               delete session.answers[step.q.key];
@@ -184,7 +221,7 @@ function renderPick(sheet, ctx, step, nextHash) {
               ctx.nav(nextHash());
             },
           },
-          "건너뛰기"
+          "이 질문 건너뛰기"
         )
       : null
   );
@@ -193,7 +230,7 @@ function renderPick(sheet, ctx, step, nextHash) {
 
 // 지난번 기본 정보 요약 카드. 잘 안 바뀌는 칸의 답을 한두 줄로 보여 주고 [그대로예요] [고칠 게 있어요]를 묻는다.
 // 고칠 게 있다고 하면 그 자리에서 해당 칸의 보기를 펼친다.
-function renderBasicSummary(sheet, ctx, step, nextHash) {
+function renderBasicSummary({ body, actions }, ctx, step, nextHash) {
   const { el, session } = ctx;
   // 칸 하나짜리 화면의 답은 한 줄에 모으고, 칸 여러 개인 화면(보호자 여건)은 화면마다 한 줄로 둔다.
   // 칸 이름이 "~는지"처럼 묻는 말이면 보기 이름만으로 뜻이 통하므로 칸 이름을 붙이지 않는다.
@@ -209,13 +246,7 @@ function renderBasicSummary(sheet, ctx, step, nextHash) {
   const card = el(
     "div",
     { class: "basic-summary" },
-    lines.length ? lines.map((l) => el("p", { class: "basic-summary-line" }, l)) : el("p", { class: "meta" }, "모두 “잘 모르겠어요”로 적혀 있어요.")
-  );
-  const actions = el(
-    "div",
-    { class: "basic-summary-actions" },
-    el("button", { class: "primary", type: "button", onclick: () => ctx.nav(nextHash()) }, "그대로예요"),
-    el("button", { class: "secondary", type: "button", onclick: () => edit() }, "고칠 게 있어요")
+    lines.length ? lines.map((l) => el("p", { class: "basic-summary-line" }, l)) : el("p", { class: "q-lead" }, "모두 “잘 모르겠어요”로 적혀 있어요.")
   );
   const editBox = el("div", { class: "basic-summary-edit" });
 
@@ -225,25 +256,34 @@ function renderBasicSummary(sheet, ctx, step, nextHash) {
     const refresh = () => (next.disabled = !fields.every(({ field }) => fieldDone(session, field)));
     const groups = fields.map(({ field, legend, hint }) => choiceGroup(ctx, field, legend, { hint, onPick: refresh }));
     refresh();
-    actions.hidden = true;
-    ctx.fill(editBox, el("p", { class: "meta" }, "달라진 곳만 고쳐 주세요."), groups, next);
+    ctx.fill(editBox, el("p", { class: "q-lead" }, "달라진 곳만 고쳐 주세요."), el("div", { class: "q-fields" }, groups));
+    ctx.fill(actions, next);
     editBox.querySelector("button")?.focus();
   }
 
-  ctx.put(sheet, el("h1", {}, "지난번 기본 정보"), el("p", { class: "meta" }, "그대로인지 봐 주세요."), card, actions, editBox);
+  ctx.put(body, el("h1", { class: "q-title" }, "지난번 기본 정보"), el("p", { class: "q-lead" }, "그대로인지 봐 주세요."), card, editBox);
+  ctx.put(
+    actions,
+    el("button", { class: "primary", type: "button", onclick: () => ctx.nav(nextHash()) }, "그대로예요"),
+    el("button", { class: "secondary", type: "button", onclick: () => edit() }, "고칠 게 있어요")
+  );
   ctx.settle();
 }
 
-function renderWorry(sheet, ctx, nextHash) {
+function renderWorry({ body, actions }, ctx, nextHash) {
   const { el, session } = ctx;
   const box = el("textarea", { id: "worry", maxlength: "300", rows: "3", "aria-describedby": "worry-note" });
   box.value = session.worry;
   box.addEventListener("input", () => (session.worry = box.value));
-  ctx.put(sheet,
-    el("h1", {}, el("label", { for: "worry" }, "요즘 가장 걱정되는 일을 한 줄로 적어 주세요")),
-    el("p", { class: "meta" }, "비워 두고 넘어가도 돼요."),
+  ctx.put(
+    body,
+    el("h1", { class: "q-title" }, el("label", { for: "worry" }, "요즘 가장 걱정되는 일을 한 줄로 적어 주세요")),
+    el("p", { class: "q-lead" }, "비워 두고 넘어가도 돼요."),
     box,
-    el("p", { class: "meta", id: "worry-note" }, AI_NOTICE),
+    el("p", { class: "q-note", id: "worry-note" }, AI_NOTICE)
+  );
+  ctx.put(
+    actions,
     el(
       "button",
       {
@@ -261,11 +301,11 @@ function renderWorry(sheet, ctx, nextHash) {
   ctx.settle();
 }
 
-async function renderFollowups(sheet, ctx) {
+async function renderFollowups({ body, actions }, ctx) {
   const { el, session } = ctx;
   const here = location.hash;
   if (session.followupQs === null) {
-    ctx.put(sheet, el("h1", {}, "조금만 더 여쭤볼게요"), el("p", { class: "loading", role: "status" }, "질문을 준비하는 중이에요."));
+    ctx.put(body, el("h1", { class: "q-title" }, "조금만 더 여쭤볼게요"), el("p", { class: "loading", role: "status" }, "질문을 준비하는 중이에요."));
     ctx.settle();
     const res = await ctx.api("followups", { situation: session.situation, answers: ctx.currentAnswers() });
     const list = res.ok && Array.isArray(res.value) ? res.value : [];
@@ -280,14 +320,11 @@ async function renderFollowups(sheet, ctx) {
   // 보충 질문이 없으면(AI가 꺼졌거나 실패) 건너뛴다. 이 단계는 기록에 남기지 않는다.
   if (session.followupQs.length === 0) return ctx.nav(ctx.afterQuestions(), { replace: true });
 
-  const root = sheet.parentNode;
-  ctx.fill(root);
-  const fresh = el("section", { class: "sheet" });
-  ctx.put(root, fresh);
-  const list = ctx.steps();
-  ctx.put(fresh,
-    el("div", { class: "topbar" }, el("a", { class: "text-button", href: `#/q/${list[list.length - 2].id}` }, "이전"), el("span", { class: "step" }, "보충 질문"))
-  );
+  // 기다리는 동안 붙은 바닥 글을 지우고 같은 틀에 다시 그린다.
+  const root = body.closest(".q-screen")?.parentNode;
+  root?.querySelector(".site-footer")?.remove();
+  ctx.fill(body);
+  ctx.fill(actions);
 
   const picked = new Map(session.followupAnswers.map((f) => [f.q, f.a]));
   const blocks = session.followupQs.map((fq, n) => {
@@ -295,7 +332,7 @@ async function renderFollowups(sheet, ctx) {
     const prev = picked.get(fq.q) ?? "";
     const typedPrev = fq.options.includes(prev) ? "" : prev;
     let choice = fq.options.includes(prev) ? prev : null;
-    const buttons = fq.options.map((o) => el("button", { class: "choice", type: "button", role: "radio", "aria-checked": String(o === choice) }, o));
+    const buttons = fq.options.map((o) => choiceButton(ctx, { label: o, value: o, single: true, chosen: o === choice }));
     const typed = el("input", { id, type: "text", maxlength: "200", class: "text-input", "aria-describedby": "fq-note" });
     typed.value = typedPrev;
     buttons.forEach((b, k) =>
@@ -317,17 +354,21 @@ async function renderFollowups(sheet, ctx) {
       { class: "field" },
       el("legend", {}, `${n + 1}. ${fq.q}`),
       el("div", { class: "choices", role: "radiogroup" }, buttons),
-      el("label", { for: id, class: "meta" }, "직접 적기"),
+      el("label", { for: id, class: "q-hint" }, "직접 적기"),
       typed
     );
     return { block, read: () => ({ q: fq.q, a: choice ?? typed.value.trim(), typed: !choice ? typed.value.trim() : "" }) };
   });
 
-  ctx.put(fresh,
-    el("h1", {}, "조금만 더 여쭤볼게요"),
-    el("p", { class: "meta" }, "모르면 비워 두고 넘어가도 돼요."),
-    blocks.map((b) => b.block),
-    el("p", { class: "meta", id: "fq-note" }, AI_NOTICE),
+  ctx.put(
+    body,
+    el("h1", { class: "q-title" }, "조금만 더 여쭤볼게요"),
+    el("p", { class: "q-lead" }, "모르면 비워 두고 넘어가도 돼요."),
+    el("div", { class: "q-fields" }, blocks.map((b) => b.block)),
+    el("p", { class: "q-note", id: "fq-note" }, AI_NOTICE)
+  );
+  ctx.put(
+    actions,
     el(
       "button",
       {

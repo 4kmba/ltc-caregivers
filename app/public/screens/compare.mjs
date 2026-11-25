@@ -1,16 +1,13 @@
 // 돌봄 방식 비교. 이후 맡는 자리: A2.
-// 지금은 rankMethods(rules.mjs)의 결과를 같은 모양의 카드 목록으로만 보여 준다. AI를 쓰지 않는다(스펙 7절).
-// A2가 채울 것: "더 확인하면 좋은 것"(답하지 않은 질문), 카드 모양 다듬기.
-// 디자인 규칙(스펙 8절): 번호를 붙이지 않고, "잘 맞을 수 있음"은 색이 아니라 먹색 테두리 태그와 이유 한 줄로만 표시한다.
+// rankMethods(rules.mjs)의 결과를 같은 모양의 카드 목록으로 보여 준다. AI를 쓰지 않는다(스펙 7절).
+// 모양은 11/25 디자인 캔버스의 비교 화면: 노랑 머리 아래 흰 카드, 항목은 두 칸 표(dl).
+// 디자인 규칙(스펙 8절): 번호를 붙이지 않고, "잘 맞을 수 있음"은 색이 아니라 먹색 테두리와 태그, 이유 한 줄로만 표시한다.
 
-function list(el, title, items) {
-  if (!Array.isArray(items) || items.length === 0) return null;
-  return el("div", { class: "method-row" }, el("h3", {}, title), el("ul", {}, items.map((x) => el("li", {}, x))));
-}
-
-function row(el, title, text) {
-  if (!text) return null;
-  return el("div", { class: "method-row" }, el("h3", {}, title), el("p", {}, text));
+// 표의 한 줄. 값이 여러 개(장점, 단점)면 한 줄씩 나눠 적는다.
+function rows(el, pairs) {
+  return pairs
+    .filter(([, v]) => (Array.isArray(v) ? v.length : v))
+    .flatMap(([k, v]) => [el("dt", {}, k), el("dd", {}, Array.isArray(v) ? v.map((x) => el("span", { class: "dd-line" }, x)) : v)]);
 }
 
 export function render(root, ctx) {
@@ -25,35 +22,67 @@ export function render(root, ctx) {
     ctx.nav("#/page/new");
   };
   const back = session.followupQs?.length ? "#/q/more" : "#/q/worry";
+  // 더 확인하면 좋은 것: 이번에 건너뛴 상황별 질문과 조건부 질문. 답하면 비교가 더 정확해진다.
+  const skipped = ctx.steps().filter((s) => s.kind === "pick" && !(s.q.key in session.answers));
 
-  ctx.put(root,
+  ctx.put(
+    root,
     el(
       "section",
-      { class: "sheet" },
-      el("div", { class: "topbar" }, el("a", { class: "text-button", href: back }, "이전")),
-      el("h1", {}, "돌봄 방식을 비교해 보세요"),
-      el("p", { class: "note" }, "참고용 정리입니다. 결정은 가족과 의료진이 함께 하세요."),
+      { class: "compare" },
       el(
-        "ul",
-        { class: "methods" },
+        "div",
+        { class: "compare-head" },
+        el(
+          "div",
+          { class: "head-row" },
+          el("a", { class: "icon-button", href: back, "aria-label": "질문으로 돌아가기" }, ctx.icon("back")),
+          el("span", { class: "q-situation" }, ctx.situationOf(session.situation)?.title ?? "")
+        ),
+        el("h1", { class: "compare-title" }, "고를 수 있는 돌봄 방식"),
+        el("p", { class: "compare-lead" }, "참고용 정리입니다. 결정은 가족과 의료진이 함께 하세요.")
+      ),
+      el(
+        "div",
+        { class: "compare-body" },
         ranked.map(({ method, fits, reason }) =>
           el(
-            "li",
-            { class: "method" },
-            el("h2", {}, method.title),
-            fits ? el("p", { class: "fits" }, el("span", { class: "fits-tag" }, "우리 상황과 잘 맞을 수 있음"), reason ? el("span", { class: "fits-reason" }, reason) : null) : null,
-            el("p", { class: "method-summary" }, method.summary),
-            list(el, "장점", method.pros),
-            list(el, "단점", method.cons),
-            row(el, "비용 기준", method.cost),
-            row(el, "가족 부담", method.burden),
-            row(el, "바로 시작할 수 있는지", method.start_now),
-            el("button", { class: "secondary", type: "button", onclick: () => pick(method.id) }, "이 방식으로 정리하기")
+            "section",
+            { class: `method${fits ? " fits" : ""}`, "aria-label": method.title },
+            el(
+              "div",
+              { class: "method-top" },
+              fits ? el("span", { class: "fits-tag" }, "우리 상황과 잘 맞을 수 있음") : null,
+              el("h2", { class: "method-title" }, method.title),
+              fits && reason ? el("p", { class: "fits-reason" }, reason) : null,
+              method.summary ? el("p", { class: "method-summary" }, method.summary) : null
+            ),
+            el(
+              "dl",
+              { class: "method-table" },
+              rows(el, [
+                ["좋은 점", method.pros],
+                ["걸리는 점", method.cons],
+                ["비용 기준", method.cost],
+                ["가족 부담", method.burden],
+                ["바로 시작", method.start_now],
+              ])
+            ),
+            el("button", { class: fits ? "method-pick filled" : "method-pick", type: "button", onclick: () => pick(method.id) }, "이 방식으로 정리하기")
           )
-        )
-      ),
-      el("button", { class: "secondary", type: "button", onclick: () => pick(null) }, "아직 못 정했어요"),
-      el("p", { class: "meta" }, "아직 못 정했어도 어느 방식을 고르든 필요한 할 일을 정리해 드려요.")
+        ),
+        skipped.length
+          ? el(
+              "div",
+              { class: "compare-more" },
+              el("h2", {}, "더 확인하면 좋은 것"),
+              el("p", {}, `건너뛴 질문이 ${skipped.length}개 있어요. 답하면 비교가 더 정확해져요.`),
+              el("ul", {}, skipped.map((s) => el("li", {}, s.q.text)))
+            )
+          : null,
+        el("button", { class: "not-yet", type: "button", onclick: () => pick(null) }, "아직 못 정했어요"),
+        el("p", { class: "compare-note" }, "아직 못 정했어도 어느 방식을 고르든 필요한 할 일을 정리해 드려요.")
+      )
     )
   );
   ctx.settle();

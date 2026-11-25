@@ -281,6 +281,7 @@
     {
       "id": "fall",
       "title": "갑자기 넘어지셨어요",
+      "short": "낙상",
       "hint": "넘어져서 다쳤거나 걷기 어려워졌어요",
       "compare": true,
       "priority": "P0",
@@ -326,6 +327,7 @@
     {
       "id": "symptom",
       "title": "증상이 나빠졌어요",
+      "short": "증상 악화",
       "hint": "가족을 못 알아보거나, 성격·행동이 달라졌어요",
       "compare": true,
       "priority": "P0",
@@ -409,6 +411,7 @@
     {
       "id": "hospital",
       "title": "입원했거나 곧 퇴원해요",
+      "short": "입원·퇴원",
       "hint": "병원에 계시거나 퇴원 날짜가 다가와요",
       "compare": true,
       "priority": "P0",
@@ -450,6 +453,7 @@
     {
       "id": "unknown",
       "title": "잘 모르겠어요",
+      "short": "무엇부터 할지",
       "hint": "무엇부터 해야 할지 모르겠어요",
       "compare": false,
       "priority": "P0",
@@ -467,6 +471,7 @@
     {
       "id": "caregiver_out",
       "title": "주 보호자가 돌볼 수 없게 됐어요",
+      "short": "보호자 공백",
       "hint": "아프거나, 출장·출근 때문에 돌볼 수 없어요",
       "compare": true,
       "priority": "P0",
@@ -549,6 +554,7 @@
     {
       "id": "suspect",
       "title": "기억력이나 행동이 걱정돼 알아보는 중이에요",
+      "short": "기억력 걱정",
       "hint": "진단이나 등급을 받기 전이에요",
       "compare": false,
       "priority": "P0",
@@ -561,6 +567,7 @@
     {
       "id": "new_grade",
       "title": "등급을 받은 지 얼마 안 됐어요",
+      "short": "등급 받은 뒤",
       "hint": "어떤 서비스를 어떻게 쓸지 정해야 해요",
       "compare": false,
       "priority": "P0",
@@ -573,6 +580,7 @@
     {
       "id": "facility",
       "title": "시설을 생각 중이에요",
+      "short": "시설 고민",
       "hint": "집에서 돌보기 어려워졌어요",
       "compare": true,
       "priority": "P1",
