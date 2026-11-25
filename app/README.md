@@ -2,7 +2,7 @@
 
 네 사람의 프로토타입을 한 제품으로 합친 돌봄수첩의 코드와 내용입니다. 기준 스펙은 [통합 스펙](../docs/specs/spec-integrated-care-plan.md)입니다. `prototypes/`의 개인 프로토타입은 HW6 제출물이라 고치지 않습니다.
 
-내용 파일 다섯 개와 점검 코드, AI 호출 통로와 기능 틀, 팀원이 채울 AI 자리가 있습니다. 화면과 서버는 다음 PR에서 올립니다.
+내용 파일 다섯 개와 점검 코드, 처음부터 수첩 페이지까지 이어지는 화면과 서버, AI 호출 통로와 기능 틀, 팀원이 채울 AI 자리가 있습니다. 비교 화면과 심청이 그림은 팀원이 채울 자리로 비워 두었습니다.
 
 ## 내용 파일
 
@@ -58,15 +58,17 @@ cd app && npm test
 
 AI 기능은 모두 `src/ai/task.mjs`의 `runTask`를 지납니다. `prompts/<이름>.md`가 아직 없으면 AI를 부르지 않고 대체 값(스펙 7절)을 돌려주며, 이때 reason은 `not_built`입니다. 그래서 프롬프트 파일을 만드는 순간부터 그 기능의 AI가 켜집니다. 모든 기능에 붙는 공통 지시는 `prompts/common.md`에 있고, B1 담당이 여기에 말투를 더합니다.
 
-팀원이 채울 자리는 아래와 같습니다. 입력과 값은 11/28에 맡은 사람과 확정합니다.
+팀원이 채울 자리는 아래와 같습니다. 입력과 값은 11/28에 맡은 사람과 확정합니다. 입력을 바꾸면 자리 파일, 브라우저가 보내는 칸 표(`public/app.js`의 `SEND`), 화면 세 곳을 함께 고쳐야 합니다.
 
-| 자리 | 파일과 만드는 함수 | 입력 | 값 | 대체 값 (스펙 7절) |
-|---|---|---|---|---|
-| 본보기: 카드 고르기 | `src/tasks/pick-cards.mjs`, `makePickCards(content)` | `{ situation, answers, methodId, worry, followups: [{ q, a }] }` | `{ items: [{ card_id, bucket, why }] }` | 규칙 기본 목록 |
-| A1 보충 질문 | `src/tasks/followups.mjs`, `makeFollowups(content)` | `{ situation, answers }` | `[{ q, options: string[] }]` 2개까지 | `[]` (건너뜀) |
-| B2 오늘 정리 | `src/tasks/summary.mjs`, `makeSummary(content)` | `{ answered: [{ q, a }], followups: [{ q, a }], worry }` | 글 한 덩이 | 답을 `"질문: 답"` 줄로 나열 |
-| B3 질문에 답하기 | `src/tasks/answer.mjs`, `makeAnswer(content)` | `{ qaId, answers }` | 글 한 덩이 | `qa.json`에 적힌 답 원문 |
-| B4 의료 질문 돌려 주기 | `src/tasks/medical.mjs`, `makeMedical(content)` | `{ worry }` | `string[]` 2개까지 | `[]` |
+AI가 쓴 글에서는 전화번호와 링크가 든 문장을 `src/ai/sanitize.mjs`의 `stripUnsafe`가 지웁니다. 카드 고르기의 "왜 지금", 오늘 정리, 질문 답이 이 점검을 지나고, 다 지워져 남는 글이 없으면 대체 값으로 갑니다.
+
+| 자리 | 파일과 만드는 함수 | 화면 위치 | 입력 | 값 | 대체 값 (스펙 7절) |
+|---|---|---|---|---|---|
+| 본보기: 카드 고르기 | `src/tasks/pick-cards.mjs`, `makePickCards(content)` | 수첩 페이지의 할 일 목록 (`public/app.js`의 `buildPage`가 부름) | `{ situation, answers, methodId, worry, followups: [{ q, a }] }` | `{ items: [{ card_id, bucket, why }] }` | 규칙 기본 목록 |
+| A1 보충 질문 | `src/tasks/followups.mjs`, `makeFollowups(content)` | 질문 화면의 보충 질문 (`public/screens/questions.mjs`의 `renderFollowups`) | `{ situation, answers }` | `[{ q, options: string[] }]` 2개까지 | `[]` (건너뜀) |
+| B2 오늘 정리 | `src/tasks/summary.mjs`, `makeSummary(content)` | 수첩 페이지의 "오늘 정리한 내용" (`public/screens/page.mjs`, 값은 `buildPage`가 채움) | `{ answered: [{ q, a }], followups: [{ q, a }], worry }` | 글 한 덩이 | 답을 `"질문: 답"` 줄로 나열 |
+| B3 질문에 답하기 | `src/tasks/answer.mjs`, `makeAnswer(content)` | 수첩 페이지의 질문 카드 (`public/screens/page.mjs`) | `{ qaId, answers }` | 글 한 덩이 | `qa.json`에 적힌 답 원문 |
+| B4 의료 질문 돌려 주기 | `src/tasks/medical.mjs`, `makeMedical(content)` | 수첩 페이지의 "다음 진료 때 의료진에게 물어볼 질문" (`public/screens/page.mjs`, 값은 `buildPage`가 채움) | `{ worry }` | `string[]` 2개까지 | `[]` |
 
 ### 기능 하나 만드는 법
 
@@ -80,7 +82,8 @@ AI 기능은 모두 `src/ai/task.mjs`의 `runTask`를 지납니다. `prompts/<�
 
 키는 환경 변수 `ANTHROPIC_API_KEY`에만 둡니다. 코드에 적지 않고, `.env.example`에는 변수 이름만 있습니다.
 
-- 키 없이 개발하기: `SHOW_UNVERIFIED=1 npm start`로 확인 전 내용을 화면에 띄워 개발합니다. 이 명령은 서버를 만드는 과제 9가 끝난 뒤부터 쓸 수 있습니다.
+- 키 없이 개발하기: `SHOW_UNVERIFIED=1 npm start`로 확인 전 내용을 화면에 띄워 개발합니다.
+- 서버 주소 바꾸기: `HOST`(기본 127.0.0.1, 컨테이너에서는 0.0.0.0)와 `PORT`(기본 8787) 환경 변수로 정합니다.
 - 키가 되는지 확인하기: `npm run try-call`이 자기 키로 AI를 한 번 불러 봅니다.
 - 키를 받는 법: 팀이 정하면 채웁니다(#44).
 
@@ -122,4 +125,3 @@ AI 기능은 모두 `src/ai/task.mjs`의 `runTask`를 지납니다. `prompts/<�
 
 - 걱정돼 알아보는 중, 등급 직후 상황의 상황별 질문과 지켜볼 신호. 스펙 4절에 따라 카드를 상황별로 나누면서 정합니다.
 - 시설을 생각 중이에요(P1)의 돌봄 방식
-- 확인 전 내용을 개발 중에만 보여 주는 설정. 화면을 올리는 다음 PR에서 `visibleContent`의 `showUnverified`를 켜는 서버 설정으로 만듭니다.

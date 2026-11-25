@@ -85,6 +85,11 @@ export function createNotebook(storage, now = Date.now) {
   };
 }
 
+// 같은 상황의 가장 최근 페이지. pages는 최근 것부터. 없으면 null(다른 상황의 페이지와는 비교하지 않는다).
+export function lastPageOfSituation(pages, situation) {
+  return (Array.isArray(pages) ? pages : []).find((p) => isObject(p) && p.situation === situation) ?? null;
+}
+
 // 지난 답과 새 답을 비교해 바뀐 것만 돌려준다. 순서는 새 답 기준, 그다음 지난 답에만 있던 것.
 export function changedAnswers(prev, next) {
   if (!isObject(prev) || !isObject(next)) return [];

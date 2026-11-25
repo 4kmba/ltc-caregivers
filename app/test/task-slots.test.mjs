@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { runTask } from "../src/ai/task.mjs";
-import { loadPrompt } from "../src/ai/prompts.mjs";
 import { makeFollowups } from "../src/tasks/followups.mjs";
 import { makeSummary } from "../src/tasks/summary.mjs";
 import { makeAnswer } from "../src/tasks/answer.mjs";
@@ -11,7 +10,7 @@ import { makeMedical, dropUnsafeSentences } from "../src/tasks/medical.mjs";
 
 const content = { qa: [{ id: "Q1", q: "검사는 어떻게 하나요?", a: "센터에서 문답으로 확인합니다." }] };
 
-test("네 자리 모두 아직 만들지 않음", async () => {
+test("프롬프트가 없으면 네 자리 모두 대체 값", async () => {
   const call = async () => {
     throw new Error("부르면 안 됨");
   };
@@ -22,7 +21,7 @@ test("네 자리 모두 아직 만들지 않음", async () => {
     [makeMedical(content), { worry: "약이 걱정돼요" }],
   ];
   for (const [task, input] of slots) {
-    const r = await runTask(task, input, { call, loadPrompt });
+    const r = await runTask(task, input, { call, loadPrompt: () => null });
     assert.equal(r.reason, "not_built", task.name);
     assert.equal(r.usedAi, false, task.name);
   }

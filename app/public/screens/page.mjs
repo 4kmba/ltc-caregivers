@@ -31,6 +31,9 @@ async function renderBuilding(root, ctx) {
   // 뒤로 가기로 다시 들어와도 같은 답으로 페이지를 두 번 만들지 않는다.
   if (session.builtPageId) return ctx.nav(`#/page/${session.builtPageId}`, { replace: true });
 
+  // 걱정 칸과 보충 질문의 글을 AI에 보내기 전에 응급 신호를 한 번 더 본다.
+  if (ctx.emergencyBeforeBuild()) return;
+
   const here = location.hash;
   ctx.put(root, el("section", { class: "sheet loading-sheet" }, ctx.simcheong("default"), el("h1", {}, "정리하는 중"), el("p", { class: "loading", role: "status" }, "답에 맞는 할 일을 고르고 있어요. 잠시만 기다려 주세요.")));
   ctx.settle();

@@ -149,3 +149,12 @@ test("createdAt이 같으면 나중에 저장한 것이 먼저 온다", () => {
   const b = book.savePage(page());
   assert.deepEqual(book.listPages().map((p) => p.id), [b, a]);
 });
+
+test("같은 상황의 가장 최근 페이지만 고른다", async () => {
+  const { lastPageOfSituation } = await import("../src/notebook.mjs");
+  const pages = [{ id: "3", situation: "fall" }, { id: "2", situation: "worse" }, { id: "1", situation: "fall" }];
+  assert.equal(lastPageOfSituation(pages, "worse").id, "2");
+  assert.equal(lastPageOfSituation(pages, "fall").id, "3");
+  assert.equal(lastPageOfSituation(pages, "other"), null);
+  assert.equal(lastPageOfSituation(null, "fall"), null);
+});

@@ -8,7 +8,7 @@
 // 판단은 서버가 내보내는 모듈(rules, notebook, emergency)에 맡긴다. 이 파일은 화면을 잇고 서버와 저장소에 연결만 한다.
 // 온디바이스 원칙(스펙 7절, 8절): 서버로 보내는 것은 api() 한 곳에서만, 허용한 칸만 담는다.
 import { rankMethods, cardMatches } from "/src/rules.mjs";
-import { createNotebook, carryChecks, changedAnswers } from "/src/notebook.mjs";
+import { createNotebook, carryChecks, changedAnswers, lastPageOfSituation } from "/src/notebook.mjs";
 import { detectEmergency, emergencyContacts } from "/src/emergency.mjs";
 import * as cover from "/screens/cover.mjs";
 import * as questions from "/screens/questions.mjs";
@@ -198,6 +198,7 @@ function newSession(situationId) {
     worry: "",
     followupQs: null,
     followupAnswers: [],
+    followupTyped: [],
     methodId: null,
     emergencyKinds: [],
     builtPageId: null,
@@ -245,6 +246,19 @@ function checkEmergency(texts, next) {
 }
 let pendingEmergency = null;
 
+// 페이지를 만들기 직전, 걱정 칸과 보충 질문에 직접 적은 글을 한 번 더 본다.
+// 뒤로 가기와 앞으로 가기로 앞 단계의 확인을 지나쳤어도 AI를 부르기 전에 걸러지게 한다.
+// 처음 보는 신호가 있어 응급 화면으로 보냈으면 true. 안내를 닫으면 페이지 만들기로 돌아온다.
+function emergencyBeforeBuild() {
+  const kinds = detectEmergency([session.worry, ...(session.followupTyped ?? [])].filter((t) => typeof t === "string"));
+  const fresh = kinds.filter((k) => !session.emergencyKinds.includes(k));
+  if (fresh.length === 0) return false;
+  session.emergencyKinds = [...session.emergencyKinds, ...fresh];
+  pendingEmergency = { kinds: session.emergencyKinds, next: "#/page/new" };
+  nav("#/emergency", { replace: true });
+  return true;
+}
+
 function contactsFor(kinds) {
   return emergencyContacts(kinds, content.sources).filter(Boolean);
 }
@@ -272,7 +286,8 @@ async function buildPage() {
   if (!pick.ok || !Array.isArray(pick.value?.items)) return { error: true };
 
   const items = pick.value.items.filter((it) => cardOf(it?.card_id));
-  const prev = notebook.listPages()[0] ?? null;
+  // 같은 상황의 가장 최근 페이지하고만 비교한다. 없으면 비교하지 않는다(스펙 3절 7단계).
+  const prev = lastPageOfSituation(notebook.listPages(), session.situation);
   const carried = carryChecks(prev, items);
   const summaryText =
     summary.ok && typeof summary.value === "string" && summary.value.trim()
@@ -377,6 +392,7 @@ const ctx = {
   sourceOf,
   methodOf,
   checkEmergency,
+  emergencyBeforeBuild,
   contactsFor,
   afterQuestions,
   buildPage,
