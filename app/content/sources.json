@@ -502,9 +502,9 @@
     {
       "id": "hs_appeal",
       "kind": "page",
-      "name": "찾기쉬운 생활법령정보: 등급판정 결과에 대한 이의신청",
+      "name": "찾기쉬운 생활법령정보: 등급판정 결과 수령(이의신청 포함)",
       "org": "법제처 국가법령정보센터",
-      "url": "https://www.easylaw.go.kr/CSP/OnhunqueansInfoRetrieve.laf?onhunqnaAstSeq=97&onhunqueSeq=6348",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=2038&itrfldNo=2&itritmNo=2&itrrlNo=2",
       "phone": null,
       "summary": "",
       "checks": [],
@@ -517,7 +517,7 @@
       "kind": "page",
       "name": "찾기쉬운 생활법령정보: 장기요양인정신청",
       "org": "법제처 국가법령정보센터",
-      "url": "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=1963&ccfNo=3&cciNo=1&cnpClsNo=2",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=1963&itrfldNo=3&itritmNo=1&itrrlNo=2",
       "phone": null,
       "summary": "",
       "checks": [],
@@ -570,7 +570,7 @@
       "kind": "page",
       "name": "찾기쉬운 생활법령정보: 장기요양기관 선택",
       "org": "법제처 국가법령정보센터",
-      "url": "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=2038&ccfNo=3&cciNo=2&cnpClsNo=1",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=2038&itrfldNo=3&itritmNo=2&itrrlNo=1",
       "phone": null,
       "summary": "",
       "checks": [],
@@ -583,7 +583,7 @@
       "kind": "page",
       "name": "찾기쉬운 생활법령정보: 본인부담금",
       "org": "법제처 국가법령정보센터",
-      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=2038&ccfNo=3&cciNo=3&cnpClsNo=1",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=2038&itrfldNo=3&itritmNo=3&itrrlNo=1",
       "phone": null,
       "summary": "",
       "checks": [],
@@ -653,7 +653,7 @@
       "kind": "page",
       "name": "찾기쉬운 생활법령정보: 급여의 종류",
       "org": "법제처 국가법령정보센터",
-      "url": "https://easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=2038&ccfNo=3&cciNo=1&cnpClsNo=1",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=2038&itrfldNo=3&itritmNo=1&itrrlNo=1",
       "phone": null,
       "summary": "",
       "checks": [],
@@ -682,7 +682,7 @@
     {
       "id": "hs_rest",
       "kind": "page",
-      "name": "복지로: 장기요양 가족휴가제 (2025.8.6.)",
+      "name": "복지로: 장기요양 가족휴가제 (2025.8.6., 2025년 기준 11일·22회)",
       "org": "보건복지부·한국사회보장정보원",
       "url": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1308416_1118.html",
       "phone": null,
@@ -984,7 +984,7 @@
       "org": "국민건강보험공단",
       "url": "https://www.longtermcare.or.kr/npbs/r/o/299/npro299m01.web?menuId=npe0000002732",
       "phone": "1577-1000",
-      "summary": "낙상 위험이 큰 재가 수급자의 집에 안전 시공을 지원한다(1인당 생애 100만원 한도, 본인부담 15%). 본인 또는 가족 소유 집에 사는 경우만 해당하고 아파트·임대 거주자, 시설 입소자, 병·의원 입원자는 제외된다.",
+      "summary": "낙상 위험이 큰 재가 수급자의 집에 안전 시공을 지원한다(1인당 생애 100만원 한도, 본인부담 15%). 본인 또는 가족 소유 집에 사는 경우만 해당하고 시설 입소자, 병·의원 입원자, 「기초생활보장법」에 따른 수급자, 아파트·임대 거주자는 제외된다.",
       "checks": [
         {
           "by": "유정민",
@@ -1893,6 +1893,45 @@
           "date": "2026-11-07"
         }
       ],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "kdca_fall",
+      "kind": "page",
+      "name": "질병관리청 국가건강정보포털: 낙상",
+      "org": "질병관리청",
+      "url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=1743",
+      "phone": null,
+      "summary": "노인 낙상의 원인과 머리 손상·대퇴골 골절 같은 결과, 집 안 조명·바닥 정리·욕실 손잡이와 미끄럼 방지 매트 같은 예방법을 안내한다.",
+      "checks": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mental_delirium",
+      "kind": "page",
+      "name": "국가정신건강정보포털: 섬망",
+      "org": "국립정신건강센터",
+      "url": "https://www.mentalhealth.go.kr/portal/disease/diseaseDetail.do?dissId=60",
+      "phone": null,
+      "summary": "섬망의 증상과 치매와의 차이, 가족과 간병인이 할 일, 보호자 스스로를 돌보는 법을 설명한다.",
+      "checks": [],
+      "from": [
+        "김영균"
+      ]
+    },
+    {
+      "id": "mohw_crisis_line",
+      "kind": "page",
+      "name": "보건복지부: 정신건강복지센터 및 정신건강상담전화 운영",
+      "org": "보건복지부",
+      "url": "https://www.mohw.go.kr/menu.es?mid=a10706040100",
+      "phone": "1577-0199",
+      "summary": "정신건강상담전화 1577-0199는 전국 같은 번호로, 가까운 정신건강복지센터에 연결되고 야간과 공휴일에는 광역정신건강복지센터로 연결된다.",
+      "checks": [],
       "from": [
         "김영균"
       ]
