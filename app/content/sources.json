@@ -216,7 +216,7 @@
       "kind": "page",
       "name": "찾기쉬운 생활법령정보: 치매 노인 > 치매 조기검진 (2026-10-15 기준)",
       "org": "법제처 국가법령정보센터",
-      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=854&ccfNo=1&cciNo=2&cnpClsNo=2",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=854&itrfldNo=1&itritmNo=2&itrrlNo=2",
       "phone": null,
       "summary": "",
       "checks": [
@@ -234,7 +234,7 @@
       "kind": "page",
       "name": "찾기쉬운 생활법령정보: 치매 노인 > 치매 치료비 지원 (2026-10-15 기준)",
       "org": "법제처 국가법령정보센터",
-      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=854&ccfNo=2&cciNo=1&cnpClsNo=1",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=854&itrfldNo=2&itritmNo=1&itrrlNo=1",
       "phone": null,
       "summary": "",
       "checks": [
@@ -250,9 +250,9 @@
     {
       "id": "easylaw_dementia_family",
       "kind": "page",
-      "name": "찾기쉬운 생활법령정보: 치매 노인 > 치매환자 가족 및 보호자 지원 (2026-10-15 기준, 2026년 치매정책 사업안내 인용)",
+      "name": "찾기쉬운 생활법령정보: 치매 노인 > 치매환자 가족 및 보호자 지원 (2026-10-15 기준)",
       "org": "법제처 국가법령정보센터",
-      "url": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=854&ccfNo=2&cciNo=4&cnpClsNo=1",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=854&itrfldNo=2&itritmNo=4&itrrlNo=1",
       "phone": null,
       "summary": "",
       "checks": [
@@ -270,7 +270,7 @@
       "kind": "page",
       "name": "찾기쉬운 생활법령정보: 치매 노인 > 실종 예방(배회가능 어르신 인식표, 지문 사전등록, 배회감지기)",
       "org": "법제처 국가법령정보센터",
-      "url": "https://easylaw.go.kr/CSP/CnpClsMainBtr.laf?popMenu=ov&csmSeq=854&ccfNo=3&cciNo=1&cnpClsNo=1",
+      "url": "https://www.easylaw.go.kr/CSP/csp1/lifeLawDetail/getLifeLawDetail.do?csmfldSeq=854&itrfldNo=3&itritmNo=1&itrrlNo=1",
       "phone": null,
       "summary": "",
       "checks": [
@@ -1934,6 +1934,32 @@
       "checks": [],
       "from": [
         "김영균"
+      ]
+    },
+    {
+      "id": "nid_faq",
+      "kind": "page",
+      "name": "중앙치매센터 치매정보포털: 자주하는 질문",
+      "org": "중앙치매센터",
+      "url": "https://www.nid.or.kr/info/question_list.aspx",
+      "phone": null,
+      "summary": "치매 진단은 환자와 보호자에게 언제부터 어떤 증상이 어떻게 달라졌는지 묻는 문진에서 시작한다는 점, 치매 약을 임의로 끊거나 조정하지 말라는 점 등을 묻고 답한다.",
+      "checks": [],
+      "from": [
+        "유정민"
+      ]
+    },
+    {
+      "id": "nid_ftd",
+      "kind": "page",
+      "name": "중앙치매센터 치매사전: 전두측두엽 치매",
+      "org": "중앙치매센터",
+      "url": "https://www.nid.or.kr/info/diction_list4.aspx?gubun=0404",
+      "phone": null,
+      "summary": "기억력 저하보다 언어, 절제, 판단 저하가 먼저 나타나 가족이 보기에 성격이 변한 것처럼 보일 수 있는 치매를 설명한다.",
+      "checks": [],
+      "from": [
+        "유정민"
       ]
     }
   ]
