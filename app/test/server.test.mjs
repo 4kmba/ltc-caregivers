@@ -5,7 +5,7 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { createCall } from "../src/ai/client.mjs";
-import { loadContent } from "../src/content.mjs";
+import { loadContent, visibleContent } from "../src/content.mjs";
 import { createHandler } from "../src/server/handler.mjs";
 import { CASES } from "./cases.mjs";
 
@@ -115,8 +115,17 @@ test("확인 전 내용은 기본으로 숨긴다", async () => {
   assert.equal(res.status, 200);
   assert.equal(res.headers.get("cache-control"), "no-store");
   const body = await res.json();
-  // 상황은 모두 오지만 ready인 것(화면에 내놓을 상황)이 하나도 없다.
-  assert.deepEqual(body.situations.filter((s) => s.ready), []);
+  const all = await (await fetch(`${dev}/api/content`)).json();
+  // 확인이 끝난 것만 오고, 개발 모드보다 적게 온다. 상황은 모두 오되 ready는 확인된 카드 수로 정한다.
+  for (const key of ["cards", "qa", "methods", "sources"]) {
+    assert.ok(body[key].every((x) => x.verified), key);
+  }
+  assert.ok(body.qa.length < all.qa.length);
+  assert.equal(body.situations.length, all.situations.length);
+  assert.deepEqual(
+    body.situations.filter((s) => s.ready).map((s) => s.id),
+    visibleContent(content).situations.filter((s) => s.ready).map((s) => s.id)
+  );
 });
 
 test("개발 모드에서는 보인다", async () => {
